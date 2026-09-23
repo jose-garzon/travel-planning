@@ -27,7 +27,9 @@ Conventional Commits:
 Refs #<issue>
 ```
 
-Types: `feat fix test refactor perf docs style chore ci build`.
+Types: `feat fix test refactor perf docs style chore ci build revert`.
+`wip` is allowed only on local `task/*` branches (squashed away).
+The `commit-msg` hook checks the subject format.
 Scope: the capability (`trips`, `bookings`) or `workflow`.
 
 One commit per task on the feature branch:
@@ -40,7 +42,7 @@ One commit per task on the feature branch:
 - Title: same format as a commit subject.
 - Body: summary, `Closes #<issue>`, tasks, test evidence, screenshots.
 - CI green before ready for review.
-- Merge: squash or rebase (TBD). Delete branch after merge.
+- Merge: squash. Delete branch after merge.
 
 
 ## Never

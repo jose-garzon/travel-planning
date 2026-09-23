@@ -7,8 +7,8 @@ Two parts: code formatting (tools) and UI design (design system).
 
 Tools decide. No debates in review.
 
-- Formatter: TBD per stack. Runs on save and in a pre-commit hook.
-- Linter: TBD per stack, based on Google's config for the language.
+- Formatter and linter: Biome (`biome.json`). Pre-commit hook
+  (lefthook) formats staged files. `pnpm format` fixes everything.
 - Line length: 100 for code, 80 for Markdown.
 - Imports: sorted and grouped automatically.
 - EditorConfig: `.editorconfig` at the root (UTF-8, LF, final newline,
@@ -17,7 +17,10 @@ Tools decide. No debates in review.
 
 ## Part 2: UI design system
 
-Status: TBD. Defined with the first UI feature. Rules that apply now:
+Status: defined by the design system feature (roadmap #1). Direction:
+bold and playful, very easy to read, generous spacing, clear
+hierarchy, no generic AI look. Stack: Tailwind v4, tokens as CSS
+variables, Radix primitives heavily customized. Rules that apply now:
 
 ### Tokens only
 
@@ -32,8 +35,8 @@ font.size.sm | md | lg | xl
 motion.duration.fast | normal
 ```
 
-Tokens live in one file (path TBD). Light and dark themes redefine the
-same tokens.
+Tokens live in `src/shared/ui/tokens.css`. Light and dark themes
+redefine the same tokens.
 
 ### Components
 

@@ -1,71 +1,184 @@
 # Architecture Standard
 
-Based on Clean Architecture (Robert C. Martin). The goal: business rules
-that do not know about frameworks, databases or UI, so each can change
-or be tested alone.
+Feature modules with layers inside, based on Clean Architecture.
+Goal: each business capability can be read, changed and tested alone,
+and business rules never depend on frameworks or storage.
+
+Enforced by dependency-cruiser (`.dependency-cruiser.cjs`,
+`pnpm lint:deps`). A violation fails CI.
 
 
-## Layers
+## Big picture
 
 ```
-  ┌───────────────────────────────────────────────┐
-  │ presentation   UI, HTTP handlers, CLI         │
-  │  ┌─────────────────────────────────────────┐  │
-  │  │ infrastructure  DB, APIs, queues, files │  │
-  │  │  ┌───────────────────────────────────┐  │  │
-  │  │  │ application   use cases, ports    │  │  │
-  │  │  │  ┌─────────────────────────────┐  │  │  │
-  │  │  │  │ domain  entities, rules     │  │  │  │
-  │  │  │  └─────────────────────────────┘  │  │  │
-  │  │  └───────────────────────────────────┘  │  │
-  │  └─────────────────────────────────────────┘  │
-  └───────────────────────────────────────────────┘
+  src/app/          ◄── composition: routes, pages, API, wiring
+     │   │
+     │   ▼
+     │  src/modules/<feature>/     ◄── one per business capability
+     │      │                          never import each other
+     ▼      ▼
+  src/shared/       ◄── design system, db, i18n, kernel, config
+                        imports nothing from app or modules
 ```
 
-| Layer          | Contains                          | May import           |
-| -------------- | --------------------------------- | -------------------- |
-| domain         | entities, value objects, rules    | nothing outside      |
-| application    | use cases, ports (interfaces)     | domain               |
-| infrastructure | port adapters: DB, HTTP clients   | application, domain  |
-| presentation   | UI, controllers, route handlers   | application, domain  |
+- `app` may import `shared` and the **public API** of any module.
+- A module may import only itself and `shared`.
+- `shared` imports only `shared`.
 
-Wiring (composition root) is the only place that knows every layer.
+If two modules need to talk, the app layer connects them (see
+"Crossing modules"). If both need the same concept, it moves to
+`shared/kernel`.
+
+
+## Modules
+
+| Module         | Owns                                               |
+| -------------- | -------------------------------------------------- |
+| `auth`         | sessions, sign in (magic link), current user       |
+| `trips`        | trip, members, roles, invites                      |
+| `destinations` | cities in a trip with date ranges                  |
+| `itinerary`    | activities scheduled on days, participants         |
+| `budget`       | cost items, categories, splits, totals             |
+| `agent`        | LLM agent: prompts, tools, search, suggestions     |
+
+New modules need an ADR.
+
+
+## Layers inside a module
+
+```
+src/modules/trips/
+  domain/           entities, value objects, rules. Pure.
+  service/          use cases + ports (interfaces the service needs)
+  data/             port implementations: Drizzle repositories, APIs
+  ui/
+    components/     React components (presentational)
+    hooks/          client hooks (data fetching, local state)
+    index.ts        public client API
+  messages/         en.json, es.json (namespace = module name)
+  index.ts          public server API: wires data into service
+```
+
+Dependency direction:
+
+```
+  ui ──(types only)──► service ──► domain
+                         ▲
+  data ──────────────────┘ (implements ports)
+```
+
+| Layer    | May import                             | Must not import       |
+| -------- | -------------------------------------- | --------------------- |
+| domain   | domain, `shared/kernel`                | everything else       |
+| service  | domain, `shared/kernel`, `shared/config` | data, ui, `shared/db` |
+| data     | service (ports), domain, `shared/db`   | ui                    |
+| ui       | domain, service **types**, `shared/ui`, `shared/i18n` | data, `shared/db` |
+| index.ts | anything in its module, `shared`       | other modules         |
+
+Outside a module, only `modules/<m>/index.ts` (server) and
+`modules/<m>/ui/index.ts` (client) may be imported.
 
 
 ## Rules
 
-1. **Dependencies point inward.** An inner layer never imports an outer
-   one. Enforced by a lint rule (TBD per stack).
-2. **Use cases are the API of the app.** Presentation calls use cases,
-   never repositories or the DB directly.
-3. **One use case, one action.** `CreateTrip`, `AddStopToTrip`. Not
-   `TripService` with 20 methods.
-4. **Ports belong to the application.** The use case defines the
-   interface it needs (`TripRepository`); infrastructure implements it.
-5. **Domain is pure.** No I/O, no framework types, no clock or random
-   calls; pass them in.
-6. **Cross boundaries with plain data.** Use cases return DTOs, not ORM
-   models or framework objects.
-7. **Validate at the edge, enforce in the domain.** Presentation checks
-   shape; domain enforces invariants.
-8. **Organize by feature, then by layer.** Top-level folders are
-   business capabilities (`trips/`, `bookings/`), each with its layers.
+1. **Domain is pure.** No I/O, no framework, no `Date.now()` or random.
+   Pass clocks and ids in.
+2. **One use case, one action.** `createTrip`, `inviteMember`,
+   `subscribeToActivity`. Not a `TripService` with 20 methods.
+3. **Ports belong to the service.** The use case declares what it
+   needs (`TripRepository`, `ActivityCostsReader`); `data/` or the app
+   layer provides it.
+4. **Use cases return plain DTOs**, never Drizzle rows.
+5. **Validate at the edge, enforce in the domain.** Route handlers
+   parse with Zod; domain guards invariants.
+6. **Authorization lives in use cases.** Every use case that touches a
+   trip checks the caller's role (owner, editor, viewer).
+7. **UI gets data through props or the API**, never by calling data or
+   service code directly. Server components in `app/` call the
+   module's `index.ts` and pass results down.
+8. **Server-only code imports `server-only`.** `data/`, `index.ts`,
+   `shared/db`, `shared/config`.
 
 
-## Folder shape
+## Crossing modules
+
+Modules never import each other. Two ways to connect them:
+
+### 1. Ports wired in the app layer (default)
+
+The consumer declares a port in its service. The app layer adapts
+the provider's public API to it.
+
+```ts
+// modules/budget/service/ports.ts
+export interface ActivityCostsReader {
+  listForTrip(tripId: TripId): Promise<ActivityCost[]>;
+}
+
+// app/_composition/budget.ts
+import { createBudgetModule } from "@/modules/budget";
+import { itinerary } from "@/modules/itinerary";
+
+export const budget = createBudgetModule({
+  activityCosts: {
+    listForTrip: (tripId) => itinerary.listActivityCosts(tripId),
+  },
+});
+```
+
+Typical ports:
+- `TripAccess` (role of a user in a trip): used by every module,
+  provided by `trips`.
+- `ActivityCostsReader`: `budget` ← `itinerary`.
+- `ItineraryWriter`, `BudgetWriter`: `agent` ← `itinerary`, `budget`
+  (apply approved suggestions).
+
+### 2. Shared kernel
+
+Concepts with identical meaning everywhere: `TripId`, `UserId`,
+`Money`, `Currency`, `DateRange`, `Result`, domain error base. Small
+and stable. If it has behavior specific to one feature, it does not
+belong here.
+
+
+## Shared
 
 ```
-src/
-  <capability>/
-    domain/
-    application/
-    infrastructure/
-    presentation/
-  shared/            only truly shared kernel (ids, money, result)
-  main/              composition root, config, wiring
+src/shared/
+  kernel/     ids, Money, DateRange, Result, errors (pure)
+  ui/         design system: tokens, primitives on Radix
+  db/         Drizzle client, schema (one file per module), migrations
+  i18n/       routing, navigation, shared messages
+  config/     env validation (Zod)
 ```
 
-Exact paths: TBD per stack, recorded in `CLAUDE.md` Layout.
+**Why DB tables live in `shared/db/schema/`:** one SQLite database,
+and foreign keys cross modules (`activity.trip_id → trip.id`).
+Defining tables in modules would force cross-module imports. Each
+module owns its file (`schema/trips.ts`) and only its own `data/`
+layer queries those tables by convention; the reviewer checks this.
+
+
+## App layer
+
+```
+src/app/
+  [locale]/            pages and layouts (server components)
+  api/v1/              route handlers: parse → use case → respond
+  _composition/        wiring modules together, i18n request config
+src/proxy.ts           locale routing (Next 16 "proxy", formerly middleware)
+```
+
+Route handlers and pages stay thin: no business logic.
+
+
+## API
+
+- Public, versioned: `/api/v1/...`. Future native clients use it.
+- Request and response schemas in Zod, shared with the client.
+- Errors: `{ "error": { "code": "TRIP_NOT_FOUND", "message": "..." } }`
+  with a stable `code` per domain error.
+- Server Actions allowed only as thin callers of the same use cases.
 
 
 ## Architecture Decision Records
@@ -83,5 +196,5 @@ Status: proposed | accepted | superseded by NNNN
 ## Consequences
 ```
 
-Write an ADR when a choice is hard to reverse or affects many features:
-new dependency, storage, auth model, API style, layer exception.
+Write one when a choice is hard to reverse or affects many features:
+new dependency, storage, auth, API style, new module, layer exception.

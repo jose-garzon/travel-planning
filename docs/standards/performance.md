@@ -43,5 +43,6 @@ Plans may tighten these, never loosen them without an ADR.
 ## Measuring
 
 - `@perf` scenarios assert budgets where measurable in tests.
-- Bundle size check in CI (tool TBD per stack).
+- Lighthouse CI (`lighthouserc.json`) in every PR: LCP, CLS, TBT
+  (proxy for INP in the lab), JS size per route, a11y score 100.
 - Query count assertions in integration tests for list endpoints.

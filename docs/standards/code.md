@@ -1,10 +1,11 @@
 # Code Standard
 
-Base: Google style guides for the chosen language, plus the rules below.
+Base: Google TypeScript Style Guide, plus the rules below.
 Tools enforce formatting and most rules. This file covers what tools
 cannot, and explains why.
 
-Tooling: TBD per stack (formatter, linter, import boundary rule).
+Tooling: Biome (format + lint), dependency-cruiser (boundaries),
+TypeScript strict. Run `pnpm lint` and `pnpm typecheck`.
 
 
 ## Principles
@@ -18,6 +19,7 @@ Tooling: TBD per stack (formatter, linter, import boundary rule).
    possible future. Three copies before an abstraction.
 5. **Fail loud and early.** Validate inputs at boundaries. Never swallow
    errors.
+6. Do not carry optional values when there is a risk of failure.
 
 
 ## Naming
@@ -26,15 +28,18 @@ Tooling: TBD per stack (formatter, linter, import boundary rule).
 - Use the domain language from `feature.md` and the plan's Naming table.
   One concept, one name, everywhere.
 - Booleans read as questions: `isPublished`, `hasStops`, `canEdit`.
-- Functions are verbs: `calculateBudget`. Use cases are
-  `VerbNoun`: `CreateTrip`.
+- Functions are verbs: `calculateBudget`. Use cases are verb-noun
+  functions: `createTrip`, `subscribeToActivity`.
 - No abbreviations except universal ones (`id`, `url`, `api`).
-- Casing per language convention (Google guide).
+- Casing: `camelCase` values and functions, `PascalCase` types and
+  components, `kebab-case` file names, `SCREAMING_SNAKE` env vars.
+- React: named exports for components; default export only where
+  Next requires it (pages, layouts, route files).
 
 
 ## Functions
 
-- Max 3 positional params. More: pass an object.
+- Max 1 positional params. More: pass an object.
 - No boolean flag params that switch behavior. Make two functions.
 - Pure where possible. Side effects at the edges.
 - Return early instead of nesting.

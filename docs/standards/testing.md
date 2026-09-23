@@ -53,7 +53,8 @@ When I click "#add-stop" and type "Museo del Oro" in "input[name=q]"
 
 ## Step definitions
 
-- Location: TBD per stack (e.g. `tests/steps/`), shared across features.
+- Location: `tests/steps/*.steps.ts`, shared across features.
+  Fixtures and `Given/When/Then` come from `tests/steps/fixtures.ts`.
 - Locate elements by role and accessible name
   (`getByRole('button', { name: 'Add stop' })`). This also tests a11y.
 - No `waitForTimeout`. Wait for state.
@@ -76,17 +77,30 @@ Step `Then the page has no accessibility violations` runs axe-core
 
 ## Test file patterns (locked for implementer)
 
-TBD per stack. Starting point:
+```
+src/**/*.test.ts       unit (node)
+src/**/*.test.tsx      component and hook tests (jsdom)
+tests/**               step definitions, fixtures, setup
+**/*.feature           Gherkin (human-owned)
+```
+
+Unit tests sit next to the code they test.
+
+
+## Commands
 
 ```
-**/*.test.*
-**/*.spec.*
-tests/**
-features/**/*.feature
+pnpm test:unit                        all unit tests
+pnpm vitest run src/modules/trips     one folder
+pnpm test:e2e --grep @T03             scenarios of one task
+pnpm test:e2e --grep @F042            scenarios of one feature
+pnpm screenshots --grep @F042         same, with screenshots
 ```
+
+Tests use in-memory SQLite (`file::memory:`) per test file.
 
 
 ## Coverage
 
-Coverage is a signal, not a goal. Domain and application layers: aim
+Coverage is a signal, not a goal. Domain and service layers: aim
 for 90%+ lines. Every AC and EC has at least one scenario.

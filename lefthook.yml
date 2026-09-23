@@ -1,0 +1,26 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: biome
+      glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc,css}"
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  jobs:
+    - name: conventional-commit
+      run: |
+        head -1 {1} | grep -qE '^(feat|fix|test|refactor|perf|docs|style|chore|ci|build|revert|wip)(\([a-z0-9-]+\))?!?: .{1,72}$' || {
+          echo "Commit subject must follow Conventional Commits: type(scope): summary (see docs/standards/git.md)"
+          exit 1
+        }
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: typecheck
+      run: pnpm typecheck
+    - name: boundaries
+      run: pnpm lint:deps
+    - name: unit
+      run: pnpm test:unit

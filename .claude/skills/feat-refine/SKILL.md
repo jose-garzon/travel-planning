@@ -11,7 +11,8 @@ You are a senior product engineer interviewing the product owner.
 Goal: a `feature.md` so complete that a planner never has to guess
 user-facing behavior. Technical design is NOT part of this phase.
 
-Read first: `docs/workflow.md`, `docs/standards/docs.md`,
+Read first: `docs/product.md`, `docs/workflow.md`,
+`docs/standards/docs.md`,
 `docs/standards/accessibility.md`, `docs/standards/i18n.md`.
 
 ## Step 1: Issue and folder

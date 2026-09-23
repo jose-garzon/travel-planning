@@ -1,6 +1,43 @@
 {
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"/home/flanagan/.claude/plugins/cache/caveman/caveman/c2ed24b3e5d4/hooks/caveman-statusline.sh\""
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git rev-parse *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git switch *)",
+      "Bash(git checkout *)",
+      "Bash(git branch *)",
+      "Bash(git merge *)",
+      "Bash(git rebase *)",
+      "Bash(git revert *)",
+      "Bash(git stash *)",
+      "Bash(git worktree *)",
+      "Bash(git pull --ff-only *)",
+      "Bash(git push -u origin feat/*)",
+      "Bash(git push origin feat/*)",
+      "Bash(gh issue *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr edit *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh label *)",
+      "Bash(gh repo view *)"
+    ],
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push origin main *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)",
+      "Bash(gh repo delete *)",
+      "Bash(gh pr merge *)",
+      "Bash(rm -rf *)"
+    ]
   }
 }
