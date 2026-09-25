@@ -110,6 +110,19 @@ Rules:
 3. Move issue label to `phase:in-review`.
 
 
+## Audit  (`/feat-audit <folder>/<file>`)
+
+Optional, before any gate. Audits one spec file (`feature.md`,
+`plan.md`, `tasks.md` or `tests.feature`) against the other spec
+files, `docs/product.md`, standards, ADRs and the code.
+
+1. Report numbered findings: contradictions, redundancies, vague or
+   untestable items, missing items, format.
+2. You answer by number.
+3. It applies the answers and lists the decisions it made plus any
+   files now out of sync. It never changes `Status:`.
+
+
 ## GitHub labels
 
 | Label                | Meaning                               |
