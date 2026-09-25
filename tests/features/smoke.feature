@@ -6,7 +6,7 @@ Feature: App shell
 
   Scenario: Home page loads in the default locale
     Given I open the home page
-    Then I see the heading "Travel Planning"
+    Then I see the heading "Parche"
     And the page has no accessibility violations
 
   @i18n

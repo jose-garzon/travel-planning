@@ -40,6 +40,7 @@ If two modules need to talk, the app layer connects them (see
 | `itinerary`    | activities scheduled on days, participants         |
 | `budget`       | cost items, categories, splits, totals             |
 | `agent`        | LLM agent: prompts, tools, search, suggestions     |
+| `styleguide`   | `/styleguide` screen (UI-only, ADR 0008)           |
 
 New modules need an ADR.
 
@@ -58,6 +59,10 @@ src/modules/trips/
   messages/         en.json, es.json (namespace = module name)
   index.ts          public server API: wires data into service
 ```
+
+A module has only the layers it needs. A UI-only module (no
+business rules, ADR 0008) has `ui/`, `messages/` and `index.ts`.
+Messages may be split into `messages/<locale>/<part>.json`.
 
 Dependency direction:
 
@@ -168,6 +173,13 @@ src/app/
   _composition/        wiring modules together, i18n request config
 src/proxy.ts           locale routing (Next 16 "proxy", formerly middleware)
 ```
+
+`src/app` is a router (ADR 0008): only Next route files
+(`page`, `layout`, `loading`, `error`, `global-error`,
+`not-found`, `template`, `default`, `route`), `globals.css` and
+`_composition/`. No `_components` or other UI folders. Screen UI
+lives in a module's `ui/`; UI on every page (root header) lives in
+`src/shared/ui/components/`. Rule `app-is-a-router` enforces it.
 
 Route handlers and pages stay thin: no business logic.
 
