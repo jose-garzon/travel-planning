@@ -1,0 +1,214 @@
+/*
+ * Design tokens. The only file allowed to hold raw values (colors,
+ * lengths, durations). Everything else in src/ uses a token utility.
+ * See features/001-design-system/plan.md "Tokens" for the source of
+ * every value below.
+ */
+
+@theme {
+  --*: initial;
+
+  /* Colors: light-dark(<light>, <dark>) follows :root color-scheme. */
+  --color-bg: light-dark(#fff8f1, #1a1411);
+  --color-surface-1: light-dark(#ffffff, #241c18);
+  --color-surface-2: light-dark(#fff1e4, #2e241f);
+  --color-surface-3: light-dark(#fbe6d4, #3a2e27);
+  --color-text: light-dark(#2a1e17, #f7ede4);
+  --color-text-muted: light-dark(#6b5548, #c9b6a7);
+  --color-border: light-dark(#e8d5c4, #4a3b32);
+  --color-border-strong: light-dark(#8c7362, #8f7868);
+  --color-accent: light-dark(#a93d16, #ff8a5c);
+  --color-accent-hover: light-dark(#8f3311, #ffa27e);
+  --color-on-accent: light-dark(#ffffff, #1a1411);
+  --color-focus: var(--color-accent);
+  --color-success: light-dark(#1f7a3a, #5fd08a);
+  --color-warning: light-dark(#8a5a00, #f2c14e);
+  --color-error: light-dark(#b42318, #ff8a80);
+  --color-shadow: light-dark(#2a1e1714, transparent);
+  --color-overlay: light-dark(#2a1e1799, #000000b3);
+
+  /* Fonts. --font-fredoka / --font-plus-jakarta-sans are set by
+     fonts.ts (next/font `variable`), not defined here. */
+  --font-display: var(--font-fredoka);
+  --font-body: var(--font-plus-jakarta-sans);
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  /* Space: n x 0.25rem. */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-touch: 2.75rem;
+  --spacing-icon-sm: 1rem;
+  --spacing-icon-md: 1.25rem;
+  --spacing-icon-lg: 1.5rem;
+  --spacing-sheet: 85dvh;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows: light theme only; --color-shadow is transparent in
+     dark, so the shadow disappears there with no extra rule. */
+  --shadow-sm: 0 1px 2px var(--color-shadow), 0 1px 1px var(--color-shadow);
+  --shadow-md: 0 4px 12px var(--color-shadow), 0 1px 3px var(--color-shadow);
+
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 250ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-easing-out: var(--ease-out);
+
+  --animate-fade-in: fade-in var(--motion-duration-fast) var(--ease-out);
+  --animate-shake: shake var(--motion-duration-normal) var(--ease-out) 3;
+  --animate-sheet-up: sheet-up var(--motion-duration-normal) var(--ease-out);
+  --animate-dialog-in: dialog-in var(--motion-duration-normal) var(--ease-out);
+  --animate-spin: spin 1s linear infinite;
+
+  --container-prose: 70ch;
+  --container-nav: 14rem;
+  --container-dialog: 32rem;
+  --container-page: 72rem;
+  --container-card: 18rem;
+
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+
+  --default-transition-duration: var(--motion-duration-fast);
+  --default-transition-timing-function: var(--ease-out);
+  --default-font-family: var(--font-body);
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
+@custom-variant ui-hover {
+  &:hover {
+    @slot;
+  }
+  &:where([data-preview="hover"] *) {
+    @slot;
+  }
+}
+
+@custom-variant ui-focus {
+  &:focus-visible {
+    @slot;
+  }
+  &:where([data-preview="focus"] *) {
+    @slot;
+  }
+}
+
+@custom-variant ui-active {
+  &:active {
+    @slot;
+  }
+  &:where([data-preview="active"] *) {
+    @slot;
+  }
+}
+
+@utility duration-fast {
+  transition-duration: var(--motion-duration-fast);
+}
+
+@utility duration-normal {
+  transition-duration: var(--motion-duration-normal);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(calc(-1 * var(--spacing-1)));
+  }
+  75% {
+    transform: translateX(var(--spacing-1));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

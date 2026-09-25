@@ -4,6 +4,10 @@ import { defineBddConfig } from "playwright-bdd";
 const testDir = defineBddConfig({
   features: ["features/**/*.feature", "tests/features/**/*.feature"],
   steps: ["tests/steps/**/*.ts"],
+  // Tasks land one at a time; scenarios for later tasks have no step
+  // definitions yet. Fail the scenario at run time instead of
+  // aborting the whole bddgen run.
+  missingSteps: "fail-on-run",
 });
 
 const isCI = Boolean(process.env.CI);
@@ -23,7 +27,8 @@ export default defineConfig({
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile", use: { ...devices["Pixel 7"] } },
+    // Pixel 7 is touch: scenarios needing a mouse hover are @desktop.
+    { name: "mobile", use: { ...devices["Pixel 7"] }, grepInvert: /@desktop/ },
   ],
   webServer: {
     command: isCI ? "pnpm start" : "pnpm dev",

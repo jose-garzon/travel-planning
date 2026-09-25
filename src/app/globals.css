@@ -1,1 +1,21 @@
 @import "tailwindcss";
+@import "../shared/ui/tokens.css";
+
+@layer base {
+  body {
+    @apply bg-bg text-text font-body leading-normal;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}

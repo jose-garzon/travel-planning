@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/shared/i18n/routing";
+import { cx } from "@/shared/ui/cx";
+import { fredoka, plusJakartaSans } from "@/shared/ui/fonts";
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -23,7 +25,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   setRequestLocale(locale);
 
   return (
-    <html lang={locale}>
+    <html lang={locale} dir="ltr" className={cx(fredoka.variable, plusJakartaSans.variable)}>
       <body>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>

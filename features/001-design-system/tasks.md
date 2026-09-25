@@ -32,7 +32,7 @@ Shared rules for every task:
 
 ## T01. Tokens, fonts and root header with the wordmark
 
-Status: todo
+Status: done
 Depends on: -
 Model: sonnet
 Scenarios: @T01, @smoke
@@ -86,18 +86,18 @@ Steps:
    steps too.
 
 Done when:
-- [ ] Scenarios tagged @T01 and @smoke pass (both projects)
-- [ ] `tokens.test.ts` checks: every AC-3 token exists; sizes in
+- [x] Scenarios tagged @T01 and @smoke pass (both projects)
+- [x] `tokens.test.ts` checks: every AC-3 token exists; sizes in
       `rem`; line heights unitless; radius/space/duration values
       match the plan; every pair in the plan contrast table meets
       its minimum in light and dark
-- [ ] `cx.test.ts` passes
-- [ ] `support/tokens.ts` resolves `--color-focus` to the
+- [x] `cx.test.ts` passes
+- [x] `support/tokens.ts` resolves `--color-focus` to the
       `--color-accent` values
-- [ ] `tokens.test.ts` asserts the `@theme` block starts with
+- [x] `tokens.test.ts` asserts the `@theme` block starts with
       `--*: initial;` (so `p-13`, `m-4`, `bg-red-500` generate no
       CSS; verified in the plan spike)
-- [ ] `pnpm typecheck` and `pnpm lint` pass
+- [x] `pnpm typecheck` and `pnpm lint` pass
 
 Notes:
 - `light-dark()` values must be hex (`#rrggbb` or `#rrggbbaa`).
