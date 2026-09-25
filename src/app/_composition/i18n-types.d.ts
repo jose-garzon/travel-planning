@@ -1,3 +1,4 @@
+import type { StyleguideMessages } from "@/modules/styleguide";
 import type sharedEn from "@/shared/i18n/messages/en.json";
 
 type SharedMessages = typeof sharedEn;
@@ -8,6 +9,6 @@ type SharedMessages = typeof sharedEn;
 // separate, larger change across those call sites (see task report).
 declare module "next-intl" {
   interface AppConfig {
-    Messages: SharedMessages;
+    Messages: SharedMessages & { styleguide: StyleguideMessages };
   }
 }

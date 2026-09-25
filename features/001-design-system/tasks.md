@@ -154,7 +154,7 @@ Done when:
 
 ## T02. Styleguide shell with sections and messages
 
-Status: todo
+Status: done
 Depends on: T15
 Model: sonnet
 Scenarios: @T02
@@ -254,12 +254,12 @@ Steps:
     `setRequestLocale`, render `<StyleguideScreen />`. No markup.
 
 Done when:
-- [ ] Scenarios tagged @T02 pass
-- [ ] `pnpm test:e2e --grep @T01` still passes
-- [ ] No hardcoded user-facing text in `src/modules/styleguide/**`
-- [ ] `pnpm lint:deps` passes (page imports only the module's
+- [x] Scenarios tagged @T02 pass
+- [x] `pnpm test:e2e --grep @T01` still passes
+- [x] No hardcoded user-facing text in `src/modules/styleguide/**`
+- [x] `pnpm lint:deps` passes (page imports only the module's
       public API)
-- [ ] `pnpm typecheck` and `pnpm lint` pass
+- [x] `pnpm typecheck` and `pnpm lint` pass
 
 Notes:
 - Step `I open the styleguide` goes to `/en/styleguide`;

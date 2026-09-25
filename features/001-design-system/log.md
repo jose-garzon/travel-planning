@@ -32,3 +32,18 @@ reviewer: approved, 2 minor, 1 nit carried
 - minor  src/shared/ui/components/site-header.tsx:8  home link has no
   token focus ring / touch-target classes (still meets 2.5.8)
 - nit    src/shared/ui/components/icon.tsx:2  merge duplicate imports
+
+## 2026-09-24 T02 round 1
+tester: 4 scenarios, 5 unit tests, red OK (e51254b)
+- "Styleguide shell fits a narrow screen" passed before implementation
+  (the 404 page does not overflow either)
+implementer (sonnet): green OK
+reviewer: approved, 3 minor, 1 nit carried
+- minor  src/modules/styleguide/ui/sections/brand-section.tsx:4  each
+  section repeats id/titleKey already in STYLEGUIDE_SECTIONS
+- minor  src/modules/styleguide/ui/sections/sections.ts:17  titleKey
+  not tied to messageKey by type
+- minor  src/modules/styleguide/messages/load.ts:61  `?.default` + cast
+  can hide a bad import
+- nit    src/modules/styleguide/messages/es/tooltip.json:2  "Consejo"
+  is an odd name for Tooltip
