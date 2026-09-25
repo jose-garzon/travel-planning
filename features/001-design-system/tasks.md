@@ -314,7 +314,7 @@ Notes:
 
 ## T04. Text and Stack primitives
 
-Status: todo
+Status: done
 Depends on: T02
 Model: sonnet
 Scenarios: @T04
@@ -338,10 +338,10 @@ Steps:
    {string} demo shows every font size`.
 
 Done when:
-- [ ] Scenarios tagged @T04 pass
-- [ ] Unit tests: each `size`/`tone`/`gap` maps to its token class;
+- [x] Scenarios tagged @T04 pass
+- [x] Unit tests: each `size`/`tone`/`gap` maps to its token class;
       `as` renders the element
-- [ ] `pnpm lint` passes
+- [x] `pnpm lint` passes
 
 
 ## T05. Theme: follow the OS, toggle, cookie, server render

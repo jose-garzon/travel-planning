@@ -47,3 +47,13 @@ reviewer: approved, 3 minor, 1 nit carried
   can hide a bad import
 - nit    src/modules/styleguide/messages/es/tooltip.json:2  "Consejo"
   is an odd name for Tooltip
+
+## 2026-09-24 T04 round 1
+tester: 1 scenario, 41 unit tests; first red commit added production
+  stubs (text.tsx, stack.tsx), sent back once; red OK (fc4b722)
+implementer (sonnet): green OK
+reviewer: approved, 2 nit carried
+- nit  src/modules/styleguide/ui/demos/layout-demo.tsx:7  parallel
+  FONT_SIZE_LABELS / FONT_SIZES lists can drift
+- nit  src/modules/styleguide/ui/demos/layout-demo.tsx:27  token names
+  render as <p>, could be <code>

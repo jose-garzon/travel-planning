@@ -1,3 +1,6 @@
 {
-  "title": "Stack and Text"
+  "title": "Stack and Text",
+  "states": {
+    "default": "Default"
+  }
 }

@@ -1,3 +1,6 @@
 {
-  "title": "Pila y texto"
+  "title": "Pila y texto",
+  "states": {
+    "default": "Normal"
+  }
 }
