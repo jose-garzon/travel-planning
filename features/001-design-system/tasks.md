@@ -111,7 +111,7 @@ Notes:
 
 ## T15. Translatable text, Icon, Wordmark and root header
 
-Status: todo
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T15
@@ -141,15 +141,15 @@ Steps:
 6. `layout.tsx`: render `<SiteHeader />` before `children`.
 
 Done when:
-- [ ] Scenarios tagged @T15 pass
-- [ ] `icon.test.tsx`: aria-hidden vs role="img"; `label` as string
+- [x] Scenarios tagged @T15 pass
+- [x] `icon.test.tsx`: aria-hidden vs role="img"; `label` as string
       and as `{ translateId }`
-- [ ] `translatable.test.tsx`: plain string returned as is; key
+- [x] `translatable.test.tsx`: plain string returned as is; key
       translated; ICU `values` applied
-- [ ] `// @ts-expect-error` test proves an unknown `translateId`
+- [x] `// @ts-expect-error` test proves an unknown `translateId`
       fails typecheck
-- [ ] `pnpm test:e2e --grep @T01` still passes
-- [ ] `pnpm typecheck` and `pnpm lint` pass
+- [x] `pnpm test:e2e --grep @T01` still passes
+- [x] `pnpm typecheck` and `pnpm lint` pass
 
 
 ## T02. Styleguide shell with sections and messages
