@@ -333,3 +333,10 @@ Applied directly (not another gate round — loop cap already at 2/2):
 Verified: e2e @T01|@T02|@T04|@T05|@T06|@T07|@T08|@T13|@T15|@smoke
 34/34, typecheck clean, lint clean (same 2 pre-existing cookie
 warnings). Section descriptions logged for T12 / the PR.
+
+## 2026-09-26 post-gate: demo sub-headings also needed accent color
+User caught that the accent-color fix only touched top-level section
+h2s, not the h3 in each Primitives demo (layout, button, input,
+tooltip, card, dialog). Added `text-accent` to all six (33fbe6d).
+Verified: e2e 34/34, typecheck/lint clean. Re-captured evidence/gate/
+(desktop 31/31, mobile 29/29).
