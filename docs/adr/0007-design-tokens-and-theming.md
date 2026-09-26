@@ -39,6 +39,18 @@ follows.
   messages are sent to the client.
 - Radix (`radix-ui`) backs Dialog and Tooltip; Lucide
   (`lucide-react`) is the only icon set.
+- Round 2 (2026-09-26): the palette moves from one accent to two —
+  `accent` (sunset red-orange, unchanged role: primary CTA, links,
+  focus ring) plus `secondary` (pine/teal, second-tier emphasis; no
+  primitive uses it yet). The neutral base (`bg`, `surface-*`,
+  `text*`, `border*`, `shadow`, `overlay`) is replaced with a
+  true-neutral scale in the same swap. `success`/`warning`/`error`
+  are unchanged. A `scrim`/`on-scrim` pair ships for a future
+  photo-hero-card: flat values in both themes, not `light-dark()`
+  — the one exception to the tokens-follow-`color-scheme` rule,
+  because a scrim masks photo contrast, not the app's theme. Full
+  values and contrast derivation: `docs/styleguide.md`,
+  `features/001-design-system/plan.md` "Tokens".
 
 
 ## Consequences

@@ -71,14 +71,18 @@ Per-file checks on top of the above:
 - `feature.md`: user perspective only; no technical design beyond
   what the user decided. Every AC observable and testable. More than
   ~15 ACs: suggest a split.
-- `plan.md`: covers every AC; layers follow
+- `plan.md`: decisions and contracts only, no code (token values,
+  CSS, prop details, demo copy belong to tasks); under ~200 lines,
+  else suggest a split; covers every AC; layers follow
   `docs/standards/architecture.md`; naming table has every new public
   name; contracts exact; decisions that affect the whole project have
   an ADR.
 - `tasks.md`: every AC maps to a scenario and a task; vertical
   slices; dependencies acyclic; `Files` exact and complete, overlaps
   noted; sizes within the workflow limits; model tier set.
-- `tests.feature`: one or more scenarios per AC; tags match task IDs;
+- `tests.feature`: user flows only, no component-state or look
+  assertions (pixels, CSS); one or more scenarios per AC; tags match
+  task IDs;
   steps phrased by role and accessible name; `@i18n` outlines across
   locales; no implementation detail in steps.
 

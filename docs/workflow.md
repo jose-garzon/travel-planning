@@ -2,14 +2,16 @@
 
 How every feature goes from idea to pull request.
 
-Four phases. Two human gates. Everything after the second gate runs
+Four phases. Two human gates, plus one visual gate inside apply.
+Apart from the visual gate, everything after the second gate runs
 unattended until a draft PR exists.
 
 ```
   /feat-refine ──► GATE 1 ──► /feat-plan ──► GATE 2 ──► /feat-apply ──► /feat-publish
    (you + AI)     you approve   (AI)       you approve   (agents)        (AI)
-                  feature.md             plan + tasks                  draft PR
-                                          + tests
+                  feature.md             plan + tasks   visual gate:   draft PR
+                                          + tests       you check
+                                                        screenshots
 ```
 
 
@@ -49,64 +51,89 @@ after planning.
 
 ## Phase 2: Plan  (`/feat-plan <folder>`)
 
-Goal: decide the how, and cut the work into slices small enough that a
-mid-tier model can implement each one without guessing.
+Goal: decide the how, and cut the work into slices a mid-tier model
+can implement without guessing. The plan holds decisions and
+contracts, not code: values, styling, props and copy are left to the
+task that writes them. Aim under ~200 lines and 4-8 tasks; bigger
+means the feature is split into several issues.
 
 1. Read `feature.md`, standards in `docs/standards/`, ADRs in `docs/adr/`.
 2. Write `plan.md`: architecture, data model, contracts, components,
-   naming table, decisions, risks, performance budgets.
+   naming table, decisions, risks, performance budgets, and what is
+   left to implementation.
 3. Write `tasks.md`: vertical slices. Each task has ID, depends-on,
    files touched, linked scenarios, model tier, done criteria.
-4. Write `tests.feature`: Gherkin scenarios tagged with task IDs.
+4. Write `tests.feature`: Gherkin scenarios for user flows, tagged
+   with task IDs. Component states go in unit tests. No assertions on
+   looks (pixels, CSS).
 5. Ask you any open technical questions.
 6. Stop. You review and edit.
 
-**Gate 2**: you say "approved". From here the run is unattended.
+**Gate 2**: you say "approved". From here the run is unattended
+until the visual gate.
 
 
 ## Phase 3: Apply  (`/feat-apply <folder>`)
 
-Goal: implement every task, verified, without human help.
+Goal: implement every task, verified, with one human look at the UI.
 
-The main session is the orchestrator. It never writes feature code.
-It schedules tasks and spawns three agent types:
+The main session is the orchestrator (Sonnet, set in the skill). It
+never writes feature code. It schedules tasks and spawns two agent
+types:
 
-| Agent        | Model    | Job                                    |
-| ------------ | -------- | -------------------------------------- |
-| tester       | sonnet   | red: write failing tests for the task  |
-| implementer  | per task | green: make the tests pass             |
-| reviewer     | opus     | check diff against plan and standards  |
+| Agent        | Model    | Job                                         |
+| ------------ | -------- | ------------------------------------------- |
+| implementer  | per task | TDD: failing tests, commit, then make pass  |
+| reviewer     | opus     | once per feature: diff, standards, visuals  |
 
-Per task loop (strict TDD):
+Per task loop:
 
 ```
-  tester ──► tests fail? ──► implementer ──► tests pass? ──► reviewer
-                                  ▲                              │
-                                  └──── fix (max 3 rounds) ◄─────┘
-                                                                 │
-                                                        approved ▼
-                                                   merge + commit task
+  implementer: red commit ──► green ──► orchestrator verifies
+                                  ▲              │
+                                  └─ fix (max 2) ◄┘ fail
+                                                 │ pass
+                                                 ▼
+                                   merge + unit tests + commit task
+```
+
+Then, once per feature:
+
+```
+  first UI task merged ──► screenshots ──► VISUAL GATE (you) ──► rest of tasks
+  all tasks done ──► full tests, lint, typecheck, build ──► reviewer (opus)
+                                                     blockers: fix, max 2
 ```
 
 Rules:
 
+- Loop cap 2 everywhere: an agent runs the tests at most twice before
+  reporting, a task gets at most 2 rounds, fix loops stop at 2.
 - Tasks run in parallel (max 3) only when dependencies are done and
   their "files touched" lists do not overlap.
 - Each running task gets its own git worktree in `.worktrees/<task-id>`
   and its own e2e dev server port (`.worktrees/T06` → 3106, set in
-  `playwright.config.ts`).
+  `playwright.config.ts`). Per-task e2e runs desktop only; mobile runs
+  at the end.
 - The orchestrator hands each agent a context packet: task block,
   its scenarios, and the plan excerpts it needs. Agents do not
   re-read the whole plan.
 - An interrupted run resumes: `doing` tasks continue from their last
-  commit (tester or partial implementer work) instead of restarting.
-- The implementer must not edit test files. The orchestrator checks this.
-- After 3 failed rounds the task is marked `blocked`, logged, and
+  commit instead of restarting.
+- Tests are locked after the red commit. A wrong test is fixed only in
+  its own `test(...)` commit with a reason; the reviewer checks these.
+- After 2 failed rounds the task is marked `blocked`, logged, and
   skipped. Independent tasks continue.
-- If the plan is wrong, agents do not improvise. The task is blocked with
-  a note. Small naming fixes are allowed and logged.
-- One commit per task.
-- End of feature: full test suite, lint, typecheck, build, screenshots.
+- If the plan is wrong, agents do not improvise. The task is blocked
+  with a note.
+- One commit per task. After each merge only unit tests run; full e2e
+  runs once at the end.
+- Visual gate: after the first UI task merges, the run captures
+  screenshots (desktop and mobile) into `evidence/gate/` and stops.
+  You compare them with `docs/design/direction.md`, reply `approved`
+  or what to change, and run `/feat-apply` again.
+- Review: one reviewer pass on the whole feature. Only blockers get a
+  fix round; everything else goes to the PR.
 
 
 ## Phase 4: Publish  (`/feat-publish <folder>`)
