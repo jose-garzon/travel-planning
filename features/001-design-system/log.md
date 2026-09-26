@@ -262,3 +262,17 @@ evidence/gate/: 6 images
   Tooltip (open, describing its trigger)
 - styleguide-nav-narrow-mobile.png — section nav wraps on a narrow
   screen, no horizontal scroll
+
+## 2026-09-26 visual gate: change requests (round 1 of 2)
+User rejected. Requests split:
+- already scheduled, not regressions: Card/Dialog missing (T09/T10,
+  todo), Color/Type/Spacing/RadiusShadow/Motion/Icons sections empty
+  (T12, todo — spec says title-only until then), palette not
+  matching docs/styleguide.md (T16, todo), nav no active state (T11,
+  blocked), button demo not in a row (T14, todo — plan already flags
+  this file for T14 specifically)
+- real gaps, fixing now: header/home-page x-padding mismatch,
+  sections have no visual rhythm (docs/styleguide.md "Space usage
+  guide" wants 8-16 between them), page h1 unstyled
+Spawned implementer (sonnet) directly on feat/001-design-system for
+the three real items.
