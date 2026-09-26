@@ -316,3 +316,20 @@ Loop cap reached (2/2 gate-fix rounds). Any further gate feedback
 gets logged and carried to the PR; run continues at Step 1
 regardless.
 visual gate: waiting (final)
+
+## 2026-09-26 post-gate: two more small requests, one deferred
+User asked for: section-title descriptions (real content, spans
+every section + en/es messages — folded into T12, not done here),
+header aligned to the same `max-w-page` container as main content
+(real bug: header had no max-width, main did, so they drifted apart
+on wide viewports), and accent color on section titles.
+Applied directly (not another gate round — loop cap already at 2/2):
+- src/app/[locale]/page.tsx: `<main>` also gets `mx-auto max-w-page`
+  (matches styleguide-screen.tsx and the header below)
+- src/shared/ui/components/site-header.tsx: inner row wrapped in
+  `mx-auto flex max-w-page items-center justify-between`, header
+  keeps `px-4 py-3`
+- styleguide-section.tsx: h2 gets `text-accent`
+Verified: e2e @T01|@T02|@T04|@T05|@T06|@T07|@T08|@T13|@T15|@smoke
+34/34, typecheck clean, lint clean (same 2 pre-existing cookie
+warnings). Section descriptions logged for T12 / the PR.
