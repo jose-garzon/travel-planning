@@ -1,3 +1,13 @@
 {
-  "title": "Input"
+  "title": "Input",
+  "label": "City",
+  "hint": "Where the trip starts",
+  "error": "Enter a city name",
+  "states": {
+    "default": "Default",
+    "hover": "Hover",
+    "focus": "Focus",
+    "disabled": "Disabled",
+    "error": "Error"
+  }
 }

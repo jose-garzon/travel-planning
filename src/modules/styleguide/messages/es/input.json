@@ -1,3 +1,13 @@
 {
-  "title": "Campo"
+  "title": "Campo",
+  "label": "Ciudad",
+  "hint": "Dónde empieza el viaje",
+  "error": "Escribe el nombre de una ciudad",
+  "states": {
+    "default": "Normal",
+    "hover": "Encima",
+    "focus": "Foco",
+    "disabled": "Deshabilitado",
+    "error": "Error"
+  }
 }

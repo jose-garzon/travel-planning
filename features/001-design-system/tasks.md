@@ -443,7 +443,7 @@ Done when:
 
 ## T07. Input with error state
 
-Status: doing
+Status: done
 Depends on: T06
 Model: sonnet
 Scenarios: @T07
@@ -470,8 +470,8 @@ Steps:
    (`animation-name` lists both keyframes).
 
 Done when:
-- [ ] Scenarios tagged @T07 pass
-- [ ] Unit tests: label association, aria-describedby with hint and
+- [x] Scenarios tagged @T07 pass
+- [x] Unit tests: label association, aria-describedby with hint and
       error, aria-invalid only with error
 
 

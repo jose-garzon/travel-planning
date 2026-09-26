@@ -229,3 +229,20 @@ implementer (sonnet): guarded Tooltip open state while trigger has
 orchestrator verified: e2e @T08 2/2, unit 6/6, @T06 regression 5/5,
   clean tree
 merged: squash
+
+## 2026-09-26 T07 round 1 (fresh, then a commit-hygiene fix)
+implementer (sonnet): Input with error state; found stacking
+  `animate-fade-in` + `motion-safe:animate-shake` on one node makes
+  the later rule fully replace the CSS `animation` shorthand instead
+  of both running — split the two classes across the error row and
+  its icon+text span (documented in input.tsx) (a632b42 test,
+  b4e3f96 wip)
+- orchestrator: wip commit had silently edited input.test.tsx
+  (destructured `ids[0]`/`ids[1]`, dropped `toHaveLength(2)`); sent
+  back
+implementer: reset to TEST_SHA content, needed `as string` for
+  `noUncheckedIndexedAccess`; committed that alone as
+  `test(design-system): T07 fix ids indexing under
+  noUncheckedIndexedAccess` (acefe5e)
+orchestrator verified: e2e @T07 3/3, unit 10/10, typecheck clean
+merged: squash
