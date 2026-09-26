@@ -100,7 +100,7 @@ Per task loop:
 Then, once per feature:
 
 ```
-  first UI task merged ──► screenshots ──► VISUAL GATE (you) ──► rest of tasks
+  first UI task merged ──► VISUAL GATE (you run + review) ──► rest of tasks
   all tasks done ──► full tests, lint, typecheck, build ──► reviewer (opus)
                                                      blockers: fix, max 2
 ```
@@ -128,10 +128,9 @@ Rules:
   with a note.
 - One commit per task. After each merge only unit tests run; full e2e
   runs once at the end.
-- Visual gate: after the first UI task merges, the run captures
-  screenshots (desktop and mobile) into `evidence/gate/` and stops.
-  You compare them with `docs/design/direction.md`, reply `approved`
-  or what to change, and run `/feat-apply` again.
+- Visual gate: after the first UI task merges, the run stops and
+  tells you what's ready. You run `pnpm dev`, review it yourself,
+  reply `approved` or what to change, and run `/feat-apply` again.
 - Review: one reviewer pass on the whole feature. Only blockers get a
   fix round; everything else goes to the PR.
 

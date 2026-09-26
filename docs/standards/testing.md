@@ -19,8 +19,9 @@ Tests are the executable specification. Written first, locked after.
   and variants: disabled, loading, error, sizes. Not e2e.
 
 Tests assert behavior, not looks: no pixel sizes, computed CSS
-properties, colors or class names. The look is judged from
-screenshots at the visual gate and in the feature review.
+properties, colors or class names. The look is judged by the user
+running the app at the visual gate, and from screenshots in the
+feature review.
 
 
 ## TDD flow (enforced by /feat-apply)

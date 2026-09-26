@@ -178,27 +178,21 @@ task is ready.
 
 Once per feature, after the first merged task that renders UI (its
 `Files` include a component or page). Skip it for features with no UI,
-and when log.md already has `visual gate: approved`.
+and when log.md already has `visual gate: approved`. No screenshots:
+the user reviews the running app themselves.
 
 1. Let running tasks finish and merge. Do not start a new batch.
-2. On the feature branch, capture the UI of every `done` task:
-   `SCREENSHOTS=on pnpm test:e2e --grep "<@T tags joined by |>"`
-   (both projects: desktop and mobile). Copy the images for the
-   screens that matter (one per page or component state, not every
-   step) to `evidence/gate/` in the feature folder. Commit them.
-3. Log `visual gate: waiting` and stop. Tell the user:
-   - the image paths, grouped by page, desktop and mobile;
-   - what to compare against (`docs/design/direction.md` if it exists);
-   - "Reply `approved`, or write what to change, then run
-     `/feat-apply <folder>` again."
+2. Log `visual gate: waiting` and stop. Tell the user:
+   - which tasks/pages are now ready to look at;
+   - "Run `pnpm dev` and review it yourself. Reply `approved`, or
+     write what to change, then run `/feat-apply <folder>` again."
 
 When the run resumes with the user's answer:
 - `approved`: log `visual gate: approved`, continue at Step 1.
 - Change requests: log them, spawn `implementer` (sonnet) on the
-  feature branch with the requests and the image paths. Commit as
-  `fix(<scope>): <what>`. Capture again and stop for the gate again.
-  Max 2 fix rounds; after that log the open requests for the PR and
-  continue.
+  feature branch with the requests. Commit as `fix(<scope>): <what>`.
+  Log `visual gate: waiting` and stop for the gate again. Max 2 fix
+  rounds; after that log the open requests for the PR and continue.
 
 
 ## Step 6: Feature verification
@@ -239,7 +233,7 @@ implementer (sonnet): green OK
 merged: 9f8e7d6
 
 ## <YYYY-MM-DD HH:MM> visual gate: waiting
-evidence/gate/: 6 images
+ready for review: T03, T04 (add-stop page)
 
 ## <YYYY-MM-DD HH:MM> feature review
 reviewer: 0 blocker, 2 major, 3 minor (carried to PR)
