@@ -340,3 +340,9 @@ h2s, not the h3 in each Primitives demo (layout, button, input,
 tooltip, card, dialog). Added `text-accent` to all six (33fbe6d).
 Verified: e2e 34/34, typecheck/lint clean. Re-captured evidence/gate/
 (desktop 31/31, mobile 29/29).
+
+## 2026-09-26 post-gate: first section top spacing
+User asked to drop the first section's `mt-16`/`pt-16` and instead
+match the nav's own top offset. styleguide-section.tsx:
+`first:mt-0 first:pt-6` (border-t kept). Verified e2e 34/34, lint
+clean.

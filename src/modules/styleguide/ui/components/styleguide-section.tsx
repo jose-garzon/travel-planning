@@ -14,7 +14,11 @@ export function StyleguideSection({ id, title, children }: StyleguideSectionProp
   const headingId = `${id}-heading`;
 
   return (
-    <section id={id} aria-labelledby={headingId} className="mt-16 border-t border-border pt-16">
+    <section
+      id={id}
+      aria-labelledby={headingId}
+      className="mt-16 border-t border-border pt-16 first:mt-0 first:pt-6"
+    >
       <h2 id={headingId} tabIndex={-1} className="text-accent">
         {translate(title)}
       </h2>
