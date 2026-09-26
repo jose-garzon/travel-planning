@@ -128,3 +128,28 @@ reviewer: approved, 1 minor carried
 - nit    tests/steps/button.steps.ts:9  (round 1) Loading figure not
   region-scoped
 merged: squash (this commit); regression @T01|@T15|@T02|@T04|@T06|@smoke 33/33, unit 138/138
+
+## 2026-09-26 T13 round 1 review
+implementer (haiku): green OK (37940c4); @T13+@T02 12/12
+reviewer: 2 major, 6 minor, 3 nit
+- major  brand-section.tsx:25  wordmark direction text missing
+- major  es/brand.json:4  meaning is a calque, not natural es-CO
+- minor  es copy (añadir→agregar, "Guardar el viaje"), Text translateId,
+  duplicated Do/Don't markup; nits: what-comments, Stack as article
+
+## 2026-09-26 T13 round 2
+implementer (haiku): fixed both majors and most minors (5e3e302);
+  @T13+@T02 12/12
+reviewer: 1 major, 1 minor, 1 nit
+- major  brand-section.tsx:29  `@ts-expect-error` on a dynamic key
+  disables key checking; type the key as a literal union
+- minor  en/brand.json:6  wordmarkDirection not sentence case
+- nit    brand-section.tsx:46  wordmark row lacks `wrap`
+
+## 2026-09-26 T13 round 3
+implementer (haiku): typed voice keys, no `@ts-expect-error`, sentence
+  case, wrap (9ec3477); @T13+@T02 12/12
+reviewer: approved, 1 minor carried
+- minor  es/brand.json:6  «Parche» capitalized while describing a
+  lowercase wordmark; reword ("En minúsculas, «parche» en Fredoka…")
+merged: squash (this commit); regression done tags + smoke 37/37, unit 138/138

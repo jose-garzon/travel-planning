@@ -475,7 +475,7 @@ Done when:
 
 ## T08. Tooltip
 
-Status: todo
+Status: doing
 Depends on: T06
 Model: sonnet
 Scenarios: @T08
@@ -662,7 +662,7 @@ Done when:
 
 ## T13. Brand section with voice rules
 
-Status: doing
+Status: done
 Depends on: T04
 Model: haiku
 Scenarios: @T13
@@ -685,7 +685,7 @@ Steps:
    `.voice.<rule>.{title,do,dont}`, `.doLabel`, `.dontLabel`.
 
 Done when:
-- [ ] Scenarios tagged @T13 pass in en and es
+- [x] Scenarios tagged @T13 pass in en and es
 
 
 ## T14. Hardening: motion, reflow, contrast, budgets, docs

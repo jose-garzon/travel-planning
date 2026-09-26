@@ -1,3 +1,31 @@
 {
-  "title": "Marca"
+  "title": "Marca",
+  "name": "Parche",
+  "meaning": "En Colombia, tu grupo de amigos y el plan que arman juntos («¿cuál es el parche?»). En inglés, un parche como los que se cosen a la mochila de viaje.",
+  "wordmark": "Dirección del logotipo",
+  "wordmarkDirection": "«Parche» en minúsculas en Fredoka, color de énfasis, opcionalmente dentro de un distintivo con borde pespunteado. El arte SVG final está fuera del alcance.",
+  "voice": {
+    "friend": {
+      "title": "Habla como un amigo",
+      "do": "¡Ey, guardemos esta idea de viaje!",
+      "dont": "Por favor confirma tus preferencias."
+    },
+    "direct": {
+      "title": "Ve al grano",
+      "do": "Agregar actividad",
+      "dont": "¿Te gustaría agregar una actividad al itinerario del viaje?"
+    },
+    "sentenceCase": {
+      "title": "Mayúscula solo al inicio",
+      "do": "Crear nuevo viaje",
+      "dont": "CREAR NUEVO VIAJE"
+    },
+    "actionVerbs": {
+      "title": "Usa verbos de acción",
+      "do": "Guardar el viaje",
+      "dont": "Aceptar"
+    }
+  },
+  "doLabel": "Bien",
+  "dontLabel": "Mal"
 }
