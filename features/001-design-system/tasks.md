@@ -607,7 +607,7 @@ Done when:
 
 ## T10. Dialog with bottom sheet on small screens
 
-Status: todo
+Status: doing
 Depends on: T05, T06, T07, T08
 Model: sonnet
 Scenarios: @T10
