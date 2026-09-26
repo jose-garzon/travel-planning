@@ -346,7 +346,7 @@ Done when:
 
 ## T05. Theme: follow the OS, toggle, cookie, server render
 
-Status: doing
+Status: done
 Depends on: T06, T15
 Model: sonnet
 Scenarios: @T05
@@ -376,14 +376,14 @@ Steps:
 5. Messages per plan table.
 
 Done when:
-- [ ] Scenarios tagged @T05 pass
-- [ ] Unit tests: `parseTheme` (valid, unknown, undefined),
+- [x] Scenarios tagged @T05 pass
+- [x] Unit tests: `parseTheme` (valid, unknown, undefined),
       `oppositeTheme`; toggle click sets `data-theme` and writes a
       cookie with `Max-Age=31536000` and `SameSite=Lax`
-- [ ] Toggle click causes no React state update (DOM + cookie only)
-- [ ] Toggle is ≥ 44×44 and shows the token focus ring (scenario
+- [x] Toggle click causes no React state update (DOM + cookie only)
+- [x] Toggle is ≥ 44×44 and shows the token focus ring (scenario
       "Theme toggle has the focus ring and touch target")
-- [ ] `pnpm test:e2e --grep @T01` still passes
+- [x] `pnpm test:e2e --grep @T01` still passes
 
 Notes:
 - "the page uses the X theme": body computed `background-color`

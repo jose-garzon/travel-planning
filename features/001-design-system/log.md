@@ -198,3 +198,25 @@ reviewer: approved, 1 minor carried
 - follow-up (plan): arbitrary properties `hover:[color:red]` escape
   every rule
 merged: squash (this commit); regression done tags + smoke 97/97, unit 138/138, lint clean
+
+## 2026-09-26 resume
+- workflow skills updated mid-run (context packets, single end-of-
+  feature review replaces per-round tester+reviewer). Committed
+  pending workflow/doc changes (08f0e41, 634d551) before resuming.
+- resumed T05: TEST_SHA f80e2cb, uncommitted green work in progress
+  (theme.ts, theme-toggle.tsx untracked; layout.tsx, site-header.tsx
+  modified) kept as-is.
+- resumed T08: TEST_SHA fe7dde3, wip 7d676e5 kept; uncommitted step
+  fixes (interaction.steps.ts, tooltip.steps.ts) for the prior
+  reviewer's blocker/major findings kept as-is.
+- T07: worktree/branch had no test(...) commit (never started);
+  removed and recreated fresh from feature tip.
+- Batch: T05 (resume), T07 (fresh), T08 (resume). T16 waits for a
+  free slot.
+
+## 2026-09-26 T05 round 1 (resumed)
+implementer (sonnet): found theme.ts/theme-toggle.tsx already correct;
+  layout.tsx wired cookies/parseTheme but never rendered data-theme;
+  header.themeToggle.* messages missing entirely — added both (0488258)
+orchestrator verified: e2e @T05 10/10 (desktop), unit 16/16, clean tree
+merged: squash
