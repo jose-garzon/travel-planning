@@ -477,7 +477,7 @@ Done when:
 
 ## T08. Tooltip
 
-Status: doing
+Status: done
 Depends on: T06
 Model: sonnet
 Scenarios: @T08
@@ -502,8 +502,8 @@ Steps:
    {string} key`.
 
 Done when:
-- [ ] Scenarios tagged @T08 pass
-- [ ] Unit test: content renders only the string; trigger keeps its
+- [x] Scenarios tagged @T08 pass
+- [x] Unit test: content renders only the string; trigger keeps its
       own props
 
 

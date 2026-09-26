@@ -220,3 +220,12 @@ implementer (sonnet): found theme.ts/theme-toggle.tsx already correct;
   header.themeToggle.* messages missing entirely — added both (0488258)
 orchestrator verified: e2e @T05 10/10 (desktop), unit 16/16, clean tree
 merged: squash
+
+## 2026-09-26 T08 round 2 (resumed)
+implementer (sonnet): guarded Tooltip open state while trigger has
+  focus (ancestor-scroll from T01 smooth-scroll no longer closes it
+  early), fixed flaky steps, renamed message key tip→content (e3bd5f1
+  test, 6091fa2 wip)
+orchestrator verified: e2e @T08 2/2, unit 6/6, @T06 regression 5/5,
+  clean tree
+merged: squash

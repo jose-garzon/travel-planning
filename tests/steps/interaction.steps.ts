@@ -48,6 +48,24 @@ When(
   async ({ page }, buttonName: string, demoName: string) => {
     const control = locateControl(page, demoName, buttonName);
 
+    // If the control already has focus (e.g. a prior step focused it and
+    // then closed something without moving focus away), tabbing to it
+    // would be a no-op: no new `focus` event fires, so anything that
+    // reacts to focus (like a tooltip) never re-opens. Move away and
+    // back so the event fires again.
+    const alreadyFocused =
+      (await control.count()) > 0 &&
+      (await control
+        .evaluate((el) => el === document.activeElement, undefined, { timeout: 500 })
+        .catch(() => false));
+
+    if (alreadyFocused) {
+      await page.keyboard.press("Shift+Tab");
+      await page.keyboard.press("Tab");
+      lastInteractedControl = control;
+      return;
+    }
+
     for (let presses = 0; presses < MAX_TAB_PRESSES; presses += 1) {
       // `count()` never waits, so a control that does not exist yet
       // fails fast instead of hanging on `evaluate`'s actionability
