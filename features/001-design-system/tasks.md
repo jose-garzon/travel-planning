@@ -509,7 +509,7 @@ Done when:
 
 ## T16. Secondary accent and scrim tokens
 
-Status: doing
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T16
@@ -553,13 +553,13 @@ Steps:
    ships the tokens it describes).
 
 Done when:
-- [ ] Scenario tagged @T16 passes
-- [ ] `tokens.test.ts` contrast tests pass for `secondary`/
+- [x] Scenario tagged @T16 passes
+- [x] `tokens.test.ts` contrast tests pass for `secondary`/
       `on-secondary` in both themes, and for the existing pairs
       re-checked against the new neutrals/accent
-- [ ] `pnpm test:e2e --grep @T01` still passes (existing token
+- [x] `pnpm test:e2e --grep @T01` still passes (existing token
       scenarios keep passing against the new values)
-- [ ] `pnpm typecheck` and `pnpm lint` pass
+- [x] `pnpm typecheck` and `pnpm lint` pass
 
 Notes:
 - Exact hex values and contrast ratios: `docs/styleguide.md` and

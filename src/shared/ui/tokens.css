@@ -8,24 +8,32 @@
 @theme {
   --*: initial;
 
-  /* Colors: light-dark(<light>, <dark>) follows :root color-scheme. */
-  --color-bg: light-dark(#fff8f1, #1a1411);
-  --color-surface-1: light-dark(#ffffff, #241c18);
-  --color-surface-2: light-dark(#fff1e4, #2e241f);
-  --color-surface-3: light-dark(#fbe6d4, #3a2e27);
-  --color-text: light-dark(#2a1e17, #f7ede4);
-  --color-text-muted: light-dark(#6b5548, #c9b6a7);
-  --color-border: light-dark(#e8d5c4, #4a3b32);
-  --color-border-strong: light-dark(#8c7362, #8f7868);
-  --color-accent: light-dark(#a93d16, #ff8a5c);
-  --color-accent-hover: light-dark(#8f3311, #ffa27e);
-  --color-on-accent: light-dark(#ffffff, #1a1411);
+  /* Colors: light-dark(<light>, <dark>) follows :root color-scheme.
+     Round 2 (docs/styleguide.md): vibrant travel-journal palette. */
+  --color-bg: light-dark(#fafafa, #16161d);
+  --color-surface-1: light-dark(#ffffff, #1e1e27);
+  --color-surface-2: light-dark(#f5f5f7, #262631);
+  --color-surface-3: light-dark(#f5f4fa, #302f3d);
+  --color-text: light-dark(#18181b, #f4f4f6);
+  --color-text-muted: light-dark(#63636d, #a8a6b3);
+  --color-border: light-dark(#e4e4e7, #38384a);
+  --color-border-strong: light-dark(#8a8894, #6e6c7d);
+  --color-accent: light-dark(#c83812, #ff9666);
+  --color-accent-hover: light-dark(#a82e0d, #ffb877);
+  --color-on-accent: light-dark(#ffffff, #16161d);
   --color-focus: var(--color-accent);
+  --color-secondary: light-dark(#0e7a6b, #57e0c7);
+  --color-secondary-hover: light-dark(#084a41, #8cebda);
+  --color-on-secondary: light-dark(#ffffff, #16161d);
   --color-success: light-dark(#1f7a3a, #5fd08a);
   --color-warning: light-dark(#8a5a00, #f2c14e);
   --color-error: light-dark(#b42318, #ff8a80);
-  --color-shadow: light-dark(#2a1e1714, transparent);
-  --color-overlay: light-dark(#2a1e1799, #000000b3);
+  --color-shadow: light-dark(#18181b14, transparent);
+  --color-overlay: light-dark(#18181b99, #000000b3);
+  /* Flat, not light-dark() (D-19): masks an arbitrary photo, not the
+     app's theme. */
+  --color-scrim: #000000a6;
+  --color-on-scrim: #ffffff;
 
   /* Fonts. --font-fredoka / --font-plus-jakarta-sans are set by
      fonts.ts (next/font `variable`), not defined here. */
@@ -158,6 +166,10 @@
 
 @utility duration-normal {
   transition-duration: var(--motion-duration-normal);
+}
+
+@utility scrim-bottom {
+  background: linear-gradient(to top, var(--color-scrim) 0%, transparent 55%);
 }
 
 @keyframes fade-in {

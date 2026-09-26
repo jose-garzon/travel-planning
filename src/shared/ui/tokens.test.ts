@@ -15,10 +15,17 @@ const COLOR_TOKENS_WITH_LIGHT_DARK = [
   "color-accent",
   "color-accent-hover",
   "color-on-accent",
+  "color-secondary",
+  "color-secondary-hover",
+  "color-on-secondary",
   "color-success",
   "color-warning",
   "color-error",
 ];
+
+// AC-3: color tokens with a single flat value, same in both themes
+// (D-19: scrim masks an arbitrary photo, not the app's theme).
+const FLAT_COLOR_TOKENS = ["color-scrim", "color-on-scrim"];
 
 const FONT_SIZE_TOKENS: Record<string, string> = {
   "text-xs": "0.75rem",
@@ -85,6 +92,23 @@ describe("tokens.css", () => {
     const tokens = readTokens();
 
     expect(tokens["color-focus"]).toEqual(tokens["color-accent"]);
+  });
+
+  it.each(FLAT_COLOR_TOKENS)("defines --%s as a flat value, not light-dark()", (name) => {
+    const tokens = readTokens();
+
+    const value = tokens[name];
+
+    expect(value).toBeDefined();
+    expect(typeof value).toBe("string");
+  });
+
+  it("defines the scrim-bottom utility referencing --color-scrim", () => {
+    const css = readTokensCss();
+
+    expect(css).toMatch(
+      /@utility\s+scrim-bottom\s*{\s*background:\s*linear-gradient\(\s*to top,\s*var\(--color-scrim\)\s*0%,\s*transparent\s*55%\s*\);\s*}/,
+    );
   });
 
   it("defines the display and body font family tokens", () => {
@@ -224,6 +248,34 @@ describe("tokens.css", () => {
         for (const bgName of ["color-accent", "color-accent-hover"]) {
           const bg = (tokens[bgName] as { light: string; dark: string })[theme];
           expect(contrastRatio(onAccent, bg)).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
+        }
+      },
+    );
+
+    it.each(["light", "dark"] as const)(
+      "secondary on every bg/surface passes 4.5:1 in the %s theme",
+      (theme) => {
+        const tokens = readTokens();
+        const secondary = (tokens["color-secondary"] as { light: string; dark: string })[theme];
+
+        for (const bgName of backgrounds) {
+          const bg = (tokens[bgName] as { light: string; dark: string })[theme];
+          expect(contrastRatio(secondary, bg)).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
+        }
+      },
+    );
+
+    it.each(["light", "dark"] as const)(
+      "on-secondary on secondary and secondary-hover passes 4.5:1 in the %s theme",
+      (theme) => {
+        const tokens = readTokens();
+        const onSecondary = (tokens["color-on-secondary"] as { light: string; dark: string })[
+          theme
+        ];
+
+        for (const bgName of ["color-secondary", "color-secondary-hover"]) {
+          const bg = (tokens[bgName] as { light: string; dark: string })[theme];
+          expect(contrastRatio(onSecondary, bg)).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
         }
       },
     );

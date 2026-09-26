@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { Then, When } from "./fixtures";
-import { readTokens } from "./support/tokens";
+import { readTokens, readTokensCss } from "./support/tokens";
 
 // AC-3: color tokens with a light and a dark value where they differ.
 const COLOR_TOKENS_WITH_LIGHT_DARK = [
@@ -15,10 +15,17 @@ const COLOR_TOKENS_WITH_LIGHT_DARK = [
   "color-accent",
   "color-accent-hover",
   "color-on-accent",
+  "color-secondary",
+  "color-secondary-hover",
+  "color-on-secondary",
   "color-success",
   "color-warning",
   "color-error",
 ];
+
+// AC-3: color tokens with a single flat value, same in both themes
+// (D-19: scrim masks an arbitrary photo, not the app's theme).
+const FLAT_COLOR_TOKENS = ["color-scrim", "color-on-scrim"];
 
 // AC-3: every other token the tokens.css file must define.
 const OTHER_REQUIRED_TOKENS = [
@@ -55,6 +62,7 @@ const OTHER_REQUIRED_TOKENS = [
   "motion-duration-fast",
   "motion-duration-normal",
   "ease-out",
+  ...FLAT_COLOR_TOKENS,
 ];
 
 // The "When" step and the "Then" steps below each re-read the tokens
@@ -81,4 +89,25 @@ Then("every color token has a light and a dark value", async () => {
       expect.objectContaining({ light: expect.any(String), dark: expect.any(String) }),
     );
   }
+});
+
+Then("the secondary accent token has a light and a dark value", async () => {
+  const tokens = readTokens();
+
+  for (const name of ["color-secondary", "color-secondary-hover", "color-on-secondary"]) {
+    const value = tokens[name];
+    expect(value, `--${name} is not defined`).toEqual(
+      expect.objectContaining({ light: expect.any(String), dark: expect.any(String) }),
+    );
+  }
+});
+
+Then("the scrim token is defined for photo card text", async () => {
+  const tokens = readTokens();
+  const css = readTokensCss();
+
+  for (const name of FLAT_COLOR_TOKENS) {
+    expect(tokens[name], `--${name} is not defined`).toEqual(expect.any(String));
+  }
+  expect(css).toMatch(/@utility\s+scrim-bottom\s*{[^}]*--color-scrim/);
 });

@@ -355,3 +355,21 @@ Reverted centering on site-header.tsx, styleguide-screen.tsx and
 home page.tsx; all three now flush `px-6` (up from `px-4`), no
 `mx-auto`/`max-w-page`. Verified e2e 34/34, lint/typecheck clean.
 Re-captured evidence/gate/.
+
+## 2026-09-26 resume (workflow speedup partial go-ahead)
+Working tree had uncommitted edits to feat-apply SKILL.md, testing.md,
+workflow.md (visual gate: no screenshot capture, user reviews
+`pnpm dev` live). User said commit them now (7fdee8b). Resumed
+/feat-apply #1.
+
+## 2026-09-26 T16 round 1
+implementer (sonnet): test OK (ec8e0fe), 1 scenario, 10 unit tests
+green OK (63d248d). Verified myself: tokens.test.ts 71/71, e2e
+@T16|@T01 4/4 desktop, typecheck/lint clean (2 pre-existing cookie
+warnings).
+merged: e58338b
+Note: `pnpm test:unit` has a pre-existing failure unrelated to any
+task here — tooltip.test.tsx, 4/6 tests, `ResizeObserver is not
+defined` in jsdom. Confirmed present before T16's merge too (checked
+against 553f915). Not blocking; flagged for feature review/T14
+hardening since T09 also uses ResizeObserver.
