@@ -431,3 +431,18 @@ the panel labels "Light"/"Dark" as plain JSX text instead of through
 next-intl, unlike the section title. Doesn't fail any test or lint
 rule; inconsistent with the rest of the app's i18n-everywhere
 convention.
+
+## 2026-09-26 T10 round 1
+implementer (sonnet): test OK (ef9db05), green (65ccc69), 6/6 @T10
+desktop, 11 new unit tests. Caught its own red/green ordering slip
+before committing (wrote full impl alongside tests, backed it out to
+a stub, reran to confirm genuine red, then restored the real impl for
+the round-1 commit) — no process issue in the final commits. Verified
+myself: e2e 6/6, unit 11/11, typecheck/lint clean.
+merged: 86e1eb1 (no conflicts). `pnpm test:unit` 196/200, same 4
+pre-existing tooltip.test.tsx failures, no new breakage.
+
+Only T14 (hardening) is left, and it depends on T11 which is still
+`blocked` (plan gap, see above) — so T14 can't start. Feature is
+stuck here until T11's plan issue is resolved by a human, or the
+scope is cut. Worktree .worktrees/T11 kept for that.

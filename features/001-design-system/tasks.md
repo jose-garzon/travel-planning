@@ -607,7 +607,7 @@ Done when:
 
 ## T10. Dialog with bottom sheet on small screens
 
-Status: doing
+Status: done
 Depends on: T05, T06, T07, T08
 Model: sonnet
 Scenarios: @T10
@@ -637,8 +637,8 @@ Steps:
    dialog, still open, focus a field, focus on a field.
 
 Done when:
-- [ ] Scenarios tagged @T10 pass
-- [ ] Unit tests: title and description wired
+- [x] Scenarios tagged @T10 pass
+- [x] Unit tests: title and description wired
       (`aria-labelledby`/`aria-describedby`); X button accessible
       name equals `closeLabel`
 
