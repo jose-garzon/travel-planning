@@ -5,16 +5,14 @@ import { Wordmark } from "@/shared/ui/components/wordmark";
 /** Root header: home link wrapping the wordmark, plus the theme toggle. No props. */
 export function SiteHeader() {
   return (
-    <header className="px-4 py-3">
-      <div className="mx-auto flex max-w-page items-center justify-between">
-        <Link href="/">
-          <Wordmark />
-        </Link>
-        <ThemeToggle
-          toDarkLabel={{ translateId: "header.themeToggle.toDark" }}
-          toLightLabel={{ translateId: "header.themeToggle.toLight" }}
-        />
-      </div>
+    <header className="flex items-center justify-between px-6 py-3">
+      <Link href="/">
+        <Wordmark />
+      </Link>
+      <ThemeToggle
+        toDarkLabel={{ translateId: "header.themeToggle.toDark" }}
+        toLightLabel={{ translateId: "header.themeToggle.toLight" }}
+      />
     </header>
   );
 }
