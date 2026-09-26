@@ -276,3 +276,13 @@ User rejected. Requests split:
   guide" wants 8-16 between them), page h1 unstyled
 Spawned implementer (sonnet) directly on feat/001-design-system for
 the three real items.
+
+## 2026-09-26 visual gate: fix round 1
+implementer (sonnet): home `<main>` gets `px-4`; styleguide h1 →
+  `mt-8 mb-8 text-3xl text-accent`; StyleguideSection → `mt-16
+  border-t border-border pt-16 first:mt-0 first:border-t-0
+  first:pt-0` (fae9cda)
+orchestrator verified: e2e @T01|@T02|@T04|@T05|@T06|@T07|@T08|@T13|
+  @T15|@smoke 34/34 desktop, re-captured evidence/gate/ (desktop
+  31/31, mobile 29/29)
+visual gate: waiting (round 2 of 2)
