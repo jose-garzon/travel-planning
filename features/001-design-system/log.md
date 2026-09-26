@@ -303,3 +303,16 @@ Three new, real, in-scope items this round:
 This is the last gate round (loop cap 2); after verifying this fix,
 remaining out-of-scope requests stay logged against their tasks and
 the run continues at Step 1 regardless of further gate feedback.
+
+## 2026-09-26 visual gate: fix round 2
+implementer (sonnet): removed first-section divider exemption; added
+  same divider class to all 6 Primitives demo sub-sections; nav
+  `md:pt-6`; Tooltip `sideOffset={8}` + `<Arrow className="fill-text">`
+  (cc0b443)
+orchestrator verified: e2e @T01|@T02|@T04|@T05|@T06|@T07|@T08|@T13|
+  @T15|@smoke 34/34, typecheck clean, re-captured evidence/gate/
+  (desktop 31/31, mobile 29/29)
+Loop cap reached (2/2 gate-fix rounds). Any further gate feedback
+gets logged and carried to the PR; run continues at Step 1
+regardless.
+visual gate: waiting (final)
