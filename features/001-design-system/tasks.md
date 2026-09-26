@@ -270,7 +270,7 @@ Notes:
 
 ## T03. Lint rules for tokens and interactive semantics
 
-Status: doing
+Status: done
 Depends on: -
 Model: sonnet
 Scenarios: @T03
@@ -300,10 +300,10 @@ Steps:
    task's files. If existing code fails, block with the file list.
 
 Done when:
-- [ ] Scenarios tagged @T03 pass
-- [ ] Each plugin loads with no `errored:` info in `biome lint`
+- [x] Scenarios tagged @T03 pass
+- [x] Each plugin loads with no `errored:` info in `biome lint`
       output (assert in the "project source" scenario step)
-- [ ] `pnpm lint` passes
+- [x] `pnpm lint` passes
 
 Notes:
 - The spike results are summarized in plan "Lint rules".
@@ -346,7 +346,7 @@ Done when:
 
 ## T05. Theme: follow the OS, toggle, cookie, server render
 
-Status: todo
+Status: doing
 Depends on: T06, T15
 Model: sonnet
 Scenarios: @T05

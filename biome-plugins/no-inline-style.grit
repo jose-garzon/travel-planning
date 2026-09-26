@@ -1,0 +1,12 @@
+language js
+
+// T03 (plan "Lint rules", D-5): bans the `style` prop in `src/`.
+// Token utilities cover everything this feature needs; nothing else
+// should reach for inline styles.
+JsxAttribute() where {
+  $filename <: r".*/src/.*",
+  $filename <: not r".*/src/shared/ui/tokens\.css",
+  $filename <: not r".*\.test\.tsx?",
+  $match <: r"(?s)style=.*",
+  register_diagnostic(span=$match, message="Inline style. Use token utilities instead.")
+}

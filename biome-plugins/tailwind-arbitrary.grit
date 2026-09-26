@@ -1,0 +1,23 @@
+language js
+
+// T03 (plan "Lint rules", D-4): flags a Tailwind arbitrary value
+// (`p-[13px]`, `bg-[#fff]`, ...) inside a plain string literal, a JSX
+// attribute string, or a template literal chunk. A `data-[state=...]`
+// attribute selector variant is not an arbitrary value, so the match
+// requires the bracket to *not* be immediately followed by `:` (or to
+// be at the end of the string).
+//
+// `<:` requires a full match, so the pattern is wrapped in `.*` on
+// both sides to allow the arbitrary value to occur anywhere in the
+// text.
+or {
+  JsStringLiteralExpression(),
+  JsxString(),
+  JsTemplateChunkElement()
+} where {
+  $filename <: r".*/src/.*",
+  $filename <: not r".*/src/shared/ui/tokens\.css",
+  $filename <: not r".*\.test\.tsx?",
+  $match <: r"(?s).*[a-z0-9]-\[[^\]]+\](?:[^:]|$).*",
+  register_diagnostic(span=$match, message="Tailwind arbitrary value. Use a token utility.")
+}

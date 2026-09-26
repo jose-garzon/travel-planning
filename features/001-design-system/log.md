@@ -153,3 +153,48 @@ reviewer: approved, 1 minor carried
 - minor  es/brand.json:6  «Parche» capitalized while describing a
   lowercase wordmark; reword ("En minúsculas, «parche» en Fredoka…")
 merged: squash (this commit); regression done tags + smoke 37/37, unit 138/138
+
+## 2026-09-26 T08 round 1
+tester: 2 outlines, 6 unit tests (8f08bee); red not rerun by
+  orchestrator (implementer already on the worktree port)
+
+## 2026-09-26 T03 round 1
+tester: 15 scenarios/outlines (60 runs), 0 unit tests, red OK (c1eb50d)
+implementer (sonnet): 4 plugins, biome.json, router rule; rebased onto
+  feature tip, @T03 60/60, whole-repo lint clean (0fb039a)
+reviewer: 4 major, 3 minor, 2 nit
+- major  .dependency-cruiser.cjs:5  FORCE_COLOR hack in config; real
+  defect in tests/steps/support/process.ts (tester fixes)
+- major  no-inline-style/tailwind-arbitrary/raw-js grit: `.` misses
+  newlines, multi-line code bypasses rules; use `(?s)`
+- minor  raw-css: multi-line decl; `var(--color-white)` false positive
+- minor  follow-up (plan): arbitrary properties `hover:[color:red]`
+  escape every rule
+
+## 2026-09-26 T08 round 1 (green)
+implementer (sonnet): Radix tooltip, demo, messages (2afc3b2, rebased)
+- orchestrator: @T08 flaked once (Escape/blur, toHaveText) in a
+  combined run; 3 reruns 3/3. Sent to reviewer to find the owner
+reviewer: 1 blocker, 2 major (test), 1 minor, 1 nit
+- blocker tooltip.tsx:35  keyboard focus on off-screen trigger:
+  global `scroll-behavior: smooth` (globals.css, T01) scrolls, Radix
+  closes tooltip on ancestor scroll ~20ms after open (probe 25/25)
+- major  tooltip.steps.ts:20  "I see the tooltip" passes on one poll
+- major  interaction.steps.ts:44  refocus is a no-op, blur check empty
+- minor  message key `tip` should be `content` (plan example)
+- decision: fix in Tooltip (open state guarded while trigger focused,
+  except Escape). globals.css left alone (not T08's file); follow-up:
+  consider dropping global smooth scroll in favor of T11's JS scroll.
+- exception: tester allowed to edit tests/steps/interaction.steps.ts
+  (T06's file) for the refocus fix
+
+## 2026-09-26 T03 round 2
+tester: harness disables color (3638876)
+implementer (sonnet): hack removed, `(?s)` in plugins, named-color
+  guard (8be511c); @T03 60/60, lint clean, no `errored:`
+reviewer: approved, 1 minor carried
+- minor  raw-css-values.grit:21  `color:red` (no space) missed; the
+  formatter inserts the space, so formatted code is safe
+- follow-up (plan): arbitrary properties `hover:[color:red]` escape
+  every rule
+merged: squash (this commit); regression done tags + smoke 97/97, unit 138/138, lint clean
