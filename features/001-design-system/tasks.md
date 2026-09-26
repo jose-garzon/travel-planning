@@ -509,7 +509,7 @@ Done when:
 
 ## T16. Secondary accent and scrim tokens
 
-Status: todo
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T16
@@ -571,7 +571,7 @@ Notes:
 
 ## T09. Card: static, clickable, truncation tooltip
 
-Status: todo
+Status: doing
 Depends on: T04, T06, T08
 Model: sonnet
 Scenarios: @T09
@@ -673,7 +673,7 @@ Done when:
 
 ## T12. Token sections: color, type, spacing, radius/shadow, motion, icons
 
-Status: todo
+Status: doing
 Depends on: T04, T06
 Model: haiku
 Scenarios: @T12
