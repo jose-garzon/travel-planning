@@ -246,3 +246,19 @@ implementer: reset to TEST_SHA content, needed `as string` for
   noUncheckedIndexedAccess` (acefe5e)
 orchestrator verified: e2e @T07 3/3, unit 10/10, typecheck clean
 merged: squash
+
+## 2026-09-26 visual gate: waiting
+Gate was overdue: T02/T04/T06/T13 already merged UI before this run
+without one. Captured all done UI tasks together
+(@T01|@T02|@T04|@T05|@T06|@T07|@T08|@T13|@T15), both projects:
+desktop 31/31, mobile 29/29.
+evidence/gate/: 6 images
+- home-desktop.png / home-mobile.png — home page, header + wordmark
+- styleguide-brand-dark-desktop.png — Brand section, dark theme
+- styleguide-brand-light-mobile.png — Brand section, light theme,
+  nav wrapped (mobile width)
+- styleguide-primitives-desktop.png — Primitives section: Button
+  (loading/disabled), Input (default/hover/focus/disabled/error),
+  Tooltip (open, describing its trigger)
+- styleguide-nav-narrow-mobile.png — section nav wraps on a narrow
+  screen, no horizontal scroll
