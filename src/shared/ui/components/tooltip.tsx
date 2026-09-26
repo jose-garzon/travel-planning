@@ -98,8 +98,9 @@ export function Tooltip({ content, children, open: openProp, onOpenChange }: Too
           {children}
         </RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content data-ui="tooltip" className={CONTENT_CLASSES}>
+          <RadixTooltip.Content data-ui="tooltip" className={CONTENT_CLASSES} sideOffset={8}>
             {translate(content)}
+            <RadixTooltip.Arrow className="fill-text" />
           </RadixTooltip.Content>
         </RadixTooltip.Portal>
       </RadixTooltip.Root>

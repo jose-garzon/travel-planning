@@ -8,7 +8,7 @@ export function ButtonDemo() {
   const translate = useTranslatable();
 
   return (
-    <section aria-labelledby="button-demo-heading">
+    <section aria-labelledby="button-demo-heading" className="mt-16 border-t border-border pt-16">
       <h3 id="button-demo-heading">{translate({ translateId: "styleguide.button.title" })}</h3>
       <Stack>
         <StateSample label={{ translateId: "styleguide.button.states.default" }}>

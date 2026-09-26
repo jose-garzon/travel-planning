@@ -21,7 +21,7 @@ export function SectionNav({ label, links }: SectionNavProps) {
   return (
     <nav
       aria-label={translate(label)}
-      className="md:sticky md:top-0 md:w-nav md:shrink-0 md:self-start"
+      className="md:sticky md:top-0 md:w-nav md:shrink-0 md:self-start md:pt-6"
     >
       <ul className="flex flex-wrap gap-x-4 gap-y-2 md:flex-col">
         {links.map((link) => (
