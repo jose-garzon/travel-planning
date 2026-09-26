@@ -286,3 +286,20 @@ orchestrator verified: e2e @T01|@T02|@T04|@T05|@T06|@T07|@T08|@T13|
   @T15|@smoke 34/34 desktop, re-captured evidence/gate/ (desktop
   31/31, mobile 29/29)
 visual gate: waiting (round 2 of 2)
+
+## 2026-09-26 visual gate: change requests (round 2 of 2, final)
+User repeated the already-scheduled items (Card/Dialog, T12 section
+content, nav active-state, button row). Asked the user directly
+whether to fast-track those now or keep the normal per-task pipeline
+(AskUserQuestion) — chose the normal pipeline; those stay on
+T09/T10/T11/T12/T14/T16 as already logged, no further discussion.
+Three new, real, in-scope items this round:
+- dividers were missing on the first top-level section and on every
+  demo sub-section inside Primitives (only the top-level
+  section-to-section gap had one from round 1)
+- sticky nav touches the viewport top edge once scrolled
+- Tooltip content has `sideOffset=0` (Radix default) and no arrow —
+  no gap or visual link to its trigger
+This is the last gate round (loop cap 2); after verifying this fix,
+remaining out-of-scope requests stay logged against their tasks and
+the run continues at Step 1 regardless of further gate feedback.
