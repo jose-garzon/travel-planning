@@ -270,7 +270,7 @@ Notes:
 
 ## T03. Lint rules for tokens and interactive semantics
 
-Status: todo
+Status: doing
 Depends on: -
 Model: sonnet
 Scenarios: @T03
@@ -394,7 +394,7 @@ Notes:
 
 ## T06. Button with every state
 
-Status: todo
+Status: done
 Depends on: T04
 Model: sonnet
 Scenarios: @T06
@@ -433,8 +433,8 @@ Steps:
    hover, fast-duration transition (`transition-duration` 0.15s).
 
 Done when:
-- [ ] Scenarios tagged @T06 pass
-- [ ] Unit tests: loading ignores clicks and sets aria-busy;
+- [x] Scenarios tagged @T06 pass
+- [x] Unit tests: loading ignores clicks and sets aria-busy;
       disabled; variant classes; icon is aria-hidden; default
       `type="button"`; `labelHidden` keeps the label as the
       accessible name; `labelHidden` without `icon` fails typecheck
@@ -581,7 +581,7 @@ Done when:
 
 ## T11. Section navigation with scroll spy
 
-Status: todo
+Status: blocked (plan: T11 scroll scenarios need page taller than 800px viewport; only content tasks T05-T13 create it, T11 depends on T02 only)
 Depends on: T02
 Model: sonnet
 Scenarios: @T11
@@ -662,7 +662,7 @@ Done when:
 
 ## T13. Brand section with voice rules
 
-Status: todo
+Status: doing
 Depends on: T04
 Model: haiku
 Scenarios: @T13

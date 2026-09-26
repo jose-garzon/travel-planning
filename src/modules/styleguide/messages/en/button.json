@@ -1,3 +1,13 @@
 {
-  "title": "Button"
+  "title": "Button",
+  "sample": "Save trip",
+  "cancel": "Cancel",
+  "states": {
+    "default": "Default",
+    "hover": "Hover",
+    "focus": "Focus",
+    "active": "Active",
+    "loading": "Loading",
+    "disabled": "Disabled"
+  }
 }

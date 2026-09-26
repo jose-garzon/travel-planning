@@ -1,3 +1,13 @@
 {
-  "title": "Botón"
+  "title": "Botón",
+  "sample": "Guardar el viaje",
+  "cancel": "Cancelar",
+  "states": {
+    "default": "Normal",
+    "hover": "Encima",
+    "focus": "Foco",
+    "active": "Presionado",
+    "loading": "Cargando",
+    "disabled": "Deshabilitado"
+  }
 }
