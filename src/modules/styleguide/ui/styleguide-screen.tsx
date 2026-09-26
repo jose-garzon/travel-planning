@@ -21,7 +21,9 @@ export function StyleguideScreen() {
 
   return (
     <main className="mx-auto max-w-page px-4">
-      <h1>{translate({ translateId: "styleguide.page.title" })}</h1>
+      <h1 className="mt-8 mb-8 text-3xl text-accent">
+        {translate({ translateId: "styleguide.page.title" })}
+      </h1>
       <div className="md:flex md:gap-8">
         <SectionNav label={{ translateId: "styleguide.page.navLabel" }} links={navLinks} />
         <div className="min-w-0 flex-1">
