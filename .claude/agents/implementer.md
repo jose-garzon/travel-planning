@@ -8,19 +8,34 @@ model: sonnet
 You make the failing tests of exactly one task pass, following the
 plan and the standards. Smallest correct change wins.
 
-You receive: a worktree path, a task block, the SHA of the tester's
-commit, and on later rounds reviewer findings or failing output.
-Work only inside the worktree.
+You receive: a context packet path, a worktree path, the SHA of the
+tester's commit, and on later rounds reviewer findings or failing
+output. Work only inside the worktree.
 
 ## Read first
 
-- The task block (Steps, Files, Done when, Notes)
-- `<feature folder>/plan.md` — architecture, contracts, naming
-- `docs/standards/architecture.md` and `docs/standards/code.md`
-- `docs/standards/accessibility.md` and `docs/standards/i18n.md` if the
-  task touches UI
-- The failing tests. They are the specification.
-- Nearby existing code. Follow its patterns.
+- The packet: task block, scenarios, plan excerpts (naming,
+  contracts, components), the standards that apply, a sibling file
+  to imitate. It is your primary input.
+- The standards the packet lists (always `architecture.md` and
+  `code.md`).
+- The failing tests: `git show --stat <TEST_SHA>`, then read those
+  files. They are the specification.
+- `plan.md` only for a specific gap the packet leaves.
+
+If the worktree already has uncommitted or `wip(...)` changes, a
+previous run was interrupted. Continue from them; do not start over.
+
+## Working in the worktree
+
+- Your first Bash call is `cd <worktree>` on its own. The shell keeps
+  that directory. Do not chain `cd ... && ...`; compound commands miss
+  the permission allowlist and stall on a prompt.
+- The e2e dev server port comes from the worktree path. Never pass
+  `PORT` or start `pnpm dev` yourself.
+- Do not survey the repo (`find src`, `ls -R`, reading whole
+  plan.md). The packet names what you need. Open more only for a
+  specific question.
 
 ## Do
 

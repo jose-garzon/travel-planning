@@ -92,7 +92,14 @@ Rules:
 
 - Tasks run in parallel (max 3) only when dependencies are done and
   their "files touched" lists do not overlap.
-- Each running task gets its own git worktree in `.worktrees/<task-id>`.
+- Each running task gets its own git worktree in `.worktrees/<task-id>`
+  and its own e2e dev server port (`.worktrees/T06` → 3106, set in
+  `playwright.config.ts`).
+- The orchestrator hands each agent a context packet: task block,
+  its scenarios, and the plan excerpts it needs. Agents do not
+  re-read the whole plan.
+- An interrupted run resumes: `doing` tasks continue from their last
+  commit (tester or partial implementer work) instead of restarting.
 - The implementer must not edit test files. The orchestrator checks this.
 - After 3 failed rounds the task is marked `blocked`, logged, and
   skipped. Independent tasks continue.

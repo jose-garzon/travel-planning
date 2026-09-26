@@ -11,7 +11,10 @@ const testDir = defineBddConfig({
 });
 
 const isCI = Boolean(process.env.CI);
-const port = 3000;
+// Each /feat-apply worktree (.worktrees/T06) gets its own dev server
+// port, so parallel tasks never reuse another task's server.
+const worktreeTask = /[\\/]\.worktrees[\\/]T(\d+)/.exec(process.cwd())?.[1];
+const port = Number(process.env.PORT ?? (worktreeTask ? 3100 + Number(worktreeTask) : 3000));
 
 export default defineConfig({
   testDir,
@@ -31,7 +34,7 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"] }, grepInvert: /@desktop/ },
   ],
   webServer: {
-    command: isCI ? "pnpm start" : "pnpm dev",
+    command: `${isCI ? "pnpm start" : "pnpm dev"} --port ${port}`,
     port,
     reuseExistingServer: !isCI,
     timeout: 120_000,

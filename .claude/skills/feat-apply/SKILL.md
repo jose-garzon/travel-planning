@@ -32,7 +32,25 @@ gh issue edit <n> --add-label phase:in-progress --remove-label phase:planned
 ```
 
 Create `log.md` in the feature folder if missing (format below).
-If tasks are already `done` from a previous run, resume: skip them.
+
+### Resume
+
+A previous run may have stopped mid-task. Per task status:
+
+- `done`: skip.
+- `blocked`: skip. Its worktree stays for the human.
+- `doing`: resume it before scheduling anything new. Look at
+  `.worktrees/<T>` and branch `task/<issue>-<T>`:
+  - No worktree or branch: set back to `todo`.
+  - Last commit on the branch is the feature branch tip (no tester
+    commit): `git worktree remove --force .worktrees/<T>`,
+    `git branch -D task/<issue>-<T>`, set to `todo`. It restarts at
+    Step 2 like any new task.
+  - A `test(...)` commit exists: that SHA is `TEST_SHA`. Uncommitted
+    or `wip(...)` changes are a partial green. Keep them, rerun
+    Test (by tag) for `@<T>`, then go to 3b (green) with the output.
+    The implementer continues from the current state, not from scratch.
+  - Log `resumed <T> at <step>` in log.md.
 
 
 ## Step 1: Schedule
@@ -54,15 +72,47 @@ git worktree add .worktrees/<T> -b task/<issue>-<T> feat/<issue>-<slug>
 
 Run install inside the worktree if the stack needs it.
 
+Each worktree runs its own dev server for e2e. `playwright.config.ts`
+derives the port from the worktree path (`.worktrees/T06` → 3106), so
+parallel tasks never share a server. Never start a dev server by hand
+on 3000 during apply; the main checkout owns that port. Before each
+batch, check the task ports are free (`ss -ltnp`). Kill stale
+`next dev` processes left by an interrupted run.
+
+### Context packet
+
+Agents start cold. Without a packet they spend most of their time
+grepping a long plan. Before spawning agents for a task, build one
+packet (in your scratchpad, `packet-<T>.md`) and pass its path. It
+holds, copied verbatim:
+
+- The task block from tasks.md.
+- The task's scenarios from tests.feature (only the `@<T>` ones).
+- From plan.md: the Naming table rows, contracts, components and
+  file-layout entries for the task's `Files`. Include the section
+  headers so the agent can open plan.md for more if truly needed.
+- Paths of the standards that apply (UI task: accessibility, i18n,
+  style).
+- Existing files to imitate: the closest sibling already merged
+  (e.g. the last component for a component task).
+- Worktree path, `TEST_SHA` (green/review only).
+
+The packet is the agent's primary input. Keep it under ~200 lines.
 
 ## Step 3: Per-task loop
 
 Run the tasks of a batch in parallel: spawn the agents for different
 tasks in the same message. Inside one task, steps are sequential.
+Do not start a batch of one while other ready tasks exist whose
+`Files` do not overlap; idle slots are the main cost of a run.
+
+When you run commands in a worktree, use `git -C <path>` or a
+separate `cd <path>` call first. Do not chain `cd <path> && ...`:
+compound commands miss the permission allowlist and stall on a prompt.
 
 ### 3a. Red (tester)
 
-Spawn agent `tester` with: worktree path, task block, feature folder
+Spawn agent `tester` with: packet path, worktree path, feature folder
 path. It writes step definitions and unit tests and commits
 `test(<scope>): <T> failing tests`.
 
@@ -80,8 +130,10 @@ Record the tester commit SHA as `TEST_SHA`.
 ### 3b. Green (implementer)
 
 Spawn agent `implementer` with `model` set to the task's `Model`
-field. Give it: worktree path, task block, `TEST_SHA`, and on later
-rounds the reviewer findings or failing output.
+field. Give it: packet path, worktree path, `TEST_SHA`, and on later
+rounds the reviewer findings or failing output. On a fix round, prefer
+`SendMessage` to the same implementer over a new spawn: it keeps its
+context and skips the cold start.
 
 Verify yourself:
 - Test (by tag) for `@<T>` passes.
@@ -97,8 +149,8 @@ Ask `reviewer` to judge that claim only. If the reviewer agrees, send
 
 ### 3c. Review (reviewer)
 
-Spawn agent `reviewer` with: worktree path, base
-`feat/<issue>-<slug>`, task block, feature folder path.
+Spawn agent `reviewer` with: packet path, worktree path, base
+`feat/<issue>-<slug>`, feature folder path.
 It returns findings with severity `blocker | major | minor | nit`.
 
 - Any `blocker` or `major`: back to 3b with the findings. New round.

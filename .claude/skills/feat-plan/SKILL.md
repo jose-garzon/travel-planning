@@ -54,6 +54,15 @@ Template: `templates/tasks.md`. Rules for slicing:
   infrastructure (route, table, module wiring). It still ends with one
   trivial scenario passing.
 - Size: about 1-2 hours of human work, under ~300 changed lines.
+  Each task costs a fixed ~15 min of agent overhead (tester,
+  implementer, reviewer cold starts, e2e runs, merge). Merge tiny
+  tasks (a copy-only section, one small component) into a neighbour
+  that touches the same area. Aim for 6-10 tasks per feature; more
+  than 12 means the feature should be split or tasks merged.
+- Shape the graph for width. Apply runs up to 3 tasks at once, so a
+  long single chain (T01 → T02 → T03 ...) wastes slots. Depend only
+  on what the task truly needs, and keep shared files (messages,
+  indexes, config) out of several parallel tasks' `Files`.
 - Order: happy path first, then alternate flows, errors, edge cases,
   a11y and i18n hardening.
 - `Files` lists every file the task creates or edits. The orchestrator
@@ -86,6 +95,8 @@ Before handing over, verify and fix:
 - Every scenario tag `@Txx` exists in tasks.md and vice versa.
 - No two tasks that could run in parallel share a file.
 - Dependency graph has no cycles.
+- Task count is within 6-10, and the critical path (longest chain)
+  is at most about half the task count.
 - A developer who has never seen the codebase could start T01 with
   only these files and the standards.
 
