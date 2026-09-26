@@ -5,7 +5,9 @@ export function DialogDemo() {
 
   return (
     <section aria-labelledby="dialog-demo-heading" className="mt-16 border-t border-border pt-16">
-      <h3 id="dialog-demo-heading">{translate({ translateId: "styleguide.dialog.title" })}</h3>
+      <h3 id="dialog-demo-heading" className="text-accent">
+        {translate({ translateId: "styleguide.dialog.title" })}
+      </h3>
     </section>
   );
 }

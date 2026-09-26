@@ -9,7 +9,9 @@ export function InputDemo() {
 
   return (
     <section aria-labelledby="input-demo-heading" className="mt-16 border-t border-border pt-16">
-      <h3 id="input-demo-heading">{translate({ translateId: "styleguide.input.title" })}</h3>
+      <h3 id="input-demo-heading" className="text-accent">
+        {translate({ translateId: "styleguide.input.title" })}
+      </h3>
       <Stack direction="horizontal" wrap gap="4">
         <StateSample label={{ translateId: "styleguide.input.states.default" }}>
           <Input

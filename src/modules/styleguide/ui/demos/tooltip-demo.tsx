@@ -9,7 +9,9 @@ export function TooltipDemo() {
 
   return (
     <section aria-labelledby="tooltip-demo-heading" className="mt-16 border-t border-border pt-16">
-      <h3 id="tooltip-demo-heading">{translate({ translateId: "styleguide.tooltip.title" })}</h3>
+      <h3 id="tooltip-demo-heading" className="text-accent">
+        {translate({ translateId: "styleguide.tooltip.title" })}
+      </h3>
       <StateSample label={{ translateId: "styleguide.tooltip.states.default" }}>
         <Tooltip content={{ translateId: "styleguide.tooltip.content" }}>
           <Button variant="secondary" translateId="styleguide.tooltip.trigger" />

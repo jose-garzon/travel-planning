@@ -9,7 +9,9 @@ export function ButtonDemo() {
 
   return (
     <section aria-labelledby="button-demo-heading" className="mt-16 border-t border-border pt-16">
-      <h3 id="button-demo-heading">{translate({ translateId: "styleguide.button.title" })}</h3>
+      <h3 id="button-demo-heading" className="text-accent">
+        {translate({ translateId: "styleguide.button.title" })}
+      </h3>
       <Stack>
         <StateSample label={{ translateId: "styleguide.button.states.default" }}>
           <Button translateId="styleguide.button.sample" />

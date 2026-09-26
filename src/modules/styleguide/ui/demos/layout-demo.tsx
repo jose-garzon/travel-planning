@@ -20,7 +20,9 @@ export function LayoutDemo() {
 
   return (
     <section aria-labelledby="layout-demo-heading" className="mt-16 border-t border-border pt-16">
-      <h3 id="layout-demo-heading">{translate({ translateId: "styleguide.layout.title" })}</h3>
+      <h3 id="layout-demo-heading" className="text-accent">
+        {translate({ translateId: "styleguide.layout.title" })}
+      </h3>
       <StateSample label={{ translateId: "styleguide.layout.states.default" }}>
         <Stack>
           {FONT_SIZES.map((size) => (
