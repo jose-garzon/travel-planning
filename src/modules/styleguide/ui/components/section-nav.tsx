@@ -21,12 +21,14 @@ export function SectionNav({ label, links }: SectionNavProps) {
   return (
     <nav
       aria-label={translate(label)}
-      className="md:sticky md:top-0 md:w-nav md:shrink-0 md:self-start md:pt-6"
+      className="md:sticky md:top-0 md:w-nav md:shrink-0 md:self-start md:pt-6 md:pb-6"
     >
       <ul className="flex flex-wrap gap-x-4 gap-y-2 md:flex-col">
         {links.map((link) => (
           <li key={link.id}>
-            <a href={`#${link.id}`}>{translate(link.label)}</a>
+            <a href={`#${link.id}`} className="ui-hover:text-accent ui-hover:underline">
+              {translate(link.label)}
+            </a>
           </li>
         ))}
       </ul>
