@@ -373,3 +373,61 @@ task here — tooltip.test.tsx, 4/6 tests, `ResizeObserver is not
 defined` in jsdom. Confirmed present before T16's merge too (checked
 against 553f915). Not blocking; flagged for feature review/T14
 hardening since T09 also uses ResizeObserver.
+
+## 2026-09-26 T09 round 1
+implementer (sonnet): test OK (175e430), then a second test(...)
+commit (0379767) mocking next-intl's Link in card.test.tsx — Vitest's
+Node ESM loader can't resolve `next/navigation`'s extensionless
+subpath outside a real Next build; assertions on CardLink's real
+output untouched. green OK (c1640fe). Verified myself: 9/9 unit
+tests, e2e @T09 5/5 desktop, typecheck/lint clean.
+merged: cd5fffa
+
+## 2026-09-26 T12 round 1
+implementer (haiku): test OK (cf3fdce), green (81c0604), 7/7 @T12
+desktop. My verify caught 2 lint errors (inline `style` prop, banned
+by D-5) in color-section.tsx and motion-sample.tsx that the
+implementer's own report hadn't checked for.
+
+## 2026-09-26 T12 round 2
+Sent the lint output back as a fresh agent (should have been
+SendMessage to the same implementer per the skill — noted for next
+time, not repeated). Fix: static `swatch-color-*` utilities in
+tokens.css instead of a `style` object; `motion-sample.tsx` folds
+`opacity-100` into its className. New commit 1135a59. Verified
+myself: lint 0 errors, e2e 7/7 desktop, typecheck clean.
+
+Process note (not re-litigated, logging for the record): round 2's
+commit (1135a59, a `wip(...)` commit) also carries a one-line test
+assertion change in tests/steps/token-sections.steps.ts, added in
+round 1's `wip` commit (81c0604) rather than a separate `test(...)`
+commit as the skill requires. I read the diff myself before merging:
+it swaps `.getByText(token, {exact:true})` for
+`.getByText(token, {exact:true}).first()`, needed because the Color
+section's own design (light + dark panels) renders every token name
+twice — the original locator would hit Playwright's strict-mode
+"multiple elements" error, not silently pass. I judged this a
+legitimate correction, not test-weakening, and squash-merge erases
+per-commit granularity from the feature branch anyway. Did not spend
+a third round on commit-hygiene alone since the loop cap was already
+reached and the content was independently verified.
+
+merge: conflicted on tokens.css (T12 branched at 553f915, before T16
+added secondary/scrim tokens). Resolved by hand: kept both sides'
+new `@utility` rules, then also added `color-secondary`,
+`color-secondary-hover`, `color-on-secondary`, `color-scrim`,
+`color-on-scrim` to color-section.tsx's swatch list (and matching
+`swatch-color-*` utilities) since T12's list otherwise would have
+silently omitted every token T16 added. Re-verified after resolving:
+typecheck/lint clean, e2e @T12|@T16|@T01 11/11 desktop (first run
+failed against a stale `pnpm dev` on :3000 left over from an earlier
+session — restarted it, then all green), e2e @T09 5/5, `pnpm
+test:unit` 185/189 (same 4 pre-existing tooltip.test.tsx failures,
+no new breakage).
+merged: 28e28f1
+
+Minor, non-blocking, for the PR/reviewer: color-section.tsx hardcodes
+the panel labels "Light"/"Dark" as plain JSX text instead of through
+next-intl, unlike the section title. Doesn't fail any test or lint
+rule; inconsistent with the rest of the app's i18n-everywhere
+convention.

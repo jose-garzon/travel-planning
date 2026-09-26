@@ -172,6 +172,89 @@
   background: linear-gradient(to top, var(--color-scrim) 0%, transparent 55%);
 }
 
+/* Styleguide color swatches: one static utility per color token so the
+   color-section.tsx swatch list can render a background without an
+   inline `style` (banned, D-5) or a Tailwind arbitrary value (D-4). */
+@utility swatch-color-bg {
+  background-color: var(--color-bg);
+}
+
+@utility swatch-color-surface-1 {
+  background-color: var(--color-surface-1);
+}
+
+@utility swatch-color-surface-2 {
+  background-color: var(--color-surface-2);
+}
+
+@utility swatch-color-surface-3 {
+  background-color: var(--color-surface-3);
+}
+
+@utility swatch-color-text {
+  background-color: var(--color-text);
+}
+
+@utility swatch-color-text-muted {
+  background-color: var(--color-text-muted);
+}
+
+@utility swatch-color-border {
+  background-color: var(--color-border);
+}
+
+@utility swatch-color-border-strong {
+  background-color: var(--color-border-strong);
+}
+
+@utility swatch-color-accent {
+  background-color: var(--color-accent);
+}
+
+@utility swatch-color-accent-hover {
+  background-color: var(--color-accent-hover);
+}
+
+@utility swatch-color-on-accent {
+  background-color: var(--color-on-accent);
+}
+
+@utility swatch-color-success {
+  background-color: var(--color-success);
+}
+
+@utility swatch-color-warning {
+  background-color: var(--color-warning);
+}
+
+@utility swatch-color-error {
+  background-color: var(--color-error);
+}
+
+@utility swatch-color-focus {
+  background-color: var(--color-focus);
+}
+
+@utility swatch-color-secondary {
+  background-color: var(--color-secondary);
+}
+
+@utility swatch-color-secondary-hover {
+  background-color: var(--color-secondary-hover);
+}
+
+@utility swatch-color-on-secondary {
+  background-color: var(--color-on-secondary);
+}
+
+@utility swatch-color-scrim {
+  background-color: var(--color-scrim);
+}
+
+@utility swatch-color-on-scrim {
+  background-color: var(--color-on-scrim);
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

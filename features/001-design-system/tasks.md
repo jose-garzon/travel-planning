@@ -571,7 +571,7 @@ Notes:
 
 ## T09. Card: static, clickable, truncation tooltip
 
-Status: doing
+Status: done
 Depends on: T04, T06, T08
 Model: sonnet
 Scenarios: @T09
@@ -599,8 +599,8 @@ Steps:
    line height, no ellipsis), hover/focus clickable card.
 
 Done when:
-- [ ] Scenarios tagged @T09 pass
-- [ ] Unit tests: `CardButton` renders `<button type="button">`,
+- [x] Scenarios tagged @T09 pass
+- [x] Unit tests: `CardButton` renders `<button type="button">`,
       `CardLink` renders `<a href>`, static renders no interactive
       element
 
@@ -673,7 +673,7 @@ Done when:
 
 ## T12. Token sections: color, type, spacing, radius/shadow, motion, icons
 
-Status: doing
+Status: done
 Depends on: T04, T06
 Model: haiku
 Scenarios: @T12
@@ -720,8 +720,8 @@ Steps:
 7. Token names are literal identifiers (plan DOM contract).
 
 Done when:
-- [ ] Scenarios tagged @T12 pass
-- [ ] No raw values printed; `pnpm lint` passes
+- [x] Scenarios tagged @T12 pass
+- [x] No raw values printed; `pnpm lint` passes
 
 
 ## T13. Brand section with voice rules
