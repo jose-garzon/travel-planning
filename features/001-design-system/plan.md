@@ -160,7 +160,8 @@ The only file allowed to hold raw values. Structure, in order:
    afterwards (`p-13`, `bg-red-500`, `m-4` generate nothing).
 2. `:root` / `[data-theme]` `color-scheme` rules (above).
 3. `@custom-variant` definitions (below).
-4. `@utility duration-fast`, `@utility duration-normal`.
+4. `@utility duration-fast`, `@utility duration-normal`,
+   `@utility scrim-bottom` (below).
 5. `@keyframes` for the `--animate-*` tokens.
 
 Spec token → CSS variable (utility example):
@@ -173,11 +174,22 @@ Spec token → CSS variable (utility example):
   (`border-border-strong`)
 - `color.accent` → `--color-accent`, `--color-accent-hover`,
   `--color-on-accent` (`bg-accent`)
+- `color.secondary` → `--color-secondary`, `--color-secondary-hover`,
+  `--color-on-secondary` (`bg-secondary`) — second-tier emphasis:
+  secondary buttons/badges/tags in a later feature, chart or
+  highlight accents. No primitive uses it yet (feature.md "Out of
+  scope"); the tokens ship ahead of that need.
 - `color.focus` → `--color-focus` (`outline-focus`)
 - `color.success|warning|error` → `--color-success` etc.
   (`text-error`)
 - shadow color → `--color-shadow` (used by `--shadow-*`)
 - dialog backdrop → `--color-overlay` (`bg-overlay`)
+- photo-card scrim → `--color-scrim`, `--color-on-scrim` (`bg-scrim`,
+  `text-on-scrim`) — flat values, not `light-dark()` (D-19); paired
+  with the `scrim-bottom` utility (`background: linear-gradient(to
+  top, var(--color-scrim) 0%, transparent 55%)`) for the future
+  photo-hero-card (feature.md "Out of scope"; tokens ship now,
+  component does not)
 - `font.family.display|body` → `--font-display`, `--font-body`
   (`font-display`)
 - `font.weight.regular|semibold|bold` → `--font-weight-*`
@@ -240,43 +252,59 @@ Animations (each keyframe named like its token):
   `duration-normal`.
 - `spin`: rotate 0 → 360deg, 1s linear infinite.
 
-Colors (hex; the contrast unit test parses them), light / dark:
+Colors (hex; the contrast unit test parses them), light / dark.
+Round 2 (`docs/styleguide.md`) replaces the whole neutral/accent
+palette with a vibrant travel-journal direction and adds a second
+accent (`secondary`) and the photo-card `scrim`; `success`,
+`warning`, `error` are unchanged (already re-verified against the
+new neutrals):
 
-| Token          | Light       | Dark        |
-| -------------- | ----------- | ----------- |
-| `bg`           | `#FFF8F1`   | `#1A1411`   |
-| `surface-1`    | `#FFFFFF`   | `#241C18`   |
-| `surface-2`    | `#FFF1E4`   | `#2E241F`   |
-| `surface-3`    | `#FBE6D4`   | `#3A2E27`   |
-| `text`         | `#2A1E17`   | `#F7EDE4`   |
-| `text-muted`   | `#6B5548`   | `#C9B6A7`   |
-| `border`       | `#E8D5C4`   | `#4A3B32`   |
-| `border-strong` | `#8C7362`  | `#8F7868`   |
-| `accent`       | `#A93D16`   | `#FF8A5C`   |
-| `accent-hover` | `#8F3311`   | `#FFA27E`   |
-| `on-accent`    | `#FFFFFF`   | `#1A1411`   |
-| `focus`        | `var(--color-accent)` (both themes)     |
-| `success`      | `#1F7A3A`   | `#5FD08A`   |
-| `warning`      | `#8A5A00`   | `#F2C14E`   |
-| `error`        | `#B42318`   | `#FF8A80`   |
-| `shadow`       | `#2A1E1714` | `transparent` |
-| `overlay`      | `#2A1E1799` | `#000000B3` |
+| Token             | Light       | Dark          |
+| ------------------ | ----------- | ------------- |
+| `bg`               | `#FAFAFA`   | `#16161D`     |
+| `surface-1`        | `#FFFFFF`   | `#1E1E27`     |
+| `surface-2`        | `#F5F5F7`   | `#262631`     |
+| `surface-3`        | `#F5F4FA`   | `#302F3D`     |
+| `text`             | `#18181B`   | `#F4F4F6`     |
+| `text-muted`       | `#63636D`   | `#A8A6B3`     |
+| `border`           | `#E4E4E7`   | `#38384A`     |
+| `border-strong`    | `#8A8894`   | `#6E6C7D`     |
+| `accent`           | `#C83812`   | `#FF9666`     |
+| `accent-hover`     | `#A82E0D`   | `#FFB877`     |
+| `on-accent`        | `#FFFFFF`   | `#16161D`     |
+| `secondary`        | `#0E7A6B`   | `#57E0C7`     |
+| `secondary-hover`  | `#084A41`   | `#8CEBDA`     |
+| `on-secondary`     | `#FFFFFF`   | `#16161D`     |
+| `focus`            | `var(--color-accent)` (both themes)        |
+| `success`          | `#1F7A3A`   | `#5FD08A`     |
+| `warning`          | `#8A5A00`   | `#F2C14E`     |
+| `error`            | `#B42318`   | `#FF8A80`     |
+| `shadow`           | `#18181B14` | `transparent` |
+| `overlay`          | `#18181B99` | `#000000B3`   |
+| `scrim`            | `#000000A6` (flat, both themes — D-19)     |
+| `on-scrim`         | `#FFFFFF` (flat, both themes — D-19)       |
 
-All pairs below were checked at plan time and pass with margin.
+All pairs below were checked at plan time (`docs/styleguide.md` has
+the per-pair ratios) and pass with margin.
 
 Required contrast pairs (checked by `tokens.test.ts`, both themes):
 
-| Foreground              | Background                | Min   |
-| ----------------------- | ------------------------- | ----- |
-| `text`                  | `bg`, `surface-1..3`      | 4.5   |
-| `text-muted`            | `bg`, `surface-1..3`      | 4.5   |
-| `accent`                | `bg`, `surface-1..3`      | 4.5   |
-| `on-accent`             | `accent`, `accent-hover`  | 4.5   |
-| `success/warning/error` | `bg`, `surface-1`         | 4.5   |
-| `border-strong`         | `bg`, `surface-1`         | 3     |
+| Foreground                 | Background                     | Min   |
+| --------------------------- | ------------------------------- | ----- |
+| `text`                      | `bg`, `surface-1..3`            | 4.5   |
+| `text-muted`                | `bg`, `surface-1..3`            | 4.5   |
+| `accent`                    | `bg`, `surface-1..3`            | 4.5   |
+| `on-accent`                 | `accent`, `accent-hover`        | 4.5   |
+| `secondary`                 | `bg`, `surface-1..3`            | 4.5   |
+| `on-secondary`              | `secondary`, `secondary-hover`  | 4.5   |
+| `success/warning/error`     | `bg`, `surface-1`               | 4.5   |
+| `border-strong`             | `bg`, `surface-1`               | 3     |
 
 `focus` equals `accent`, so it passes 3:1 wherever `accent` passes
-4.5:1 (AC-19 asks for the accent color).
+4.5:1 (AC-19 asks for the accent color). `scrim`/`on-scrim` are not
+in this table: they mask an arbitrary destination photo, not an app
+surface, so their guarantee is derived by hand (`docs/styleguide.md`
+"Scrim"), not checked against `bg`/`surface-*`.
 
 ### Custom variants (in `tokens.css`)
 
@@ -592,6 +620,19 @@ es strings are free to choose except where listed, and stay within
   "Trip name"; footer `DialogClose` secondary "Cancel" + primary
   "Save"; closeLabel "Close".
 
+State-figure layout (AC-22, round 2): the Button, Input, Tooltip,
+Card and Dialog demos wrap their figures in
+`<Stack direction="horizontal" wrap gap="4">` instead of the default
+vertical `Stack`, so figures sit in a row that wraps as the viewport
+narrows, using the desktop width instead of a single cramped column.
+Tooltip and Dialog keep this wrapper even though they render only
+one figure today, so a later figure needs no layout change. Stack
+and Text (`layout-demo.tsx`) is the one exception and keeps the
+default vertical `Stack` — the point is demonstrating a real line
+length. `button-demo.tsx` (T06, merged) still uses a vertical
+`Stack`; T14 changes it to the row layout (it already owns this
+file).
+
 ### Messages
 
 Namespaces and files:
@@ -757,6 +798,61 @@ SectionNav behavior (T11):
 - Reduced motion read via `matchMedia("(prefers-reduced-motion:
   reduce)")` at click time.
 
+### Component usage guide (round 2)
+
+Not new tokens — makes explicit the radius/border/shadow logic
+already implicit across T06/T09/T10, so later features follow one
+rule instead of re-deriving it. Full rationale and the confirmed
+`radius-md` → Input assignment: `docs/styleguide.md` "Component
+usage guide".
+
+- **Card vs Dialog, not "modal vs drawer"**: `Dialog` already
+  responsively becomes a bottom sheet below `md`, so there is no
+  separate Drawer primitive. The real choice is blocking: `Card` is
+  inline, non-blocking, browsable; `Dialog` blocks the page (focus
+  trap, overlay, scroll lock) for one task. A `CardButton` opening a
+  `Dialog` is the expected chain, not a reason for a third primitive.
+- **Radius scales by role**: `radius-sm` — small, floating,
+  transient (Tooltip). `radius-md` — mid-size resting control
+  (Input, T07). `radius-lg` — larger resting container (Card,
+  Dialog). `radius-full` — reserved for the one tappable-action
+  shape (Button only); never reused for a passive container.
+- **Border is solid only**; no dashed/dotted anywhere — weight, not
+  style, carries meaning. `border-border` (subtle): passive resting
+  surfaces (Card, Dialog content in dark mode). `border-border-strong`
+  (≥ 3:1): controls that read as operable (Input, Button secondary).
+- **Shadow is light-theme only** (`--color-shadow` resolves to
+  `transparent` in dark; border is dark mode's only depth cue).
+  `shadow-sm` — resting surfaces (Card). `shadow-md` — floating/
+  overlay surfaces (Tooltip, Dialog). No third tier.
+
+### Space usage guide (round 2)
+
+How to pick among the existing `space.*`/`container-*` values — no
+new values. Full detail: `docs/styleguide.md` "Space usage guide".
+
+- Every margin/padding/gap comes from the `space.*` scale; never
+  round to an arbitrary pixel.
+- Three spacing jobs, three ranges: **inside** a component
+  (`space.2`–`space.6`), **between related things** — a `Stack`
+  `gap` (`space.1`–`space.4`), **between unrelated things** — page/
+  section rhythm (`space.8`–`space.16`).
+- Density is a `Stack` `gap` choice (e.g. `gap="2"` tight list vs.
+  `gap="4"` card grid), never a denser/looser component variant.
+- Pick a `container-*` by content type, not by screen:
+  `container-prose` (paragraph text), `container-card` (a Card's
+  width in a grid), `container-nav` (side nav), `container-dialog`
+  (Dialog content), `container-page` (outer page shell). Nest
+  narrower containers inside a `container-page` shell; never shrink
+  a whole page to `container-prose`.
+- Mobile-first: build the tight end of each range at the smallest
+  breakpoint; widening at `sm`/`md`/`lg` moves up within the same
+  range (or changes stack → row), never stacks extra margin on top
+  of the mobile value.
+- Vertical rhythm, consistent across every view: `gap="8"`–`gap="12"`
+  between sections; `gap="2"`–`gap="4"` between a section heading and
+  its body.
+
 
 ## Naming
 
@@ -792,6 +888,7 @@ SectionNav behavior (T11):
 | Messages type         | `StyleguideMessages`          | module index    |
 | Router guard rule     | `app-is-a-router`             | dep-cruiser     |
 | Route                 | `/[locale]/styleguide`        | app             |
+| Scrim utility         | `scrim-bottom`                | `tokens.css`    |
 
 Primitives (`src/shared/ui/components/`): `Icon`, `Wordmark`,
 `Text`, `Stack`, `Button`, `Input`, `Tooltip`, `Card`, `CardButton`,
@@ -968,6 +1065,31 @@ Chosen: `--color-focus: var(--color-accent)`.
 Why: AC-19 and the feature's accessibility section ask for the
 accent color; keeping a `focus` token (AC-3) lets it change later
 in one place.
+
+### D-18. Two-accent color model: `accent` (primary) + `secondary`
+
+Chosen: add `secondary`/`secondary-hover`/`on-secondary` alongside
+`accent`, both contrast-checked the same way. `accent` stays the one
+primary interactive color (main CTA fill, links, `focus`);
+`secondary` is for second-tier emphasis (a later feature's secondary
+buttons/badges/tags, highlight or chart accents) — nothing in this
+feature uses it yet. Full color derivation (why `#C83812`/`#FF9666`
+and not the image's flatter orange, two rejected rounds):
+`docs/styleguide.md`. Approved by the user (refine round 2). ADR 0007.
+Alternatives: keep a single accent and let a later feature invent
+its own second color (rejected — repeats the problem this feature
+exists to prevent); ship the full saturated image orange as `accent`
+(rejected — fails 4.5:1 on light surfaces, see `docs/styleguide.md`).
+
+### D-19. `scrim`/`on-scrim` are flat values, not `light-dark()`
+
+Chosen: `--color-scrim: #000000A6`, `--color-on-scrim: #FFFFFF`, the
+same in both themes — an exception to D-2.
+Why: the scrim masks an arbitrary destination photo, not an app
+surface; its job (guaranteeing 4.5:1 for white text over a
+worst-case pure-white photo pixel) has nothing to do with the user's
+light/dark preference. Ships with this feature; the photo-hero-card
+component that uses it is out of scope (feature.md).
 
 
 ## Risks

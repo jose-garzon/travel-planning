@@ -28,6 +28,12 @@ Feature: Design system
 
   # T15: translatable text, root header
 
+  @T16 @AC-3
+  Scenario: Secondary accent and scrim tokens are defined
+    When I inspect the design tokens
+    Then the secondary accent token has a light and a dark value
+    And the scrim token is defined for photo card text
+
   @T15 @a11y
   Scenario: Root header shows the wordmark
     Given I open the home page
@@ -542,6 +548,18 @@ Feature: Design system
       | the viewport is 320 pixels wide |
       | the page is zoomed to 200%      |
       | my browser text size is 200%    |
+
+  @T14 @AC-22 @desktop
+  Scenario Outline: Primitive demo states lay out in a row on desktop
+    Given the viewport is 1280 pixels wide
+    When I open the styleguide
+    Then the "<demo>" demo lays out its states in a row
+
+    Examples:
+      | demo   |
+      | Button |
+      | Input  |
+      | Card   |
 
   @T14 @AC-11 @i18n
   Scenario Outline: Spanish labels fit at the narrowest width

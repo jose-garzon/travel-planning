@@ -9,7 +9,7 @@ Status values: todo | doing | done | blocked
 Parallel batches (max 3 at once):
 
 ```
-T01, T03 → T15 → T02 → T04, T11 → T06, T13 → T05, T07, T08
+T01, T03 → T15 → T02 → T04, T11 → T06, T13 → T05, T07, T08, T16
   → T09, T10, T12 → T14
 ```
 
@@ -443,7 +443,7 @@ Done when:
 
 ## T07. Input with error state
 
-Status: todo
+Status: doing
 Depends on: T06
 Model: sonnet
 Scenarios: @T07
@@ -458,10 +458,12 @@ Files:
 - tests/steps/input.steps.ts
 
 Steps:
-1. `Input` per plan API: label above, `min-h-touch`, border
-   `border-border-strong`, `ui-hover:border-accent`, focus ring,
-   error: `border-error`, error row = `Icon` CircleAlert + text in
-   `text-error`, `animate-fade-in motion-safe:animate-shake`.
+1. `Input` per plan API: label above, `min-h-touch`, `rounded-md`
+   (docs/styleguide.md "Component usage guide": mid-size resting
+   control, between Tooltip's `radius-sm` and Card's `radius-lg`),
+   border `border-border-strong`, `ui-hover:border-accent`, focus
+   ring, error: `border-error`, error row = `Icon` CircleAlert +
+   text in `text-error`, `animate-fade-in motion-safe:animate-shake`.
 2. Input demo per plan "Demo content".
 3. Steps for "invalid and described by its error", "error message
    shows an icon and text", "enters with a fade and a shake"
@@ -503,6 +505,68 @@ Done when:
 - [ ] Scenarios tagged @T08 pass
 - [ ] Unit test: content renders only the string; trigger keeps its
       own props
+
+
+## T16. Secondary accent and scrim tokens
+
+Status: todo
+Depends on: T01
+Model: sonnet
+Scenarios: @T16
+Covers: - (extends AC-3; round 2 palette, docs/styleguide.md)
+
+Files:
+- src/shared/ui/tokens.css
+- src/shared/ui/tokens.test.ts
+- tests/steps/tokens.steps.ts
+- docs/adr/0007-design-tokens-and-theming.md
+
+Steps:
+1. `tokens.css`: replace every neutral and accent hex with plan
+   "Tokens" → Colors round-2 values (`bg`, `surface-1..3`, `text`,
+   `text-muted`, `border`, `border-strong`, `accent`,
+   `accent-hover`, `on-accent`, `shadow`, `overlay`). Leave
+   `success`/`warning`/`error` untouched. Add
+   `--color-secondary`, `--color-secondary-hover`,
+   `--color-on-secondary` next to the `--color-accent*` block, and
+   `--color-scrim`, `--color-on-scrim` as flat hex (no
+   `light-dark()` — D-19) next to `--color-overlay`.
+2. Add `@utility scrim-bottom { background: linear-gradient(to
+   top, var(--color-scrim) 0%, transparent 55%); }` next to
+   `duration-fast`/`duration-normal` in `tokens.css`.
+3. `tokens.test.ts` and `tests/steps/tokens.steps.ts`: add
+   `color-secondary`, `color-secondary-hover`, `color-on-secondary`
+   to the light/dark color-token list; add `color-scrim`,
+   `color-on-scrim` to the flat required-token list (not the
+   light/dark list — they have one value, not a pair). Add
+   contrast tests: `secondary` vs `bg`/`surface-1..3` ≥ 4.5,
+   `on-secondary` vs `secondary`/`secondary-hover` ≥ 4.5 (both
+   themes), mirroring the existing `accent`/`on-accent` tests.
+   Add one test asserting `tokens.css` defines the `scrim-bottom`
+   utility referencing `--color-scrim`.
+4. Since no component reads `--color-secondary`/`--color-scrim`
+   yet, nothing else changes: `Wordmark`, `Button` and the Brand
+   section already read `--color-accent` through token classes, so
+   the new accent/neutral hexes re-color them with no code change
+   (AC-1's whole point).
+5. ADR 0007: already updated with the round-2 bullet (this task
+   ships the tokens it describes).
+
+Done when:
+- [ ] Scenario tagged @T16 passes
+- [ ] `tokens.test.ts` contrast tests pass for `secondary`/
+      `on-secondary` in both themes, and for the existing pairs
+      re-checked against the new neutrals/accent
+- [ ] `pnpm test:e2e --grep @T01` still passes (existing token
+      scenarios keep passing against the new values)
+- [ ] `pnpm typecheck` and `pnpm lint` pass
+
+Notes:
+- Exact hex values and contrast ratios: `docs/styleguide.md` and
+  plan.md "Tokens" → Colors.
+- This is a values-only change: no `tokens.test.ts` assertion
+  hardcodes old hex, so existing tests keep passing once the new
+  values also clear their thresholds.
 
 
 ## T09. Card: static, clickable, truncation tooltip
@@ -692,11 +756,11 @@ Done when:
 
 Status: todo
 Depends on: T01, T02, T03, T04, T05, T06, T07, T08, T09, T10,
-T11, T12, T13, T15
+T11, T12, T13, T15, T16
 Model: sonnet
 Scenarios: @T14
 Covers: AC-4, AC-5, AC-8, AC-9, AC-11, AC-15, AC-17, AC-19, AC-21,
-EC-3, EC-4, EC-7
+AC-22, EC-3, EC-4, EC-7
 
 Files:
 - tests/steps/hardening.steps.ts
@@ -730,16 +794,28 @@ Steps:
    font-size: 200% }`), "no primitive clips or overlaps" (every
    `[data-ui]` except `[data-truncate]` has `scrollWidth <=
    clientWidth`; sibling `figure` boxes do not intersect).
-2. Run all @T14 scenarios; fix only what fails, inside the listed
+2. AC-22: switch `button-demo.tsx`'s figure wrapper from `<Stack>`
+   (vertical) to `<Stack direction="horizontal" wrap gap="4">`
+   (plan "Demo content" → "State-figure layout"). Confirm
+   `input-demo.tsx`, `tooltip-demo.tsx`, `card-demo.tsx`,
+   `dialog-demo.tsx` already use the row wrapper (their own tasks
+   build it that way); fix any that don't, inside this task's
+   files only. `layout-demo.tsx` keeps its vertical `Stack`
+   (unchanged). Step: "the '<demo>' demo lays out its states in a
+   row" — on a desktop viewport, at least two figures in the demo
+   share the same `y` (bounding box `top`) and differ in `x`.
+3. Run all @T14 scenarios; fix only what fails, inside the listed
    files.
-3. `lighthouserc.json`: add `http://localhost:3000/en/styleguide`.
-4. `docs/standards/style.md` Part 2: replace the token list with the
-   plan's token table (names only), point to ADR 0007, list the
-   primitives and the `ui-*` variants, remove "Status: defined by
-   the design system feature".
+4. `lighthouserc.json`: add `http://localhost:3000/en/styleguide`.
+5. `docs/standards/style.md` Part 2: replace the token list with the
+   plan's token table (names only, including `secondary` and
+   `scrim`), point to ADR 0007, list the primitives and the `ui-*`
+   variants, remove "Status: defined by the design system feature".
 
 Done when:
 - [ ] Scenarios tagged @T14 pass
+- [ ] Button, Input, Card demos: at least two state figures sit in
+      the same row on a desktop viewport (AC-22)
 - [ ] `pnpm test:e2e --grep @F1` passes (full regression)
 - [ ] `pnpm lint`, `pnpm typecheck`, `pnpm build` pass
 
@@ -748,6 +824,10 @@ Done when:
 
 Not from feature.md: the `app-is-a-router` guard (plan D-14) is
 covered by T03, scenario "App folder only imports route files".
+T16 (secondary accent + scrim tokens, plan D-18/D-19) has no AC of
+its own — feature.md leaves the exact token set to `/feat-plan`
+(feature.md "Also updates docs/standards/style.md ..." note); it
+extends AC-3's token set rather than satisfying a numbered AC.
 
 Scenarios per criterion: `:grep @AC-n` / `@EC-n` in
 `tests.feature`.
@@ -775,6 +855,7 @@ Scenarios per criterion: `:grep @AC-n` / `@EC-n` in
 | AC-19     | T05, T06, T07, T14 |
 | AC-20     | T13                |
 | AC-21     | T05, T06, T07, T09, T14 |
+| AC-22     | T14                |
 | EC-1      | T09                |
 | EC-2      | T01                |
 | EC-3      | T14                |

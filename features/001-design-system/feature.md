@@ -20,6 +20,15 @@ colors and spacing.
 Also updates `docs/standards/style.md` (Part 2) to match the token
 scales defined here.
 
+Refine round 2 (2026-09-26) folds `docs/styleguide.md`'s decisions
+in: a second "secondary" accent color, scrim tokens for photo-hero
+cards, a component usage guide (radius/border/shadow) and a space
+usage guide — plus a fix for the `/styleguide` page's wasted desktop
+space in primitive demos. `/feat-plan` reads `docs/styleguide.md`
+directly for the exact token values and folds them into `plan.md`,
+`tokens.css`, `tokens.test.ts` and ADR 0007; this file only captures
+what changes for users.
+
 
 ## Problem
 
@@ -57,6 +66,15 @@ data.
 - Wordmark direction: lowercase "parche" in Fredoka, accent color,
   optionally set inside a stitched patch-shaped badge. Final SVG
   artwork is out of scope.
+- Color direction: vibrant, playful travel-journal palette — a
+  sunset red-orange primary accent (main CTAs, links, focus ring)
+  paired with a pine/teal secondary accent (second-tier emphasis:
+  future badges/tags, highlights), on a neutral base. Replaces the
+  original single warm-terracotta accent. The shipped Button
+  `secondary` variant (a neutral, lower-emphasis button shape) is
+  unrelated and unchanged — the new secondary accent color has no
+  primitive of its own yet (see "Out of scope"). Exact values in
+  `docs/styleguide.md`, folded into plan.md tokens by `/feat-plan`.
 - Voice: friendly, direct, playful without jokes getting in the way.
   Speaks like a friend in the group, not a travel agency. Sentence
   case, short sentences, action verbs ("Save trip", not "OK"). Each
@@ -251,6 +269,20 @@ scrolling link strip.
   (pressed)                       (faded)
 ```
 
+### Primitive state demos: a wrapping row, not a stack
+
+Every primitive demo (Button, Input, Tooltip, Card, Dialog) lays its
+state figures out in a flex row that wraps onto more rows as the
+viewport narrows, using the desktop width instead of one cramped
+column (see "Button states" above — the row layout was already the
+intent; the stacked single column in the current build is a bug this
+round fixes). Text/Type is the one exception: font-size and
+line-height samples stay a single vertical column, since
+demonstrating a real line length is the point. Token-swatch sections
+(Color, Spacing, Radius/Shadow, Motion, Icons) are unbuilt (task T12)
+and out of scope for this round — their layout is T12's call, not
+this fix's.
+
 
 ## Accessibility
 
@@ -388,6 +420,11 @@ specifics:
   with a do/don't example.
 - AC-21. Given any interactive primitive, when measured, then its
   touch target is at least 44×44 CSS px.
+- AC-22. Given a desktop viewport, when a Button, Input, Tooltip,
+  Card or Dialog demo renders in the styleguide, then its state
+  figures lay out in a flex row that wraps onto more rows rather than
+  a single vertical column; the Type/font-size demo stays a vertical
+  column.
 
 
 ## Out of scope
@@ -397,7 +434,12 @@ specifics:
   header ship).
 - Any primitive beyond Button, Input, Card, Stack, Text, Dialog,
   Tooltip. Mobile bottom sheet is the Dialog, not a separate
-  primitive. Skeleton loaders.
+  primitive. Skeleton loaders. Badge/tag (the new secondary accent's
+  badge/tag use case waits for a later feature that needs one).
+- Photo-hero-card component (full-bleed destination photo, pill
+  nav). The color/scrim tokens it would use ship in this round; the
+  component itself needs a photo source decided first (product
+  question, not a design-system one).
 - Locale detection and default locale (already handled by next-intl
   routing in `src/shared/i18n/routing.ts` and `src/proxy.ts`).
 - Trademark or domain availability check for the name "Parche"; it
