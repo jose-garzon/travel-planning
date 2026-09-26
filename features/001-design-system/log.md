@@ -346,3 +346,12 @@ User asked to drop the first section's `mt-16`/`pt-16` and instead
 match the nav's own top offset. styleguide-section.tsx:
 `first:mt-0 first:pt-6` (border-t kept). Verified e2e 34/34, lint
 clean.
+
+## 2026-09-26 post-gate: padding direction was backwards
+Round-3 fix wrapped header in `mx-auto max-w-page` to match main's
+centered container — user actually wanted the reverse: header's
+flush (no max-width) style applied everywhere, with more padding.
+Reverted centering on site-header.tsx, styleguide-screen.tsx and
+home page.tsx; all three now flush `px-6` (up from `px-4`), no
+`mx-auto`/`max-w-page`. Verified e2e 34/34, lint/typecheck clean.
+Re-captured evidence/gate/.
