@@ -79,6 +79,11 @@ export function Text({
       id={id}
       tabIndex={tabIndex}
       className={cx(
+        // Unbroken content (a dotted token name, a long compound word in
+        // some locale) has no space to wrap at; without this, it inflates
+        // this block's ink overflow past its own box at large zoom/font
+        // scaling instead of wrapping, overflowing the viewport (AC-11).
+        "wrap-anywhere",
         sizeClasses[size],
         fontClasses[font],
         weightClasses[weight],

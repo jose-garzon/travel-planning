@@ -34,7 +34,7 @@ function ColorSwatch({
   swatchClassName: string;
 }) {
   return (
-    <Stack direction="horizontal" gap="3" align="center">
+    <Stack direction="horizontal" gap="3" align="center" wrap>
       <div className={`h-12 w-12 rounded-md border border-border ${swatchClassName}`} />
       <Stack gap="1">
         <span className="font-mono text-sm">{tokenName}</span>
@@ -47,7 +47,7 @@ export function ColorSection() {
   return (
     <StyleguideSection id="color" title={{ translateId: "styleguide.color.title" }}>
       <Stack direction="horizontal" gap="6" wrap>
-        <div data-theme="light" className="flex-1 min-w-80 bg-bg p-4 rounded-lg">
+        <div data-theme="light" className="flex-1 min-w-card bg-bg p-4 rounded-lg">
           <h3 className="mb-4 text-md font-semibold">Light</h3>
           <Stack gap="3">
             {COLOR_TOKENS.map((token) => (
@@ -59,7 +59,7 @@ export function ColorSection() {
             ))}
           </Stack>
         </div>
-        <div data-theme="dark" className="flex-1 min-w-80 bg-bg p-4 rounded-lg">
+        <div data-theme="dark" className="flex-1 min-w-card bg-bg p-4 rounded-lg">
           <h3 className="mb-4 text-md font-semibold">Dark</h3>
           <Stack gap="3">
             {COLOR_TOKENS.map((token) => (
