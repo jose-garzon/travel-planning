@@ -11,7 +11,7 @@ import { cx } from "@/shared/ui/cx";
 import type { TextContent } from "@/shared/ui/translatable";
 import { useTranslatable } from "@/shared/ui/translatable";
 
-type ButtonVariant = "primary" | "secondary";
+type ButtonVariant = "primary" | "secondary" | "outline";
 
 type NativeButton = Omit<ComponentPropsWithRef<"button">, "className" | "style" | "children">;
 
@@ -42,11 +42,14 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   secondary:
     "bg-surface-1 text-text border border-border-strong " +
     "ui-hover:not-disabled:not-aria-disabled:bg-surface-2",
+  outline:
+    "bg-transparent text-text border border-border-strong " +
+    "ui-hover:not-disabled:not-aria-disabled:bg-surface-2",
 };
 
 const BASE_CLASSES =
   "inline-flex items-center justify-center gap-2 rounded-full min-h-touch min-w-touch " +
-  "px-4 py-3 text-md font-semibold transition duration-fast ease-out " +
+  "px-4 py-3 text-md font-semibold transition duration-fast ease-out cursor-pointer " +
   "motion-safe:ui-active:not-disabled:not-aria-disabled:scale-97 outline-focus " +
   "ui-focus:outline-2 ui-focus:outline-solid ui-focus:outline-focus " +
   "ui-focus:outline-offset-2 aria-disabled:opacity-50 disabled:opacity-50 " +
