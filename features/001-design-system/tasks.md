@@ -765,7 +765,7 @@ Done when:
 
 ## T14. Hardening: motion, reflow, contrast, budgets, docs
 
-Status: todo
+Status: doing
 Depends on: T01, T02, T03, T04, T05, T06, T07, T08, T09, T10,
 T11, T12, T13, T15, T16
 Model: sonnet
