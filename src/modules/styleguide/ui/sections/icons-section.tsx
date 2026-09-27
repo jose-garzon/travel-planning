@@ -36,7 +36,7 @@ export function IconsSection() {
           <Text as="h3" size="md" weight="semibold">
             Decorative
           </Text>
-          <Stack gap="4">
+          <Stack direction="horizontal" wrap gap="4">
             {ICONS.map(({ name, Component }) => (
               <Stack key={`decorative-${name}`} direction="horizontal" gap="3" align="center">
                 <Icon icon={Component} size="md" aria-hidden="true" />
