@@ -568,3 +568,33 @@ commit (01e0f66). Caught before moving on; recovered by checking out
 No data lost, branch is local-only (unpushed).
 
 All tasks done (T01–T16). Feature ready for Step 6 verification.
+
+## 2026-09-27 /feat-publish
+
+Working tree had uncommitted edits from an earlier session (never
+logged): `stack.tsx`-adjacent reflow tweaks in `color-section.tsx`
+(`wrap` on the swatch Stack, `min-w-card`) and `wrap-anywhere` on the
+`Text` primitive for AC-11. User approved committing them
+(ca7ff55) and removing 16 stray `diagnose*.tmp.mjs` debug files at
+repo root.
+
+Full `pnpm test:e2e` after that commit: 4 failed. 3 were the known
+pre-existing tooltip issues (T08 Escape/blur race, T08 hover/stays
+parallel-worker flake — see above). The 4th was new-looking:
+`@T14 @AC-11 @EC-3 @EC-7` "Styleguide reflows without scroll" Example
+#3 (200% browser text size, mobile). Checked out `HEAD~1` in a
+throwaway worktree and reran it there too — same failure, so it
+predates ca7ff55 and isn't a regression from this session's commit.
+
+Root cause: `color-section.tsx`'s token-name span
+(`<span className="font-mono text-sm">`) is a raw element, not the
+`Text` primitive, so it never got the `wrap-anywhere` fix — unbroken
+names like `color-secondary-hover` don't wrap in their 70px box at
+200% text size, overflowing the viewport by ~9px. Fixed by adding
+`wrap-anywhere` to that span (1ae7d96). Verified: the 6
+`@T14 @AC-11 @EC-3 @EC-7` examples now pass on both projects.
+
+Other sections (`spacing-section.tsx`, `radius-shadow-section.tsx`,
+`type-section.tsx`) have the same raw-span pattern but shorter token
+names that don't currently overflow — not touched, outside this
+session's scope.
