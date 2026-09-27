@@ -765,7 +765,7 @@ Done when:
 
 ## T14. Hardening: motion, reflow, contrast, budgets, docs
 
-Status: doing
+Status: done
 Depends on: T01, T02, T03, T04, T05, T06, T07, T08, T09, T10,
 T11, T12, T13, T15, T16
 Model: sonnet
@@ -824,8 +824,8 @@ Steps:
    variants, remove "Status: defined by the design system feature".
 
 Done when:
-- [ ] Scenarios tagged @T14 pass
-- [ ] Button, Input, Card demos: at least two state figures sit in
+- [x] Scenarios tagged @T14 pass
+- [x] Button, Input, Card demos: at least two state figures sit in
       the same row on a desktop viewport (AC-22)
 - [ ] `pnpm test:e2e --grep @F1` passes (full regression)
 - [ ] `pnpm lint`, `pnpm typecheck`, `pnpm build` pass

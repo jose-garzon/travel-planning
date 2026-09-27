@@ -22,6 +22,21 @@ const directionClasses: Record<StackDirection, string> = {
   horizontal: "flex-row",
 };
 
+// A flex item's automatic minimum size defaults to its content's
+// min-content size, which for a child capped by `max-width` (e.g. a
+// `max-w-card` wrapper around unbreakable, truncated text) never goes
+// below that cap — the child (and this row) then refuses to shrink
+// past it, overflowing a narrower viewport (AC-11). Resetting direct
+// children to `min-width: 0` lets them actually shrink instead; a
+// wrapping row still lays every child out at its natural width
+// whenever there is room, and non-wrapping rows never need to shrink
+// their single line in the first place, so this is scoped to
+// horizontal + `wrap` (the state-figure row layout, plan "State-figure
+// layout") to leave every other Stack's sizing untouched.
+function shrinkClasses(direction: StackDirection, wrap: boolean | undefined): string | undefined {
+  return direction === "horizontal" && wrap ? "*:min-w-0" : undefined;
+}
+
 const gapClasses: Record<StackGap, string> = {
   "0": "gap-0",
   "1": "gap-1",
@@ -67,6 +82,7 @@ export function Stack({
       className={cx(
         "flex",
         directionClasses[direction],
+        shrinkClasses(direction, wrap),
         gapClasses[gap],
         align ? alignClasses[align] : undefined,
         justify ? justifyClasses[justify] : undefined,

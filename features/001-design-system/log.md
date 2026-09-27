@@ -520,3 +520,51 @@ for the PR.
 
 All 8 of the user's post-approval change requests are now addressed:
 #1 and #8 by T11 above, #2-#7 by this batch.
+
+## 2026-09-27 09:00 resumed T14
+
+Prior run left T14 `doing` with a worktree/branch but no `test(...)`
+commit. Removed `.worktrees/T14` and branch `task/1-T14`, reset to
+`todo`, restarted at Step 2.
+
+## 2026-09-27 09:22 T14 round 1
+implementer (sonnet): red OK (9469087), 15 @T14 examples (7
+scenarios), green OK (9c9682d).
+
+Verified myself: `pnpm test:e2e --grep @T14 --project=desktop` → 15/15
+passed. Unit tests touched (`stack.test.tsx`, `tokens.test.ts`) →
+89/89 passed. No files changed outside T14's Files list.
+
+Fixed along the way (inside `stack.tsx`, already in scope): the new
+AC-11 reflow check caught a real bug — Card demo's `max-w-card`
+wrapper around unbreakable truncated text gave its flex item an
+automatic min-width equal to that max-width, so it wouldn't shrink
+below 288px and overflowed at 320px. Fix scoped to
+`direction="horizontal"` + `wrap` Stacks only (an unscoped fix
+regressed the Brand section's Do/Don't rows).
+
+`button-demo.tsx`, `input-demo.tsx`, `card-demo.tsx`,
+`dialog-demo.tsx` already used the row layout from earlier tasks;
+only `tooltip-demo.tsx` needed the AC-22 wrapper. `style.md` Part 2
+rewritten per plan (token table, ADR 0007 pointer, primitives list,
+status line removed). `lighthouserc.json` now also budgets
+`/en/styleguide`.
+
+merged: 48f1987
+
+Ran `pnpm test:unit` on the feature branch after merge: 4 pre-existing
+failures in `tooltip.test.tsx` (`ResizeObserver is not defined` in
+jsdom). Confirmed pre-existing and unrelated — `tooltip.tsx`,
+`tooltip.test.tsx` and `tests/setup` are byte-identical before/after
+the T14 merge (`git diff 0d40d1e..HEAD` on those paths is empty). Not
+reverting; noting for the PR alongside the other pre-existing T08
+tooltip issues logged above.
+
+Note: an in-session slip during this step — a stray `git checkout
+0d40d1e -- .` briefly reverted 4 of 48f1987's 5 files in the working
+tree, and a follow-up `commit --amend` baked that revert into a bad
+commit (01e0f66). Caught before moving on; recovered by checking out
+48f1987's tree back into place (48f1987 itself was never rewritten).
+No data lost, branch is local-only (unpushed).
+
+All tasks done (T01–T16). Feature ready for Step 6 verification.

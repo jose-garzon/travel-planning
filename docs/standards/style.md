@@ -17,31 +17,46 @@ Tools decide. No debates in review.
 
 ## Part 2: UI design system
 
-Status: defined by the design system feature (roadmap #1). Direction:
-bold and playful, very easy to read, generous spacing, clear
-hierarchy, no generic AI look. Stack: Tailwind v4, tokens as CSS
-variables, Radix primitives heavily customized. Rules that apply now:
+Direction: bold and playful, very easy to read, generous spacing,
+clear hierarchy, no generic AI look. Stack: Tailwind v4, tokens as CSS
+variables, Radix primitives heavily customized.
 
 ### Tokens only
 
 No raw values in components. Every color, spacing, radius, font size,
-shadow and duration comes from a design token.
+shadow and duration comes from a design token:
 
 ```
-color.bg.surface      color.text.primary     color.border.subtle
-space.1 ... space.8   (4px scale)
-radius.sm | md | lg
-font.size.sm | md | lg | xl
+color.bg              color.text        color.text.muted
+color.surface         color.border      color.border.strong
+color.accent          color.secondary   color.focus
+color.success         color.warning     color.error
+color.shadow          color.overlay     color.scrim
+font.family.display | body
+font.weight.regular | semibold | bold
+font.size.xs | sm | md | lg | xl | 2xl | 3xl
+font.lineHeight.tight | normal | relaxed
+space.0 ... space.8, 10, 12, 16   (4px scale)
+radius.sm | md | lg | full
+shadow.sm | md
 motion.duration.fast | normal
+motion.easing.out
 ```
 
 Tokens live in `src/shared/ui/tokens.css`. Light and dark themes
-redefine the same tokens.
+redefine the same tokens. Full names, values and the contrast rules
+they must pass: `docs/adr/0007-design-tokens-and-theming.md` and
+`features/001-design-system/plan.md` "Tokens".
 
 ### Components
 
-- Build from a small set of primitives (Button, Input, Card, Stack,
-  Text, Dialog). Features compose primitives; they do not restyle them.
+- Build from a small set of primitives: `Icon`, `Wordmark`, `Text`,
+  `Stack`, `Button`, `Input`, `Tooltip`, `Card`, `CardButton`,
+  `CardLink`, `Dialog`, `DialogClose`, `ThemeToggle`. Features compose
+  primitives; they do not restyle them.
+- Primitives style hover, focus and active only through the
+  `ui-hover`, `ui-focus` and `ui-active` variants, never plain
+  `hover:`/`focus-visible:`.
 - Every interactive primitive is accessible by default (see
   `accessibility.md`). Features cannot break that.
 - Every component handles its states: default, hover, focus, active,
