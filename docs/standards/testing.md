@@ -15,15 +15,26 @@ Tests are the executable specification. Written first, locked after.
 - **Integration** proves adapters work with real infrastructure
   (test DB in a container, not mocks).
 - **Unit** proves domain rules and use case logic. Milliseconds each.
+- **Component** (Vitest + RTL, `*.test.tsx`) proves component states
+  and variants: disabled, loading, error, sizes. Not e2e.
+
+Tests assert behavior, not looks: no pixel sizes, computed CSS
+properties, colors or class names. The look is judged by the user
+running the app at the visual gate, and from screenshots in the
+feature review.
 
 
 ## TDD flow (enforced by /feat-apply)
 
-1. Red: tester writes failing tests. Commit.
-2. Green: implementer writes the minimum code to pass.
-3. Refactor: implementer cleans up while green.
-4. Tests are locked after red. Changing them requires the reviewer to
-   agree the test is wrong.
+One implementer agent per task does all three steps.
+
+1. Red: write failing tests. Commit them alone (`test(...)`).
+2. Green: write the minimum code to pass.
+3. Refactor: clean up while green.
+4. Tests are locked after red. A wrong test is fixed only in its own
+   `test(...)` commit with the reason in the body. The feature review
+   checks every such commit. Skips and weakened assertions are never
+   allowed.
 
 
 ## Gherkin rules
@@ -75,7 +86,7 @@ Step `Then the page has no accessibility violations` runs axe-core
 - One logical assertion per test.
 
 
-## Test file patterns (locked for implementer)
+## Test file patterns (locked after red)
 
 ```
 src/**/*.test.ts       unit (node)

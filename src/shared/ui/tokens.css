@@ -1,0 +1,341 @@
+/*
+ * Design tokens. The only file allowed to hold raw values (colors,
+ * lengths, durations). Everything else in src/ uses a token utility.
+ * See features/001-design-system/plan.md "Tokens" for the source of
+ * every value below.
+ */
+
+@theme {
+  --*: initial;
+
+  /* Colors: light-dark(<light>, <dark>) follows :root color-scheme.
+     Round 2 (docs/styleguide.md): vibrant travel-journal palette. */
+  --color-bg: light-dark(#fafafa, #16161d);
+  --color-surface-1: light-dark(#ffffff, #1e1e27);
+  --color-surface-2: light-dark(#f5f5f7, #262631);
+  --color-surface-3: light-dark(#f5f4fa, #302f3d);
+  --color-text: light-dark(#18181b, #f4f4f6);
+  --color-text-muted: light-dark(#63636d, #a8a6b3);
+  --color-border: light-dark(#e4e4e7, #38384a);
+  --color-border-strong: light-dark(#8a8894, #6e6c7d);
+  --color-accent: light-dark(#c83812, #ff9666);
+  --color-accent-hover: light-dark(#a82e0d, #ffb877);
+  --color-on-accent: light-dark(#ffffff, #16161d);
+  --color-focus: var(--color-accent);
+  --color-secondary: light-dark(#0e7a6b, #57e0c7);
+  --color-secondary-hover: light-dark(#084a41, #8cebda);
+  --color-on-secondary: light-dark(#ffffff, #16161d);
+  --color-success: light-dark(#1f7a3a, #5fd08a);
+  --color-warning: light-dark(#8a5a00, #f2c14e);
+  --color-error: light-dark(#b42318, #ff8a80);
+  --color-shadow: light-dark(#18181b14, transparent);
+  --color-overlay: light-dark(#18181b99, #000000b3);
+  /* Flat, not light-dark() (D-19): masks an arbitrary photo, not the
+     app's theme. */
+  --color-scrim: #000000a6;
+  --color-on-scrim: #ffffff;
+
+  /* Fonts. --font-fredoka / --font-plus-jakarta-sans are set by
+     fonts.ts (next/font `variable`), not defined here. */
+  --font-display: var(--font-fredoka);
+  --font-body: var(--font-plus-jakarta-sans);
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  /* Space: n x 0.25rem. */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-touch: 2.75rem;
+  --spacing-icon-sm: 1rem;
+  --spacing-icon-md: 1.25rem;
+  --spacing-icon-lg: 1.5rem;
+  --spacing-sheet: 85dvh;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows: light theme only; --color-shadow is transparent in
+     dark, so the shadow disappears there with no extra rule. */
+  --shadow-sm: 0 1px 2px var(--color-shadow), 0 1px 1px var(--color-shadow);
+  --shadow-md: 0 4px 12px var(--color-shadow), 0 1px 3px var(--color-shadow);
+
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 250ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-easing-out: var(--ease-out);
+
+  --animate-fade-in: fade-in var(--motion-duration-fast) var(--ease-out);
+  --animate-fade-out: fade-out var(--motion-duration-fast) var(--ease-out);
+  --animate-shake: shake var(--motion-duration-normal) var(--ease-out) 3;
+  --animate-sheet-up: sheet-up var(--motion-duration-normal) var(--ease-out);
+  --animate-sheet-down: sheet-down var(--motion-duration-normal) var(--ease-out);
+  --animate-dialog-in: dialog-in var(--motion-duration-normal) var(--ease-out);
+  --animate-dialog-out: dialog-out var(--motion-duration-normal) var(--ease-out);
+  --animate-spin: spin 1s linear infinite;
+
+  --container-prose: 70ch;
+  --container-nav: 14rem;
+  --container-dialog: 32rem;
+  --container-page: 72rem;
+  --container-card: 18rem;
+
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+
+  --default-transition-duration: var(--motion-duration-fast);
+  --default-transition-timing-function: var(--ease-out);
+  --default-font-family: var(--font-body);
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
+@custom-variant ui-hover {
+  &:hover {
+    @slot;
+  }
+  &:where([data-preview="hover"] *) {
+    @slot;
+  }
+}
+
+@custom-variant ui-focus {
+  &:focus-visible {
+    @slot;
+  }
+  &:where([data-preview="focus"] *) {
+    @slot;
+  }
+}
+
+@custom-variant ui-active {
+  &:active {
+    @slot;
+  }
+  &:where([data-preview="active"] *) {
+    @slot;
+  }
+}
+
+@utility duration-fast {
+  transition-duration: var(--motion-duration-fast);
+}
+
+@utility duration-normal {
+  transition-duration: var(--motion-duration-normal);
+}
+
+@utility scrim-bottom {
+  background: linear-gradient(to top, var(--color-scrim) 0%, transparent 55%);
+}
+
+/* Styleguide color swatches: one static utility per color token so the
+   color-section.tsx swatch list can render a background without an
+   inline `style` (banned, D-5) or a Tailwind arbitrary value (D-4). */
+@utility swatch-color-bg {
+  background-color: var(--color-bg);
+}
+
+@utility swatch-color-surface-1 {
+  background-color: var(--color-surface-1);
+}
+
+@utility swatch-color-surface-2 {
+  background-color: var(--color-surface-2);
+}
+
+@utility swatch-color-surface-3 {
+  background-color: var(--color-surface-3);
+}
+
+@utility swatch-color-text {
+  background-color: var(--color-text);
+}
+
+@utility swatch-color-text-muted {
+  background-color: var(--color-text-muted);
+}
+
+@utility swatch-color-border {
+  background-color: var(--color-border);
+}
+
+@utility swatch-color-border-strong {
+  background-color: var(--color-border-strong);
+}
+
+@utility swatch-color-accent {
+  background-color: var(--color-accent);
+}
+
+@utility swatch-color-accent-hover {
+  background-color: var(--color-accent-hover);
+}
+
+@utility swatch-color-on-accent {
+  background-color: var(--color-on-accent);
+}
+
+@utility swatch-color-success {
+  background-color: var(--color-success);
+}
+
+@utility swatch-color-warning {
+  background-color: var(--color-warning);
+}
+
+@utility swatch-color-error {
+  background-color: var(--color-error);
+}
+
+@utility swatch-color-focus {
+  background-color: var(--color-focus);
+}
+
+@utility swatch-color-secondary {
+  background-color: var(--color-secondary);
+}
+
+@utility swatch-color-secondary-hover {
+  background-color: var(--color-secondary-hover);
+}
+
+@utility swatch-color-on-secondary {
+  background-color: var(--color-on-secondary);
+}
+
+@utility swatch-color-scrim {
+  background-color: var(--color-scrim);
+}
+
+@utility swatch-color-on-scrim {
+  background-color: var(--color-on-scrim);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(calc(-1 * var(--spacing-1)));
+  }
+  75% {
+    transform: translateX(var(--spacing-1));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-down {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes dialog-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

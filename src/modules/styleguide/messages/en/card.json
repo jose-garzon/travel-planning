@@ -1,0 +1,11 @@
+{
+  "title": "Card",
+  "heading": "Museo del Oro and the Candelaria walking tour with lunch",
+  "shortHeading": "Café",
+  "states": {
+    "default": "Default",
+    "hover": "Hover",
+    "focus": "Focus",
+    "active": "Active"
+  }
+}

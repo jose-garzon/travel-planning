@@ -32,13 +32,28 @@ Decide everything else yourself and record it under Decisions.
 
 Template: `templates/plan.md`. Rules:
 
+- The plan holds what is expensive to change later or what several
+  tasks must agree on: decisions and why, module boundaries, contracts
+  between tasks, data model, risks. Everything else is left to the
+  task that writes it.
+- No code in the plan. No token values, CSS, component prop details,
+  function bodies, config files or demo copy. Name them and say which
+  task owns them. Every line of the plan is read by every agent, and
+  code written twice drifts.
+- Size: aim under ~200 lines. Over that, or more than 8 tasks, the
+  feature is too big: stop and propose splitting it into several
+  issues (each with its own feature.md and plan), ordered so each one
+  ships something usable.
+- List what is left to implementation under "Left to implementation",
+  so reviewers know it was a choice, not a gap.
 - Follow `docs/standards/architecture.md` (Clean Architecture). Name the
   layer of every new module.
 - Diagrams in Mermaid code blocks. Keep them small, one idea each.
 - Naming table: every new public name (entity, use case, endpoint,
   component, route, table, event, i18n key namespace). Cheap models
   copy names; give them the right ones.
-- Contracts: exact request/response shapes and error codes.
+- Contracts: exact request/response shapes and error codes, and the
+  signatures (not bodies) of anything one task exports to another.
 - Performance budgets with numbers (see `docs/standards/performance.md`).
 - Decisions: what you chose, alternatives, why. If a decision affects
   the whole project, also write an ADR in `docs/adr/NNNN-title.md`.
@@ -53,7 +68,20 @@ Template: `templates/tasks.md`. Rules for slicing:
 - Exception: `T00` walking skeleton when the feature needs new
   infrastructure (route, table, module wiring). It still ends with one
   trivial scenario passing.
-- Size: about 1-2 hours of human work, under ~300 changed lines.
+- Size: about 2-4 hours of human work, under ~500 changed lines.
+  Each task costs a fixed ~10 min of agent overhead (cold start, e2e
+  runs, merge). Merge tiny tasks (a copy-only section, one small
+  component) into a neighbour that touches the same area. Aim for 4-8
+  tasks per feature; more than 8 means the feature should be split
+  into several issues.
+- Dependencies cover what the task's tests need to run, not only what
+  its code imports. If a scenario needs content, data or layout from
+  another task (e.g. a scroll test needs a page taller than the
+  viewport), depend on that task or put the setup in the scenario.
+- Shape the graph for width. Apply runs up to 3 tasks at once, so a
+  long single chain (T01 → T02 → T03 ...) wastes slots. Depend only
+  on what the task truly needs, and keep shared files (messages,
+  indexes, config) out of several parallel tasks' `Files`.
 - Order: happy path first, then alternate flows, errors, edge cases,
   a11y and i18n hardening.
 - `Files` lists every file the task creates or edits. The orchestrator
@@ -71,6 +99,11 @@ Template: `templates/tests.feature`. Rules:
 - One `Feature:` per file. Tag it `@F<issue>`.
 - Each scenario tagged with its task (`@T03`) and what it covers
   (`@AC-2`, `@EC-1`). Add `@a11y` or `@perf` where relevant.
+- Scenarios cover user flows. Component states and variants
+  (disabled, loading, error, sizes) belong in the task's unit tests,
+  not in tests.feature.
+- Assert behavior, not looks: no pixel sizes, CSS properties, colors
+  or class names. The look is judged at the visual gate.
 - Declarative steps (what, not how): "When I add a stop to the trip",
   not "When I click the button with id add-stop".
 - Reuse step phrasing across scenarios. Same meaning, same words.
@@ -86,6 +119,11 @@ Before handing over, verify and fix:
 - Every scenario tag `@Txx` exists in tasks.md and vice versa.
 - No two tasks that could run in parallel share a file.
 - Dependency graph has no cycles.
+- Each task's scenarios can pass with only its dependencies merged.
+- Task count is within 4-8, and the critical path (longest chain)
+  is at most about half the task count.
+- plan.md is under ~200 lines and has no code blocks except small
+  diagrams and contract shapes.
 - A developer who has never seen the codebase could start T01 with
   only these files and the standards.
 
@@ -94,5 +132,5 @@ Before handing over, verify and fix:
 Update the issue label to `phase:planned` only after approval.
 Tell the user the three file paths, the task count, the parallel
 batches (e.g. "T01 → T02,T03 → T04"), and:
-"Review and edit. Say `approved` to run `/feat-apply features/<folder>`
-unattended."
+"Review and edit. Say `approved` to run `/feat-apply features/<folder>`.
+It runs unattended until the visual gate."

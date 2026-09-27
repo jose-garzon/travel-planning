@@ -20,10 +20,21 @@
       "tailwindDirectives": true
     }
   },
+  "plugins": [
+    "biome-plugins/raw-css-values.grit",
+    "biome-plugins/raw-js-values.grit",
+    "biome-plugins/tailwind-arbitrary.grit",
+    "biome-plugins/no-inline-style.grit"
+  ],
   "linter": {
     "enabled": true,
     "rules": {
       "preset": "recommended",
+      "a11y": {
+        "noStaticElementInteractions": "error",
+        "noNoninteractiveElementInteractions": "error",
+        "useKeyWithClickEvents": "error"
+      },
       "complexity": {
         "noExcessiveCognitiveComplexity": "error"
       },

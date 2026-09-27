@@ -1,0 +1,12 @@
+{
+  "title": "Dialog",
+  "trigger": "Rename trip",
+  "description": "Friends see the new name right away.",
+  "fieldLabel": "Trip name",
+  "cancel": "Cancel",
+  "save": "Save",
+  "closeLabel": "Close",
+  "states": {
+    "default": "Default"
+  }
+}

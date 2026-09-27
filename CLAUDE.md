@@ -103,8 +103,10 @@ Skills read commands from this table. Keep it accurate.
 - `pnpm typecheck` runs `next typegen` first; route types come from it.
 - `pnpm test:e2e` starts `pnpm dev` (or reuses a running one). With
   `CI=1` it runs `pnpm start`, so build first.
-- `/feat-apply` runs unattended. It needs permission to run git, pnpm
-  and `gh` without prompts (auto mode or an allowlist).
+- `/feat-apply` runs unattended except for one visual gate, where it
+  stops for you to check screenshots; run it again to resume. It
+  needs permission to run git, pnpm and `gh` without prompts (auto
+  mode or an allowlist). It runs on Sonnet (skill frontmatter).
 - `.worktrees/` holds per-task git worktrees during apply. Blocked
   tasks keep theirs; remove with `git worktree remove .worktrees/<T>`.
 - Env vars: see `.env.example`. Copy to `.env.local`.

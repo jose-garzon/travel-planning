@@ -1,0 +1,8 @@
+{
+  "title": "Tooltip",
+  "trigger": "Add to budget",
+  "content": "Adds this activity to the trip budget",
+  "states": {
+    "default": "Default"
+  }
+}

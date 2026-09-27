@@ -1,0 +1,12 @@
+{
+  "title": "Diálogo",
+  "trigger": "Renombrar viaje",
+  "description": "Tus amigos ven el nuevo nombre al instante.",
+  "fieldLabel": "Nombre del viaje",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "closeLabel": "Cerrar",
+  "states": {
+    "default": "Normal"
+  }
+}

@@ -61,9 +61,9 @@ Errors:
 
 ## UI components
 
-| Component        | Location          | Props / state            |
+| Component        | Location          | Purpose                  |
 | ---------------- | ----------------- | ------------------------ |
-| <Name>           | <path>            | <summary>                |
+| <Name>           | <path>            | <one line, no props>     |
 
 
 ## Naming
@@ -100,3 +100,11 @@ Why: <reason>
 ## Risks
 
 - <risk>: <mitigation>
+
+
+## Left to implementation
+
+<Details the owning task decides: values, styling, props, copy.
+One line each, with the task ID.>
+
+- <what>: <task>

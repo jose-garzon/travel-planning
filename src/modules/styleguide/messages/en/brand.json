@@ -1,0 +1,31 @@
+{
+  "title": "Brand",
+  "name": "Parche",
+  "meaning": "In Colombian Spanish, your group of friends and the plan you make together (\"¿cuál es el parche?\"). In English, a patch, like the travel patches sewn on a backpack.",
+  "wordmark": "Wordmark direction",
+  "wordmarkDirection": "Lowercase \"parche\" in Fredoka, accent color, optionally inside a stitched patch-shaped badge. Final SVG artwork out of scope.",
+  "voice": {
+    "friend": {
+      "title": "Speak like a friend",
+      "do": "Hey, let's save this trip idea!",
+      "dont": "Please confirm your trip preferences."
+    },
+    "direct": {
+      "title": "Keep it short",
+      "do": "Add activity",
+      "dont": "Would you like to add an activity to the itinerary?"
+    },
+    "sentenceCase": {
+      "title": "Use sentence case",
+      "do": "Create a new trip",
+      "dont": "CREATE A NEW TRIP"
+    },
+    "actionVerbs": {
+      "title": "Use action verbs",
+      "do": "Save trip",
+      "dont": "OK"
+    }
+  },
+  "doLabel": "Do",
+  "dontLabel": "Don't"
+}

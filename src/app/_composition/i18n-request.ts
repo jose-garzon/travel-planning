@@ -1,12 +1,14 @@
 import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
+import { loadStyleguideMessages } from "@/modules/styleguide";
+import type { Locale } from "@/shared/i18n/routing";
 import { routing } from "@/shared/i18n/routing";
 
 // Each module owns its messages under its own namespace. Register them here;
 // modules cannot import each other, so the app layer merges them.
-async function loadMessages(locale: string) {
+async function loadMessages(locale: Locale) {
   const shared = (await import(`@/shared/i18n/messages/${locale}.json`)).default;
-  return { ...shared };
+  return { ...shared, styleguide: await loadStyleguideMessages(locale) };
 }
 
 export default getRequestConfig(async ({ requestLocale }) => {

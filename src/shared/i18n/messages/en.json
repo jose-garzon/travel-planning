@@ -1,6 +1,12 @@
 {
   "common": {
-    "appName": "Travel Planning",
+    "appName": "Parche",
     "tagline": "Plan and budget trips together."
+  },
+  "header": {
+    "themeToggle": {
+      "toDark": "Switch to dark theme",
+      "toLight": "Switch to light theme"
+    }
   }
 }

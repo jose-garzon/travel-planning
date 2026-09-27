@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/shared/i18n/routing";
+import { SiteHeader } from "@/shared/ui/components/site-header";
+import { cx } from "@/shared/ui/cx";
+import { fredoka, plusJakartaSans } from "@/shared/ui/fonts";
+import { parseTheme, THEME_COOKIE } from "@/shared/ui/theme";
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -21,11 +26,20 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
     notFound();
   }
   setRequestLocale(locale);
+  const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   return (
-    <html lang={locale}>
+    <html
+      lang={locale}
+      dir="ltr"
+      data-theme={theme}
+      className={cx(fredoka.variable, plusJakartaSans.variable)}
+    >
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <SiteHeader />
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

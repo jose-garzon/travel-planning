@@ -78,6 +78,18 @@ module.exports = {
       to: { path: "^src/modules/[^/]+/service/", dependencyTypesNot: ["type-only"] },
     },
 
+    // ── src/app is a router ─────────────────────────────────────────
+    {
+      name: "app-is-a-router",
+      comment: "src/app holds route files and _composition only. UI lives in modules or shared/ui.",
+      severity: "error",
+      from: { path: "^src/app/" },
+      to: {
+        path: "^src/app/.+\\.tsx$",
+        pathNot: "/(page|layout|loading|error|global-error|not-found|template|default)\\.tsx$",
+      },
+    },
+
     // ── Hygiene ──────────────────────────────────────────────────────
     {
       name: "no-circular",

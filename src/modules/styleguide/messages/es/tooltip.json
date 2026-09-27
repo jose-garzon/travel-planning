@@ -1,0 +1,8 @@
+{
+  "title": "Consejo",
+  "trigger": "Agregar al presupuesto",
+  "content": "Agrega esta actividad al presupuesto del viaje",
+  "states": {
+    "default": "Normal"
+  }
+}

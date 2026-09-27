@@ -1,6 +1,12 @@
 {
   "common": {
-    "appName": "Travel Planning",
+    "appName": "Parche",
     "tagline": "Planea y presupuesta viajes en grupo."
+  },
+  "header": {
+    "themeToggle": {
+      "toDark": "Cambiar a tema oscuro",
+      "toLight": "Cambiar a tema claro"
+    }
   }
 }
