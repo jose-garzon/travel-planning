@@ -20,7 +20,7 @@ export function StyleguideScreen() {
   }));
 
   return (
-    <main className="px-6">
+    <main className="px-6 pb-16">
       <h1 className="mt-8 mb-8 text-3xl text-accent">
         {translate({ translateId: "styleguide.page.title" })}
       </h1>
