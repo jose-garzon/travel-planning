@@ -37,7 +37,7 @@ function ColorSwatch({
     <Stack direction="horizontal" gap="3" align="center" wrap>
       <div className={`h-12 w-12 rounded-md border border-border ${swatchClassName}`} />
       <Stack gap="1">
-        <span className="font-mono text-sm">{tokenName}</span>
+        <span className="wrap-anywhere font-mono text-sm">{tokenName}</span>
       </Stack>
     </Stack>
   );
