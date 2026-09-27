@@ -27,49 +27,53 @@ export function CardDemo() {
       <h3 id="card-demo-heading" className="text-accent">
         {translate({ translateId: "styleguide.card.title" })}
       </h3>
-      <Stack direction="horizontal" wrap gap="4">
-        <StateSample label={{ translateId: "styleguide.card.states.default" }}>
+      <Stack gap="4">
+        <Stack direction="horizontal" wrap gap="4">
+          <StateSample label={{ translateId: "styleguide.card.states.default" }}>
+            <div className="max-w-card">
+              <CardButton
+                heading={{ translateId: "styleguide.card.heading" }}
+                onClick={handleClick}
+              />
+            </div>
+          </StateSample>
+          <StateSample label={{ translateId: "styleguide.card.states.hover" }} preview="hover">
+            <div className="max-w-card">
+              <CardButton
+                heading={{ translateId: "styleguide.card.heading" }}
+                onClick={handleClick}
+              />
+            </div>
+          </StateSample>
+          <StateSample label={{ translateId: "styleguide.card.states.focus" }} preview="focus">
+            <div className="max-w-card">
+              <CardButton
+                heading={{ translateId: "styleguide.card.heading" }}
+                onClick={handleClick}
+              />
+            </div>
+          </StateSample>
+          <StateSample label={{ translateId: "styleguide.card.states.active" }} preview="active">
+            <div className="max-w-card">
+              <CardButton
+                heading={{ translateId: "styleguide.card.heading" }}
+                onClick={handleClick}
+              />
+            </div>
+          </StateSample>
+        </Stack>
+        <Stack gap="4">
+          <div className="max-w-card">
+            <Card heading={{ translateId: "styleguide.card.heading" }} />
+          </div>
           <div className="max-w-card">
             <CardButton
-              heading={{ translateId: "styleguide.card.heading" }}
+              heading={{ translateId: "styleguide.card.shortHeading" }}
               onClick={handleClick}
             />
           </div>
-        </StateSample>
-        <StateSample label={{ translateId: "styleguide.card.states.hover" }} preview="hover">
-          <div className="max-w-card">
-            <CardButton
-              heading={{ translateId: "styleguide.card.heading" }}
-              onClick={handleClick}
-            />
-          </div>
-        </StateSample>
-        <StateSample label={{ translateId: "styleguide.card.states.focus" }} preview="focus">
-          <div className="max-w-card">
-            <CardButton
-              heading={{ translateId: "styleguide.card.heading" }}
-              onClick={handleClick}
-            />
-          </div>
-        </StateSample>
-        <StateSample label={{ translateId: "styleguide.card.states.active" }} preview="active">
-          <div className="max-w-card">
-            <CardButton
-              heading={{ translateId: "styleguide.card.heading" }}
-              onClick={handleClick}
-            />
-          </div>
-        </StateSample>
+        </Stack>
       </Stack>
-      <div className="max-w-card">
-        <Card heading={{ translateId: "styleguide.card.heading" }} />
-      </div>
-      <div className="max-w-card">
-        <CardButton
-          heading={{ translateId: "styleguide.card.shortHeading" }}
-          onClick={handleClick}
-        />
-      </div>
     </section>
   );
 }
