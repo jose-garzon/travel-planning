@@ -90,9 +90,12 @@
   --motion-easing-out: var(--ease-out);
 
   --animate-fade-in: fade-in var(--motion-duration-fast) var(--ease-out);
+  --animate-fade-out: fade-out var(--motion-duration-fast) var(--ease-out);
   --animate-shake: shake var(--motion-duration-normal) var(--ease-out) 3;
   --animate-sheet-up: sheet-up var(--motion-duration-normal) var(--ease-out);
+  --animate-sheet-down: sheet-down var(--motion-duration-normal) var(--ease-out);
   --animate-dialog-in: dialog-in var(--motion-duration-normal) var(--ease-out);
+  --animate-dialog-out: dialog-out var(--motion-duration-normal) var(--ease-out);
   --animate-spin: spin 1s linear infinite;
 
   --container-prose: 70ch;
@@ -264,6 +267,15 @@
   }
 }
 
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes shake {
   0% {
     transform: translateX(0);
@@ -296,6 +308,26 @@
   to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes sheet-down {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes dialog-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.96);
+    opacity: 0;
   }
 }
 

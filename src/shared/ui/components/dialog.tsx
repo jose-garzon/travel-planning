@@ -24,7 +24,8 @@ export type DialogProps = {
   onOpenChange?: (open: boolean) => void;
 };
 
-const OVERLAY_CLASSES = "fixed inset-0 bg-overlay animate-fade-in";
+const OVERLAY_CLASSES =
+  "fixed inset-0 bg-overlay animate-fade-in data-[state=closed]:animate-fade-out";
 
 // < md: bottom sheet (`inset-x-0 bottom-0`, rounded top, `max-h-sheet`,
 // `motion-safe:animate-sheet-up`, fade always). >= md: centered
@@ -32,12 +33,16 @@ const OVERLAY_CLASSES = "fixed inset-0 bg-overlay animate-fade-in";
 // `translate(-50%,-50%)`, which `dialog-in`'s own `transform: scale()`
 // keyframe would otherwise fight over the `transform` property during
 // the animation), `motion-safe:animate-dialog-in` (plan
-// "components/dialog.tsx").
+// "components/dialog.tsx"). Exit mirrors entry: Radix's Presence keeps
+// the content mounted until its own `data-[state=closed]` animation
+// finishes, keyed off the same breakpoint split.
 const CONTENT_CLASSES =
   "fixed inset-x-0 bottom-0 flex max-h-sheet flex-col gap-4 overflow-y-auto rounded-t-lg " +
   "bg-surface-2 p-6 shadow-md animate-fade-in motion-safe:animate-sheet-up dark:border " +
-  "dark:border-border md:inset-0 md:m-auto md:h-fit md:w-full md:max-h-none md:max-w-dialog " +
-  "md:rounded-lg md:motion-safe:animate-dialog-in";
+  "dark:border-border data-[state=closed]:animate-fade-out " +
+  "data-[state=closed]:motion-safe:animate-sheet-down md:inset-0 md:m-auto md:h-fit md:w-full " +
+  "md:max-h-none md:max-w-dialog md:rounded-lg md:motion-safe:animate-dialog-in " +
+  "md:data-[state=closed]:motion-safe:animate-dialog-out";
 
 /** `Translatable` (content XOR key) to `TextContent` (children XOR key), for spreading into `Text`/`Button`. */
 function toTextContent(text: Translatable): TextContent {

@@ -15,7 +15,8 @@ import { useTranslatable } from "@/shared/ui/translatable";
 export const TOOLTIP_DELAY_MS = 300;
 
 const CONTENT_CLASSES =
-  "bg-text text-bg text-sm rounded-sm px-2 py-1 shadow-md animate-fade-in max-w-prose";
+  "bg-text text-bg text-sm rounded-sm px-2 py-1 shadow-md animate-fade-in " +
+  "data-[state=closed]:animate-fade-out max-w-prose";
 
 type TooltipProps = {
   /** Text only, no elements. */
@@ -98,7 +99,18 @@ export function Tooltip({ content, children, open: openProp, onOpenChange }: Too
           {children}
         </RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content data-ui="tooltip" className={CONTENT_CLASSES} sideOffset={8}>
+          {/* Radix's Presence keeps this mounted for the closed-state fade-out
+              (see CONTENT_CLASSES), so a just-closed tooltip can briefly
+              coexist with the next one a fast Tab press opens instantly.
+              `aria-hidden` while closed drops it from the accessibility tree
+              immediately, before the animation finishes, so it never
+              collides with that next tooltip. */}
+          <RadixTooltip.Content
+            data-ui="tooltip"
+            className={CONTENT_CLASSES}
+            sideOffset={8}
+            aria-hidden={open ? undefined : true}
+          >
             {translate(content)}
             <RadixTooltip.Arrow className="fill-text" />
           </RadixTooltip.Content>
