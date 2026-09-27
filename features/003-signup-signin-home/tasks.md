@@ -14,7 +14,7 @@ T00 → T01, T02, T03
 
 ## T00. Infra: Better Auth, DB schema, and the page skeleton
 
-Status: done
+Status: todo
 Depends on: -
 Model: sonnet
 Scenarios: @T00
@@ -86,12 +86,12 @@ Steps:
 9. Register both modules' messages in `i18n-request.ts`.
 
 Done when:
-- [x] Scenario tagged @T00 passes: signed-out visitor on `/` sees the
+- [ ] Scenario tagged @T00 passes: signed-out visitor on `/` sees the
       landing page (header, hero, email field, submit button).
-- [x] `pnpm typecheck` and `pnpm lint` pass (new modules satisfy
+- [ ] `pnpm typecheck` and `pnpm lint` pass (new modules satisfy
       dependency-cruiser boundaries).
-- [x] `pnpm db:generate && pnpm db:migrate` produces a clean migration.
-- [x] Integration test asserts `getCurrentUser` issues exactly 1 query
+- [ ] `pnpm db:generate && pnpm db:migrate` produces a clean migration.
+- [ ] Integration test asserts `getCurrentUser` issues exactly 1 query
       (performance budget, plan.md).
 
 Notes:
@@ -103,7 +103,7 @@ Notes:
 
 ## T01. Request a magic link: happy path, invalid email, send failure, cooldown
 
-Status: done
+Status: todo
 Depends on: T00
 Model: sonnet
 Scenarios: @T01
@@ -149,17 +149,17 @@ Steps:
 6. Add the `aria-live="polite"` region announcing "check your email".
 
 Done when:
-- [x] Scenarios tagged @T01 pass.
-- [x] Unit tests: cooldown rule at the boundary (2 vs 3 vs 4 recent).
-- [x] Reloading the "check your email" screen returns to the landing
+- [ ] Scenarios tagged @T01 pass.
+- [ ] Unit tests: cooldown rule at the boundary (2 vs 3 vs 4 recent).
+- [ ] Reloading the "check your email" screen returns to the landing
       form (no pending state persisted) — EC-3.
-- [x] Integration test asserts the cooldown check issues exactly 1
+- [ ] Integration test asserts the cooldown check issues exactly 1
       query (performance budget, plan.md).
 
 
 ## T02. Verify a magic link: create/reuse account, expiry, name capture
 
-Status: done
+Status: todo
 Depends on: T00
 Model: sonnet
 Scenarios: @T02
@@ -205,20 +205,20 @@ Steps:
    Accessibility, AC-13).
 
 Done when:
-- [x] Scenarios tagged @T02 pass.
-- [x] Unit tests: display-name rule at 0, 1, 50, 51 chars; `setDisplayName`
+- [ ] Scenarios tagged @T02 pass.
+- [ ] Unit tests: display-name rule at 0, 1, 50, 51 chars; `setDisplayName`
       rejects invalid input without writing.
-- [x] A link opened on a different browser context than the one that
+- [ ] A link opened on a different browser context than the one that
       requested it still verifies (EC-2).
-- [x] After completing sign-in, focus is on the home page's `<h1>`,
+- [ ] After completing sign-in, focus is on the home page's `<h1>`,
       not `body` (AC-13; asserted in the AC-5 scenario).
-- [x] "Signed in, loading your trips" is announced via a live region
+- [ ] "Signed in, loading your trips" is announced via a live region
       somewhere between verify completing and home rendering.
 
 
 ## T03. Home page: next trip, trip list, empty state
 
-Status: done
+Status: todo
 Depends on: T00
 Model: sonnet
 Scenarios: @T03
@@ -254,10 +254,10 @@ Steps:
    the stub call shape was wrong.
 
 Done when:
-- [x] Scenarios tagged @T03 pass.
-- [x] Unit tests cover: zero trips, all-past trips, one upcoming, two
+- [ ] Scenarios tagged @T03 pass.
+- [ ] Unit tests cover: zero trips, all-past trips, one upcoming, two
       upcoming (ordering).
-- [x] Dates render via `Intl`, correct in both `en` and `es`.
+- [ ] Dates render via `Intl`, correct in both `en` and `es`.
 
 
 ## Coverage
