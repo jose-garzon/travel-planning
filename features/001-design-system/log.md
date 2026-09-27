@@ -446,3 +446,32 @@ Only T14 (hardening) is left, and it depends on T11 which is still
 `blocked` (plan gap, see above) — so T14 can't start. Feature is
 stuck here until T11's plan issue is resolved by a human, or the
 scope is cut. Worktree .worktrees/T11 kept for that.
+
+## 2026-09-26 user reviewed the app, 8 change requests
+User ran the app and listed 8 issues. Two of them (#1 nav missing
+links, #8 nav has no active/scroll-spy state) are T11's own scope —
+and by now T05-T13 are all merged, so the plan-gap block ("page too
+short for scroll scenarios") no longer applies. Unblocked T11
+(discarded its old worktree — branched way back before T04, badly
+stale) and resumed it properly (see below), folding request #1 into
+its task file as a new step. The other 6 requests (button variants/
+flex/disabled/cursor/spacing, card layout bug, icons flex, motion
+Play button, main bottom padding, hover/focus + tooltip/dialog exit
+animations) went to a second implementer working directly on the
+feature branch (not a task, no new tests — testing.md keeps visual/
+animation detail out of the suite; verified against the existing
+regression instead).
+
+## 2026-09-26 T11 round 1 (resumed)
+implementer (sonnet): test OK (64215c3), a second test(...) commit
+(89fbc55, jsdom module resolution + act() wrapping — same next-intl
+Link issue T09 hit, worked around the same way) green (8a3aa84), then
+a third test(...) commit (9512139) loosening a flaky sub-pixel bound
+in the "in view" check after 3 repeat runs confirmed it was flaky, not
+wrong. 14 new unit tests. Verified myself: e2e @T11 3/3 + @T02 4/4
+desktop, unit 14/14, typecheck/lint clean.
+merged: 444c7d4 (no conflicts; done alongside the other implementer's
+still-uncommitted work on unrelated files in the same checkout —
+squash-merge only touched T11's own files, confirmed via `git status`
+before and after, then committed just the staged T11 changes).
+`pnpm test:unit` 210/214, same 4 pre-existing failures.

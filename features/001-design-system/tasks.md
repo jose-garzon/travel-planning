@@ -645,7 +645,7 @@ Done when:
 
 ## T11. Section navigation with scroll spy
 
-Status: doing
+Status: done
 Depends on: T02
 Model: sonnet
 Scenarios: @T11
@@ -677,9 +677,9 @@ Steps:
    top-level links is active; do not touch that contract).
 
 Done when:
-- [ ] Scenarios tagged @T11 pass
-- [ ] `pnpm test:e2e --grep @T02` still passes
-- [ ] Primitives sub-demos are reachable from the nav (nested links)
+- [x] Scenarios tagged @T11 pass
+- [x] `pnpm test:e2e --grep @T02` still passes
+- [x] Primitives sub-demos are reachable from the nav (nested links)
 
 
 ## T12. Token sections: color, type, spacing, radius/shadow, motion, icons
