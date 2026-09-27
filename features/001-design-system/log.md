@@ -475,3 +475,48 @@ still-uncommitted work on unrelated files in the same checkout —
 squash-merge only touched T11's own files, confirmed via `git status`
 before and after, then committed just the staged T11 changes).
 `pnpm test:unit` 210/214, same 4 pre-existing failures.
+
+## 2026-09-26 fix batch: the other 6 change requests
+implementer (sonnet), direct on feat/001-design-system, 6 commits
+(5c6333b, e6cb1aa, 77bcf73, 8358561, a703e50, f708ca3):
+- Button demo: horizontal wrapping Stack (matches Card/Dialog), new
+  `outline` variant, `cursor-pointer` on the base classes (disabled
+  grayout/cursor were already correct).
+- Card demo: root cause was zero gap between the trailing static
+  Card/short CardButton and the rest (bare block siblings touching,
+  not an actual side-by-side layout bug) — wrapped in Stacks.
+- Icons: Decorative group now `direction="horizontal" wrap` like
+  Meaningful.
+- Motion: fixed a Tailwind-purge bug (class name built via string
+  interpolation, so `motion-safe:duration-*` never generated) and a
+  second bug found along the way — the animated overlay had no
+  background of its own, invisible against the identically-colored
+  parent square. Noted, not fixed (out of scope): `duration-fast` vs
+  `-normal` are `transition-duration` utilities, not
+  `animation-duration`, so both MotionSample instances still animate
+  at the same baked-in `--animate-fade-in` timing regardless of which
+  duration token is picked. Follow-up if it matters.
+- Main: `pb-16` added.
+- Tooltip/Dialog: added `fade-out`/`sheet-down`/`dialog-out`
+  keyframes + `data-[state=closed]:...` exit classes. Caught its own
+  regression from this: Radix kept a closing Tooltip mounted during
+  its fade-out, so tabbing to an adjacent trigger briefly showed two
+  `role="tooltip"` elements and broke T09's focus-tooltip scenario;
+  fixed with `aria-hidden` driven off the same `open` state, verified
+  via git-stash A/B that this didn't exist before the exit-animation
+  change.
+
+Verified myself: typecheck/lint clean, unit 37/37 on button/card/
+dialog, e2e @T01|@T02|@T04|@T06|@T07|@T08|@T09|@T10|@T11|@T12|@T13|
+@T16|@smoke desktop → 43 passed, 2 failed. Independently confirmed
+both failures pre-exist before this fix batch (checked out f354e87 in
+a throwaway worktree, reran @T08 @AC-13 there, same 1 failure): T08
+"Escape and blur" fails deterministically (a pre-existing race in
+tooltip.tsx's own Escape-close guard, unrelated to this session's
+work) and T08 "hover and stays" flakes only under parallel workers
+(passes with --workers=1). Neither is new. Not fixing — outside every
+task's file scope and outside this feature's remaining budget; noting
+for the PR.
+
+All 8 of the user's post-approval change requests are now addressed:
+#1 and #8 by T11 above, #2-#7 by this batch.
