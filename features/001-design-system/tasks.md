@@ -645,7 +645,7 @@ Done when:
 
 ## T11. Section navigation with scroll spy
 
-Status: blocked (plan: T11 scroll scenarios need page taller than 800px viewport; only content tasks T05-T13 create it, T11 depends on T02 only)
+Status: doing
 Depends on: T02
 Model: sonnet
 Scenarios: @T11
@@ -654,6 +654,7 @@ Covers: AC-17, AC-18
 Files:
 - src/modules/styleguide/ui/components/section-nav.tsx
 - tests/steps/section-nav.steps.ts
+- src/modules/styleguide/ui/sections/primitives-section.tsx
 
 Steps:
 1. Make `SectionNav` a client component with the behavior in plan
@@ -665,10 +666,20 @@ Steps:
    heading from the test), links wrap (link `offsetTop` values
    differ), no horizontal scroll in nav (`scrollWidth <=
    clientWidth`).
+4. User feedback (post-gate): the nav reads as having fewer items
+   than the visible page, because Primitives has 6 sub-demos
+   (Layout, Button, Input, Tooltip, Card, Dialog) each with their
+   own `h3`, none of them reachable from the nav. Add a nested list
+   of plain jump links under the "Primitives" `li` (one per demo
+   heading id), styled like the top-level links minus the active
+   state — do not fold these into the scroll-spy/active-link logic
+   in step 2/3 (the @T11 scenarios assert exactly one of the 8
+   top-level links is active; do not touch that contract).
 
 Done when:
 - [ ] Scenarios tagged @T11 pass
 - [ ] `pnpm test:e2e --grep @T02` still passes
+- [ ] Primitives sub-demos are reachable from the nav (nested links)
 
 
 ## T12. Token sections: color, type, spacing, radius/shadow, motion, icons
