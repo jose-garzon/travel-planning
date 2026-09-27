@@ -320,7 +320,7 @@ Feature: Design system
     Then I do not see a tooltip
     When I focus the "Add to budget" button in the "Tooltip" demo by keyboard
     And I press the "Tab" key
-    Then I do not see a tooltip
+    Then I do not see the tooltip "<tip>"
 
     Examples:
       | tip                                   |

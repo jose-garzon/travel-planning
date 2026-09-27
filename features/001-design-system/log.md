@@ -632,3 +632,52 @@ reference page that mounts every primitive at once, unlike any real
 screen a visitor lands on; 170 KB was never a realistic target for
 it. User approved (chose this over leaving the check failing for a
 follow-up task).
+
+## 2026-09-27 CI: root-caused the "Escape and blur" tooltip failure
+
+User asked to chase down the two remaining CI failures
+(`@T08 @AC-13` "Tooltip shows on hover and stays" and "...Escape and
+blur") instead of leaving them as known/pre-existing.
+
+"Escape and blur" was not a `tooltip.tsx` race at all — reproduced
+with a raw Playwright script isolating each step and `tooltip.tsx`
+closes correctly and immediately every time. The actual scenario's
+last step (`When I focus "Add to budget" ... And I press "Tab" ...
+Then I do not see a tooltip`) fails because Tab-order-wise, the very
+next focusable control after the Tooltip demo is the Card demo's
+first (truncated) `CardButton`, which correctly opens *its own*
+tooltip on focus (AC-12, working as designed since T09 added Card
+right after Tooltip in the Primitives section). The blanket "I do not
+see a tooltip" assertion predates Card and never accounted for this.
+Confirmed via a bounding-box screenshot: the "Card / Focus" figure
+had the focus ring, showing "Museo del Oro..." — not the Tooltip
+demo's own tip text.
+
+Fixed the test, not the component: added a
+`Then I do not see the tooltip "<tip>"` step (checks that specific
+tooltip's role+name is gone) and used it for that one assertion,
+leaving the blanket step's other uses (which have no such collision)
+alone.
+
+"Hover and stays" turned out to be a red herring: `log.md`'s earlier
+"flakes under parallel workers" note was true historically, but this
+PR's actual GitHub Actions CI runs never failed on it (checked: 0
+matches for it in the original failing-job log). It only flaked
+locally, in `pnpm dev` (Turbopack, HMR) under this session's repeated
+back-to-back full-suite runs on a loaded machine — confirmed by
+running the exact same suite via `CI=1` (real `pnpm start` production
+build, same as GitHub Actions): 196/196 passed in 40s, twice. Not
+touching the app for a failure that only exists in local dev-mode
+contention. Did add a defensive, harmless hardening to
+`tooltip.steps.ts` regardless: bumped the tooltip-appear assertion's
+timeout from the 5s default to 15s (`TOOLTIP_APPEAR_TIMEOUT_MS`),
+since a hover-triggered open stacks `TOOLTIP_DELAY_MS` (300ms) on top
+of Playwright's own margins — cheap insurance against a slow shared
+CI runner, not a fix for anything actually broken.
+
+Full suite after both changes: 196/196 twice under `CI=1 pnpm start`
+(the real CI path). Still occasionally flakes on "hover and stays"
+under plain `pnpm dev` on this machine specifically — consistent with
+it being dev-server/HMR overhead under load, not present in the
+production-build path CI actually runs. No more known CI-relevant
+failures.
