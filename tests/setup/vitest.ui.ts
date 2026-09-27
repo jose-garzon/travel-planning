@@ -9,3 +9,15 @@ import "@testing-library/jest-dom/vitest";
 afterEach(() => {
   cleanup();
 });
+
+// jsdom doesn't implement ResizeObserver, but Radix UI primitives
+// (e.g. Tooltip, via @radix-ui/react-use-size) call it on mount. No
+// test in this codebase asserts on resize callback behavior, so a
+// no-op stub is enough to let those components mount in jsdom.
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.ResizeObserver = ResizeObserverStub;
