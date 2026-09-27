@@ -909,7 +909,8 @@ i18n key namespaces: `header.*`, `styleguide.*` (and
 | CLS `/en`, `/en/styleguide`   | ≤ 0.1    | Lighthouse CI              |
 | CLS when webfonts arrive late | ≤ 0.01   | `@perf` scenario (T01)     |
 | TBT (INP proxy)               | ≤ 200 ms | Lighthouse CI              |
-| JS per route (gzip)           | ≤ 170 KB | Lighthouse CI              |
+| JS per route (gzip), `/en`    | ≤ 170 KB | Lighthouse CI              |
+| JS, `/en/styleguide` (gzip)   | ≤ 200 KB | Lighthouse CI              |
 
 - Theme toggle: no React re-render; DOM attribute + cookie only
   (code review, T05).
@@ -918,6 +919,14 @@ i18n key namespaces: `header.*`, `styleguide.*` (and
 - Lucide: named imports only (`import { Sun } from "lucide-react"`).
 - Radix: import from `radix-ui` (`import { Dialog } from
   "radix-ui"`).
+- `/en/styleguide` gets its own, higher JS budget
+  (`lighthouserc.json`'s `assertMatrix`): it is a kitchen-sink
+  reference page that mounts every primitive (Button, Input, Card,
+  Dialog, Tooltip) at once, unlike any real screen a visitor lands
+  on. Deferring those primitives' runtimes below the fold was tried
+  and reverted — it made Card/Dialog/Tooltip's own controls
+  unreachable by keyboard until scrolled into view, regressing
+  AC-14/AC-19 for real users, not just this page's demos.
 
 
 ## Accessibility notes

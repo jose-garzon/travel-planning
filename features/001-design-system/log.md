@@ -598,3 +598,37 @@ Other sections (`spacing-section.tsx`, `radius-shadow-section.tsx`,
 `type-section.tsx`) have the same raw-span pattern but shorter token
 names that don't currently overflow — not touched, outside this
 session's scope.
+
+## 2026-09-27 CI: performance budget failure on /en/styleguide
+
+Pushed, opened PR #2. CI's "Performance budgets" job failed:
+`/en/styleguide` resource-summary:script:size 193301 bytes vs the
+174080-byte (170 KB) budget plan.md set for both routes — ~19 KB
+over. Not caused by this session's two commits above (CSS only); a
+pre-existing gap nobody could catch locally (WSL's lighthouserc run
+uses a Windows-side Chrome that can't reach the WSL-side dev server —
+`ECONNREFUSED` on the DevTools port — so `pnpm lhci` only ever ran in
+real CI for this feature).
+
+Tried code-splitting: lazy-loaded `TooltipDemo`/`DialogDemo`/
+`CardDemo`'s bodies (and Card's own Radix Tooltip import, used for
+its truncation tooltip) behind an `IntersectionObserver`, so
+Lighthouse's non-scrolling automated run wouldn't fetch them. Bundle
+math worked (page-specific JS delta dropped from ~34.6 KB to ~8.5 KB
+by curl/gzip approximation — real Lighthouse numbers weren't
+obtainable locally per the WSL note above). Reverted it anyway: it
+renders the demo body as `null` until scrolled near, so Card/Dialog/
+Tooltip's own interactive controls don't exist in the DOM until then
+— unreachable by keyboard Tab order, not just by Playwright's
+non-scrolling locators. That's a real AC-14/AC-19 regression to
+already-shipped, tested primitives, not a test artifact; not worth
+19 KB. Full revert confirmed clean (`git status` back to the last
+commit's tree) before trying anything else.
+
+Landed on: give `/en/styleguide` its own 200 KB budget via
+`lighthouserc.json`'s `assertMatrix` (`/en` keeps 170 KB), documented
+in plan.md's "Performance budgets" table — it is a kitchen-sink
+reference page that mounts every primitive at once, unlike any real
+screen a visitor lands on; 170 KB was never a realistic target for
+it. User approved (chose this over leaving the check failing for a
+follow-up task).
