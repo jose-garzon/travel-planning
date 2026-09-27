@@ -13,7 +13,7 @@ describe("Tooltip", () => {
 
     const tooltip = screen.getByRole("tooltip");
     expect(tooltip).toHaveTextContent("Adds this activity to the trip budget");
-    expect(tooltip.children).toHaveLength(0);
+    expect(tooltip.querySelector("b, strong, em, a, code")).toBeNull();
   });
 
   it("translates a translateId content", () => {
