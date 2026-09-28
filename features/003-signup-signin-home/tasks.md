@@ -218,7 +218,7 @@ Done when:
 
 ## T03. Home page: next trip, trip list, empty state
 
-Status: doing
+Status: done
 Depends on: T00
 Model: sonnet
 Scenarios: @T03
@@ -254,10 +254,10 @@ Steps:
    the stub call shape was wrong.
 
 Done when:
-- [ ] Scenarios tagged @T03 pass.
-- [ ] Unit tests cover: zero trips, all-past trips, one upcoming, two
+- [x] Scenarios tagged @T03 pass.
+- [x] Unit tests cover: zero trips, all-past trips, one upcoming, two
       upcoming (ordering).
-- [ ] Dates render via `Intl`, correct in both `en` and `es`.
+- [x] Dates render via `Intl`, correct in both `en` and `es`.
 
 
 ## Coverage

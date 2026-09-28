@@ -71,3 +71,25 @@ user still not satisfied with landing-screen.tsx layout:
 Per /feat-apply's 2-fix-round cap, not spawning a 3rd round now.
 Carrying this to the PR description as open feedback for follow-up.
 Continuing to Step 1 (T01/T02/T03, now unblocked by T00).
+
+## 2026-09-27 T01/T02/T03 round 1 (parallel batch)
+started T01, T02, T03 together (no Files overlap). Worktrees
+.worktrees/T01-T03, ports 3101-3103.
+
+## 2026-09-28 T03 round 1
+implementer (sonnet): red OK (010fb5e; two follow-up test(...) fix
+commits with reasons: f805608 invalid date comparison, 3245871
+locale-scoped step). green OK (0c48fba).
+verified myself: typecheck/lint clean, @T03 e2e 6/6, unit 224/224, no
+test tampering (impl commit touched no test files), scope matches
+Files list + anticipated step-def/support files.
+notable: past trips dropped entirely (not listed in otherTrips, so
+past-only -> full empty state per EC-4); Colombia trip fixed to a
+2027 date to match the AC-14 scenario's exact expected string (D-4
+never pinned dates); EmptyTripsState is a client component
+(buttonClasses is client-only, same as ThemeToggle); e2e session
+seeding via a new tests/steps/support/session.ts (direct DB
+insert + cookie, since no UI sign-in flow exists yet for T01/T02 to
+have built). No plan gap.
+merged: 74c5127. post-merge unit tests: 224/224.
+worktree/branch T03 removed.

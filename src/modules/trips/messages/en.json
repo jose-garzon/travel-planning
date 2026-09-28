@@ -1,6 +1,8 @@
 {
   "home": {
-    "greeting": "Hi, {name}"
+    "greeting": "Hi, {name}",
+    "nextTripHeading": "Next trip",
+    "otherTripsHeading": "Other trips"
   },
   "emptyState": {
     "title": "No trips yet",
