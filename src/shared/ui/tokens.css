@@ -97,6 +97,7 @@
   --animate-dialog-in: dialog-in var(--motion-duration-normal) var(--ease-out);
   --animate-dialog-out: dialog-out var(--motion-duration-normal) var(--ease-out);
   --animate-spin: spin 1s linear infinite;
+  --animate-logo-in: logo-in var(--motion-duration-normal) var(--ease-out);
 
   --container-prose: 70ch;
   --container-nav: 14rem;
@@ -337,5 +338,16 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes logo-in {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }
