@@ -47,9 +47,9 @@ Then("I see the home page directly, with no landing page", async ({ page }) => {
   await expect(page.getByRole("textbox")).toHaveCount(0);
 });
 
-Then("I see {string}", async ({ page }, text: string) => {
-  await expect(page.getByText(text)).toBeVisible();
-});
+// "I see {string}" (generic visible-text check) is registered once,
+// in auth.steps.ts, and reused across @T01/@T02/@T03 (testing.md
+// "Same meaning, same words") — do not redefine it here.
 
 Then("I see {string} as my next trip", async ({ page }, name: string) => {
   const nextTrip = page.getByRole("region", { name: "Next trip" });
