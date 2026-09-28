@@ -59,3 +59,15 @@ in the component.
 ready for re-review. This was the 2nd/last fix round per skill's cap
 — any further layout feedback now gets logged for the PR rather than
 another round.
+
+## 2026-09-27 visual gate: further feedback (carried to PR, no round 3)
+user still not satisfied with landing-screen.tsx layout:
+- `<main>` height should be exactly `100vh` minus the header's height
+  (70px), not content-sized/flex-centered as round 2 left it.
+- Desktop: the content div should have max-width 1/3 of the *available*
+  space and be centered within its 2/3-wide column (round 2 used
+  `lg:max-w-md`, a fixed rem value, not a proportional 1/3 of the
+  column).
+Per /feat-apply's 2-fix-round cap, not spawning a 3rd round now.
+Carrying this to the PR description as open feedback for follow-up.
+Continuing to Step 1 (T01/T02/T03, now unblocked by T00).
