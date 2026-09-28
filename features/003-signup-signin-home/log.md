@@ -25,3 +25,15 @@ post-merge: main checkout needed `pnpm install` + `pnpm db:migrate`
 ## 2026-09-27 visual gate: waiting
 ready for review: T00 (landing page at `/`, static shells for
 name-capture and home — not yet interactive, that's T01/T02/T03).
+
+## 2026-09-27 visual gate: change requests (round 1)
+user: mobile-only layout, doesn't look good on desktop; center
+content; add a big animated logo above the title; add a catchy
+product description inviting sign-in; make desktop look good.
+spawning implementer (sonnet) on feat/3-signup-signin-home directly.
+fixed: 56bdb7d. verified: typecheck/lint clean, @T00 e2e 1/1, unit
+215/215.
+
+## 2026-09-27 visual gate: waiting
+ready for re-review: landing page centered, desktop layout, big
+animated wordmark above title, catchy tagline added.
