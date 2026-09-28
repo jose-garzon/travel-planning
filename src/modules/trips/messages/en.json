@@ -1,0 +1,13 @@
+{
+  "home": {
+    "greeting": "Hi, {name}"
+  },
+  "emptyState": {
+    "title": "No trips yet",
+    "description": "Create your first trip to start planning.",
+    "cta": "Create your first trip"
+  },
+  "placeholder": {
+    "title": "Trip creation is coming soon"
+  }
+}

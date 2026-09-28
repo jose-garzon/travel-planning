@@ -14,7 +14,7 @@ T00 → T01, T02, T03
 
 ## T00. Infra: Better Auth, DB schema, and the page skeleton
 
-Status: todo
+Status: done
 Depends on: -
 Model: sonnet
 Scenarios: @T00
@@ -86,12 +86,12 @@ Steps:
 9. Register both modules' messages in `i18n-request.ts`.
 
 Done when:
-- [ ] Scenario tagged @T00 passes: signed-out visitor on `/` sees the
+- [x] Scenario tagged @T00 passes: signed-out visitor on `/` sees the
       landing page (header, hero, email field, submit button).
-- [ ] `pnpm typecheck` and `pnpm lint` pass (new modules satisfy
+- [x] `pnpm typecheck` and `pnpm lint` pass (new modules satisfy
       dependency-cruiser boundaries).
-- [ ] `pnpm db:generate && pnpm db:migrate` produces a clean migration.
-- [ ] Integration test asserts `getCurrentUser` issues exactly 1 query
+- [x] `pnpm db:generate && pnpm db:migrate` produces a clean migration.
+- [x] Integration test asserts `getCurrentUser` issues exactly 1 query
       (performance budget, plan.md).
 
 Notes:

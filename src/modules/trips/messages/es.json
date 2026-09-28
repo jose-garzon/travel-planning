@@ -1,0 +1,13 @@
+{
+  "home": {
+    "greeting": "Hola, {name}"
+  },
+  "emptyState": {
+    "title": "Aún no tienes viajes",
+    "description": "Crea tu primer viaje para empezar a planear.",
+    "cta": "Crea tu primer viaje"
+  },
+  "placeholder": {
+    "title": "La creación de viajes llega pronto"
+  }
+}

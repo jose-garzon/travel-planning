@@ -54,6 +54,7 @@ Better Auth's core tables, plus one additional field:
 ```mermaid
 erDiagram
   USER ||--o{ SESSION : has
+  USER ||--o{ ACCOUNT : has
   USER ||--o{ VERIFICATION : requests
   USER {
     string id PK
@@ -65,6 +66,11 @@ erDiagram
     string id PK
     string userId FK
     datetime expiresAt
+  }
+  ACCOUNT {
+    string id PK
+    string userId FK
+    string providerId
   }
   VERIFICATION {
     string id PK
@@ -78,6 +84,10 @@ erDiagram
 - `nameConfirmedAt` (nullable timestamp, Better Auth `additionalFields`)
   is the single source of truth for "needs the name-capture screen".
   Never infer it from `name` being empty (illegal states, code.md #3).
+- `account` is Better Auth's own 4th core table (its `BaseModelNames`
+  always includes it, even with only the magic-link plugin enabled).
+  T00 found this at runtime; no rows are written to it by this
+  feature's magic-link flow.
 - No `trips` table. `trips` module has no `shared/db/schema` file this
   feature (D-4).
 - Migration via `pnpm db:generate && pnpm db:migrate` (T00).
@@ -97,15 +107,20 @@ Thin route file, delegates to `auth.handler` exported by
 ### `getCurrentUser(): Promise<CurrentUser | null>` (auth/index.ts)
 
 ```json
-{ "id": "string", "displayName": "string", "needsDisplayName": "boolean" }
+{ "id": "string", "displayName": "string", "email": "string", "needsDisplayName": "boolean" }
 ```
+
+`email` is not in the original literal JSON but is required: `trips`
+cannot see `user` data (module boundary), so `page.tsx` must pass the
+member's email through from `CurrentUser` to `getHomeTripsSummary`
+(D-4's fixture and `TripsReader.listForEmail` both key off email).
 
 ### `setDisplayName(name: string): Promise<Result<void, "INVALID_NAME">>` (auth/index.ts)
 
 Validates 1–50 chars (domain rule), then sets `name` and
 `nameConfirmedAt = now`. Throws only on an unexpected (I/O) failure.
 
-### `getHomeTripsSummary(userId: string): Promise<HomeTripsSummary>` (trips/index.ts)
+### `getHomeTripsSummary(email: string): Promise<HomeTripsSummary>` (trips/index.ts)
 
 ```json
 {
