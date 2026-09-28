@@ -140,3 +140,68 @@ is an orchestrator-reviewed exception, not agent scope creep (same
 spirit as T00's `account`-table addition).
 merged: 81c0e39. post-merge unit tests: 229/229.
 worktree/branch T01 removed.
+
+## 2026-09-28 T02 round 1
+implementer (sonnet): red OK (96ad1bf), green OK (1b63cad). Reported
+13/13 e2e (unclear if with default parallelism), unit 224/224,
+typecheck/lint clean.
+verified myself: typecheck/lint/unit match. `--grep @T02
+--project=desktop` (default settings) failed 1/13 twice; confirmed
+with `--workers=1` (13/13) that this is the same pre-existing
+fullyParallel race T01 already fixed on the feature branch — T02's
+worktree just predates that fix (branched at the same point as T01).
+No fix needed for T02 itself on this.
+Independently verified the implementer's two flagged deviations:
+`shared/kernel/result.ts` (architecture.md literally lists `Result`
+under "Shared kernel", first use case) and `shared/ui/focus-heading.tsx`
+(reasonable: `home-screen.tsx`'s `<h1>` is T03's file, `app/[locale]/`
+may only hold route files per architecture.md). Also independently
+verified the reported cookie-signature bug fix in `auth/index.ts`
+against `node_modules/better-call`'s actual source
+(`serializeSignedCookie`/`getSignedCookie` in
+`better-call/dist/context.mjs`): confirmed real — Better Auth signs
+the session cookie as `token.signature`, `session.token` in the DB is
+the bare value, so `getCurrentUser`/`setDisplayName` never matched a
+real signed-in session before this fix. Genuine, correct, pre-existing
+bug in T00's original code, not a T02 regression.
+merge: conflict in tests/steps/auth.steps.ts (T01 and T02 both
+appended step defs to the same file). Per Step 4, resolved by hand
+(mechanical union of both diffs + de-duplicating one identical
+"I see the error {string}" registration) rather than rebasing in the
+worktree, given the resolution was a straightforward union with no
+new logic. Also adopted T02's `tests/steps/support/db.ts` (WAL +
+busy_timeout, shared `user`/`session`/`verification` exports) as the
+one DB-access helper for the file, dropping T01's now-redundant
+inline client.
+merged: 1f05583.
+
+Two serious bugs surfaced while verifying the combined result (not
+caught by any single task's own scoped verification):
+
+1. Ambiguous step: `trips.steps.ts` (T03) redefined the exact generic
+   `Then("I see {string}", ...)` already in `auth.steps.ts`
+   (established by T00/T01) — breaks `bddgen` for the *entire* suite,
+   not just @T03. Fixed: removed the duplicate from `trips.steps.ts`.
+   Committed: 99989b2.
+
+2. T01's cooldown repository is wrong against real Better Auth data.
+   `VerificationMagicLinkAttemptsRepository` queries
+   `WHERE identifier = email`, but Better Auth's actual magic-link
+   plugin writes `identifier: <token>`, `value: JSON.stringify({email,
+   name})` (confirmed at `node_modules/better-auth/dist/plugins/
+   magic-link/index.mjs`) — the reverse of plan.md's Data model ERD
+   comment (`identifier "email"`, `value "magic-link token"`), which
+   was wrong. Consequence: AC-10 (cooldown after 3 requests) never
+   triggers against real traffic — T01's own test only "passed"
+   because its seed rows and query shared the same wrong assumption
+   (`identifier: email` on both sides). Worse: those seeded rows have
+   a plain-string `value` (`"test-token-0"`), which crashes T02's
+   `readLatestMagicLinkToken` (`JSON.parse(row.value)`) on its
+   full-table scan once both tasks' e2e scenarios share the persistent
+   `local.db` — confirmed by running `--grep "@T01|@T02"` together
+   after a fresh migration: 9 of T02's 9 real scenarios failed with
+   `SyntaxError: ... is not valid JSON`.
+   Fixing now via a dedicated fix round (implementer), touching the
+   repository query, its integration test's seed shape, and the
+   e2e cooldown-seed step — all three need the real
+   `identifier=token, value=JSON{email}` shape.
