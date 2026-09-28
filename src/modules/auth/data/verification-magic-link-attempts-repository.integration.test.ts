@@ -53,19 +53,27 @@ describe("VerificationMagicLinkAttemptsRepository", () => {
     const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
     const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000);
 
+    // Shaped like the real rows Better Auth's magic-link plugin
+    // writes (`createVerificationValue` in
+    // `node_modules/better-auth/dist/plugins/magic-link/index.mjs`):
+    // `identifier` is the issued token (a random string, never the
+    // email), and `value` is a JSON string with the email inside.
+    // Using a plain `identifier: email` here (the plan's ERD comment
+    // had it backwards) would let a regression back to the old
+    // `identifier`-based query pass this test unnoticed.
     await db.insert(verification).values([
       {
         id: "verification-recent-1",
-        identifier: "ana@example.com",
-        value: "token-1",
+        identifier: "token-recent-1",
+        value: JSON.stringify({ email: "ana@example.com", name: null }),
         createdAt: new Date(fifteenMinutesAgo.getTime() + 60 * 1000),
         updatedAt: new Date(fifteenMinutesAgo.getTime() + 60 * 1000),
         expiresAt: new Date(now.getTime() + 60 * 60 * 1000),
       },
       {
         id: "verification-recent-2",
-        identifier: "ana@example.com",
-        value: "token-2",
+        identifier: "token-recent-2",
+        value: JSON.stringify({ email: "ana@example.com", name: null }),
         createdAt: now,
         updatedAt: now,
         expiresAt: new Date(now.getTime() + 60 * 60 * 1000),
@@ -73,8 +81,8 @@ describe("VerificationMagicLinkAttemptsRepository", () => {
       // Outside the caller's `sinceIso` window: must not be counted.
       {
         id: "verification-old",
-        identifier: "ana@example.com",
-        value: "token-3",
+        identifier: "token-old",
+        value: JSON.stringify({ email: "ana@example.com", name: null }),
         createdAt: thirtyMinutesAgo,
         updatedAt: thirtyMinutesAgo,
         expiresAt: new Date(thirtyMinutesAgo.getTime() + 60 * 60 * 1000),
@@ -82,8 +90,8 @@ describe("VerificationMagicLinkAttemptsRepository", () => {
       // A different email entirely: must not be counted either.
       {
         id: "verification-other-email",
-        identifier: "ben@example.com",
-        value: "token-4",
+        identifier: "token-other-email",
+        value: JSON.stringify({ email: "ben@example.com", name: null }),
         createdAt: now,
         updatedAt: now,
         expiresAt: new Date(now.getTime() + 60 * 60 * 1000),

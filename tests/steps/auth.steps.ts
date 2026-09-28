@@ -1,6 +1,6 @@
 import type { APIRequestContext, Page } from "@playwright/test";
 import { expect } from "@playwright/test";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { Given, Then, When } from "./fixtures";
 import { user, verification, withTestDb } from "./support/db";
 
@@ -31,6 +31,20 @@ async function expireLatestMagicLinkToken(email: string): Promise<void> {
   const token = await readLatestMagicLinkToken(email);
   const expiresAt = new Date(Date.now() - (MAGIC_LINK_EXPIRY_MINUTES + 1) * 60 * 1000);
   await testDb.update(verification).set({ expiresAt }).where(eq(verification.identifier, token));
+}
+
+// Deletes every `verification` row for `email`, matched the same way
+// the real rows are shaped: `identifier` is the issued token (never
+// the email, see `readLatestMagicLinkToken` above), so the email only
+// ever lives inside the JSON `value` column. Used to reset a fixture
+// email's magic-link history between scenarios/reruns (testing.md "no
+// order dependence") — matching on `identifier` here would silently
+// never delete a single real row.
+async function deleteVerificationRowsForEmail(email: string): Promise<void> {
+  const testDb = await withTestDb();
+  await testDb
+    .delete(verification)
+    .where(sql`json_extract(${verification.value}, '$.email') = ${email}`);
 }
 
 // Emails in the human-authored `tests.feature` repeat across scenarios
@@ -232,8 +246,7 @@ When("I request a magic link for {string}", async ({ page }, email: string) => {
     // @T01 scenarios also send real magic links for this fixture
     // email, so a plain happy-path request must not inherit their
     // leftover rows.
-    const testDb = await withTestDb();
-    await testDb.delete(verification).where(eq(verification.identifier, email));
+    await deleteVerificationRowsForEmail(email);
   }
 
   await page.goto("/");
@@ -277,8 +290,12 @@ Given("the email provider is failing", async ({ page }) => {
 });
 
 // Seeds `verification` rows directly (no test-only HTTP seeding
-// endpoint in this repo, testing.md): the cooldown check counts rows
-// Better Auth itself writes for `identifier` (email), D-3.
+// endpoint in this repo, testing.md): the cooldown check counts real
+// rows Better Auth itself writes for the email, D-3. Shaped like the
+// plugin's actual output (`identifier` is a fake token, `value` is
+// JSON with the email inside) — not `identifier: email` — so this
+// seed exercises the same shape `countRecent` really queries instead
+// of merely being self-consistent with a wrong assumption.
 Given(
   // The outline's `<previous>` sits inside quotes in the scenario
   // template (tests.feature), so the rendered step is `"2"`/`"3"` —
@@ -292,13 +309,13 @@ Given(
     // Deletes first (testing.md "no order dependence"): other @T01
     // scenarios send real magic links for this same fixture email, so
     // this seed is not additive to whatever ran before it.
-    await testDb.delete(verification).where(eq(verification.identifier, email));
+    await deleteVerificationRowsForEmail(email);
 
     const now = new Date();
     const rows = Array.from({ length: previous }, (_unused, index) => ({
       id: `test-verification-${email}-${index}-${now.getTime()}`,
-      identifier: email,
-      value: `test-token-${index}`,
+      identifier: `test-token-${email}-${index}-${now.getTime()}`,
+      value: JSON.stringify({ email, name: null }),
       createdAt: now,
       updatedAt: now,
       expiresAt: new Date(now.getTime() + 15 * 60 * 1000),
@@ -318,8 +335,7 @@ Given(
     // Same reasoning as the cooldown seed above: a real send, so it
     // must not inherit another scenario's leftover cooldown count for
     // this fixture email.
-    const testDb = await withTestDb();
-    await testDb.delete(verification).where(eq(verification.identifier, email));
+    await deleteVerificationRowsForEmail(email);
 
     await page.goto("/");
     await page.getByRole("textbox", { name: "Email" }).fill(email);
