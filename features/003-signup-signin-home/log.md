@@ -21,3 +21,7 @@ merged: f6d15c0
 post-merge: main checkout needed `pnpm install` + `pnpm db:migrate`
 (new deps/migration only existed in the worktree) — unit tests then
 215/215.
+
+## 2026-09-27 visual gate: waiting
+ready for review: T00 (landing page at `/`, static shells for
+name-capture and home — not yet interactive, that's T01/T02/T03).
