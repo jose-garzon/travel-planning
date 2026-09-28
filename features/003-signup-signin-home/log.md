@@ -37,3 +37,12 @@ fixed: 56bdb7d. verified: typecheck/lint clean, @T00 e2e 1/1, unit
 ## 2026-09-27 visual gate: waiting
 ready for re-review: landing page centered, desktop layout, big
 animated wordmark above title, catchy tagline added.
+
+## 2026-09-27 visual gate: change requests (round 2, last fix round)
+user: center `<main>` vertically; desktop two-column layout, left ~1/3
+reserved space for an image (user adds it later, leave placeholder
+only), right column content capped to ~1/3 max-width and centered;
+reduce title line-height (looks too separate at 2 lines); no vertical
+scroll on mobile. spawning implementer (sonnet) on
+feat/3-signup-signin-home directly. Max fix rounds (2) reached after
+this — further feedback carries to the PR, not another round.
