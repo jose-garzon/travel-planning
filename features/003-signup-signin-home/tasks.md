@@ -103,7 +103,7 @@ Notes:
 
 ## T01. Request a magic link: happy path, invalid email, send failure, cooldown
 
-Status: todo
+Status: doing
 Depends on: T00
 Model: sonnet
 Scenarios: @T01
@@ -159,7 +159,7 @@ Done when:
 
 ## T02. Verify a magic link: create/reuse account, expiry, name capture
 
-Status: todo
+Status: doing
 Depends on: T00
 Model: sonnet
 Scenarios: @T02
@@ -218,7 +218,7 @@ Done when:
 
 ## T03. Home page: next trip, trip list, empty state
 
-Status: todo
+Status: doing
 Depends on: T00
 Model: sonnet
 Scenarios: @T03
