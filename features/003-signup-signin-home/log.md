@@ -93,3 +93,21 @@ insert + cookie, since no UI sign-in flow exists yet for T01/T02 to
 have built). No plan gap.
 merged: 74c5127. post-merge unit tests: 224/224.
 worktree/branch T03 removed.
+
+## 2026-09-28 T01 round 1
+implementer (sonnet): red OK (af556f9), green OK (3f15607). Reported
+6/6 e2e (via `--workers=1`), unit 220/220, typecheck/lint clean.
+verified myself: typecheck/lint/unit match. `pnpm test:e2e --grep @T01
+--project=desktop` (default parallelism, the actual Commands-table
+command) FAILED reproducibly (2/2 runs), 3 of our scenarios (AC-2,
+EC-3, AC-10/EC-1 Example #1) — a 4th failure (F1's own @T01 tag,
+"Fallback fonts") is unrelated, confirmed pre-existing on the feature
+branch with no T01 changes.
+root cause (not the SQLITE_BUSY the implementer suspected): every
+@T01 scenario uses the literal, locked email "ana@example.com";
+`fullyParallel: true` runs scenarios in that spec file across workers
+concurrently, so one scenario's seeded cooldown rows leak into
+another's count (observed: happy-path scenario saw "Too many
+requests" instead of success). Sent the reproduced failure + root
+cause back to the implementer for round 2 (max 2), not merging round
+1.
