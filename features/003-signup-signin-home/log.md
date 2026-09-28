@@ -111,3 +111,32 @@ another's count (observed: happy-path scenario saw "Too many
 requests" instead of success). Sent the reproduced failure + root
 cause back to the implementer for round 2 (max 2), not merging round
 1.
+
+## 2026-09-28 T01 round 2
+implementer (sonnet): fix commit 9358185, `playwright.config.ts`
+`fullyParallel: true` -> `false` (Playwright's own default) — the only
+clean lever after ruling out editing locked tests.feature (tag-based
+serial) and splitting the "desktop" project (breaks the literal
+Commands-table command). Scoped effect: scenarios within one feature's
+generated spec file now run in order, in one worker; different
+features' files still run in parallel with each other.
+verified myself: ran `--grep @T01 --project=desktop` twice (default
+settings) — only the pre-existing unrelated @F1 font flake fails, both
+times. Also ran the FULL untagged e2e suite once as a sanity check on
+this repo-wide config change: no new failures attributable to it — all
+other failures were either (a) that same pre-existing F1 flake, (b)
+this worktree simply predating T02/T03's merges (expected, scenarios
+for code that doesn't exist yet in this branch point), or (c) a
+genuine pre-existing regression in `tests/features/smoke.feature`
+(expects h1 "Parche"/old scaffold tagline copy, written before T00's
+page.tsx rewrite in commit 855cb67, unrelated to any T00-T03 work) —
+logging this now, to fix in Step 6 (Test all), not blocking any task
+on it.
+typecheck/lint/unit (229/229 on feature branch) all clean.
+Accepted `playwright.config.ts` as in-scope for T01 despite not being
+in its Files list: I explicitly authorized investigating it in the
+round-2 message after ruling out scoped alternatives myself, so this
+is an orchestrator-reviewed exception, not agent scope creep (same
+spirit as T00's `account`-table addition).
+merged: 81c0e39. post-merge unit tests: 229/229.
+worktree/branch T01 removed.

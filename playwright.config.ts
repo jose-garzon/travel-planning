@@ -18,7 +18,20 @@ const port = Number(process.env.PORT ?? (worktreeTask ? 3100 + Number(worktreeTa
 
 export default defineConfig({
   testDir,
-  fullyParallel: true,
+  // `false` (Playwright's own default) keeps a feature's scenarios in
+  // their generated `tests.feature.spec.js` file running in order, in
+  // one worker; different feature files still run in parallel with
+  // each other. Some scenarios share real, out-of-band server state
+  // (Better Auth's `verification` table, keyed by a fixed test email
+  // reused across many scenarios in one feature file, e.g. the
+  // magic-link cooldown, testing.md "no order dependence" applies
+  // *within* a feature, not to concurrent execution across its own
+  // scenarios). `true` schedules individual tests across workers
+  // regardless of file, so those scenarios raced each other and
+  // corrupted that shared state (e.g. one scenario's cooldown-count
+  // seed rows were still visible to another's unrelated request for
+  // the same email, wrongly cooling it down).
+  fullyParallel: false,
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
   reporter: isCI ? [["github"], ["html", { open: "never" }]] : [["list"]],

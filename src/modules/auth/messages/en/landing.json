@@ -3,5 +3,9 @@
   "tagline": "One shared plan for cities, budgets and activities — sign in and start planning together.",
   "description": "Sign in with just your email. No password needed.",
   "emailLabel": "Email",
-  "submit": "Continue"
+  "submit": "Continue",
+  "checkEmail": "Check your email for a sign-in link. We sent it to {email}.",
+  "invalidEmailError": "Enter a valid email address",
+  "cooldownError": "Too many requests. Try again in a few minutes.",
+  "genericError": "Something went wrong. Try again."
 }

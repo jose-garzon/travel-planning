@@ -1,13 +1,35 @@
+"use client";
+
+import type { FormEvent } from "react";
+import { useRef, useState } from "react";
+import { useRequestMagicLink } from "@/modules/auth/ui/hooks/use-request-magic-link";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
 import { Wordmark } from "@/shared/ui/components/wordmark";
 import { useTranslatable } from "@/shared/ui/translatable";
 
+// Loose on purpose: catches obviously malformed input (AC-9) without
+// re-implementing RFC 5322. The server (Better Auth's own zod schema)
+// is the real gate.
+const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isValidEmailFormat(email: string): boolean {
+  return EMAIL_FORMAT.test(email);
+}
+
 /**
- * `/[locale]` for a signed-out visitor (plan "States": landing).
- * Header copy is `SiteHeader`'s (root layout); this is a static shell
- * for T00 — hero text, email field and submit button render with no
- * client interactivity yet. T01 adds the request-magic-link flow.
+ * `/[locale]` for a signed-out visitor (plan "States": landing). Header
+ * copy is `SiteHeader`'s (root layout).
+ *
+ * T01 makes the shell interactive: client-side email-format validation
+ * (AC-9, inline error, no request sent, focus stays on the field),
+ * submit through `use-request-magic-link.ts` (AC-2), and branching the
+ * result on `error.code` — the cooldown message (AC-10) instead of the
+ * generic retriable one (AC-12). "Check your email" replaces the form
+ * and is announced through the always-rendered `aria-live="polite"`
+ * region below it (accessibility.md "Async results … announced via a
+ * live region"); a full reload always starts over at `status: "idle"`
+ * (EC-3 — nothing here persists across reloads).
  *
  * `<main>` centers its content horizontally and vertically. `SiteHeader`
  * (root layout) renders above it in normal flow, so `<main>` never
@@ -31,6 +53,31 @@ import { useTranslatable } from "@/shared/ui/translatable";
  */
 export function LandingScreen() {
   const translate = useTranslatable();
+  const [email, setEmail] = useState("");
+  const [hasFormatError, setHasFormatError] = useState(false);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const { status, errorKind, requestMagicLink } = useRequestMagicLink();
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!isValidEmailFormat(email)) {
+      setHasFormatError(true);
+      emailInputRef.current?.focus();
+      return;
+    }
+
+    setHasFormatError(false);
+    await requestMagicLink(email);
+  }
+
+  const fieldError = hasFormatError
+    ? { translateId: "auth.landing.invalidEmailError" as const }
+    : errorKind === "cooldown"
+      ? { translateId: "auth.landing.cooldownError" as const }
+      : errorKind === "generic"
+        ? { translateId: "auth.landing.genericError" as const }
+        : undefined;
 
   return (
     <main className="flex flex-col items-center justify-center gap-4 px-6 py-16 lg:flex-row lg:items-stretch lg:justify-center lg:gap-12 lg:px-16 lg:py-16">
@@ -54,10 +101,35 @@ export function LandingScreen() {
               {translate({ translateId: "auth.landing.description" })}
             </p>
           </div>
-          <form className="flex w-full max-w-sm flex-col gap-3 md:gap-4">
-            <Input type="email" name="email" label={{ translateId: "auth.landing.emailLabel" }} />
-            <Button type="submit" translateId="auth.landing.submit" />
-          </form>
+          {status === "sent" ? null : (
+            <form
+              onSubmit={handleSubmit}
+              className="flex w-full max-w-sm flex-col gap-3 md:gap-4"
+              noValidate
+            >
+              <Input
+                ref={emailInputRef}
+                type="email"
+                name="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                label={{ translateId: "auth.landing.emailLabel" }}
+                error={fieldError}
+              />
+              <Button
+                type="submit"
+                isLoading={status === "sending"}
+                translateId="auth.landing.submit"
+              />
+            </form>
+          )}
+          <div aria-live="polite" className="w-full max-w-sm text-center">
+            {status === "sent" && (
+              <p className="animate-fade-in text-text">
+                {translate({ translateId: "auth.landing.checkEmail", values: { email } })}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </main>

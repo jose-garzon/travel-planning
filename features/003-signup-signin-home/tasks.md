@@ -103,7 +103,7 @@ Notes:
 
 ## T01. Request a magic link: happy path, invalid email, send failure, cooldown
 
-Status: doing
+Status: done
 Depends on: T00
 Model: sonnet
 Scenarios: @T01
@@ -149,11 +149,11 @@ Steps:
 6. Add the `aria-live="polite"` region announcing "check your email".
 
 Done when:
-- [ ] Scenarios tagged @T01 pass.
-- [ ] Unit tests: cooldown rule at the boundary (2 vs 3 vs 4 recent).
-- [ ] Reloading the "check your email" screen returns to the landing
+- [x] Scenarios tagged @T01 pass.
+- [x] Unit tests: cooldown rule at the boundary (2 vs 3 vs 4 recent).
+- [x] Reloading the "check your email" screen returns to the landing
       form (no pending state persisted) — EC-3.
-- [ ] Integration test asserts the cooldown check issues exactly 1
+- [x] Integration test asserts the cooldown check issues exactly 1
       query (performance budget, plan.md).
 
 
