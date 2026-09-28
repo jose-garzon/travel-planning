@@ -1,39 +1,81 @@
-import { createClient } from "@libsql/client";
+import type { APIRequestContext, Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/libsql";
-import { verification } from "@/shared/db/schema/auth";
 import { Given, Then, When } from "./fixtures";
+import { user, verification, withTestDb } from "./support/db";
 
-// A plain Drizzle/libsql client, not `shared/db/client.ts`: that file
-// (and `shared/config/env.ts`) imports `server-only`, which throws
-// outside a Next.js server bundle — this step file runs in plain Node
-// (Playwright's runner), same reasoning as the `*.integration.test.ts`
-// files' `vi.mock("server-only", ...)`, just without vitest's mocking
-// available here. Same `DATABASE_URL` default as `env.ts`, so this
-// points at the same local SQLite file the `pnpm dev` server (started
-// by Playwright's `webServer`, same shell env) uses.
-//
-// `fullyParallel` (playwright.config.ts) runs scenarios in several
-// worker processes, each opening its own connection to that one local
-// file; SQLite's default rollback-journal mode needs an exclusive lock
-// per write, so concurrent writers otherwise fail with
-// `SQLITE_BUSY: database is locked`. WAL lets readers and a writer
-// coexist, and `busy_timeout` makes a blocked writer wait its turn
-// instead of erroring immediately.
-let testDbPromise: ReturnType<typeof initTestDb> | null = null;
+const MAGIC_LINK_EXPIRY_MINUTES = 15;
 
-async function initTestDb() {
-  const client = createClient({ url: process.env.DATABASE_URL ?? "file:local.db" });
-  await client.execute("PRAGMA journal_mode = WAL;");
-  await client.execute("PRAGMA busy_timeout = 5000;");
-  return drizzle(client, { schema: { verification } });
+async function requestMagicLink(request: APIRequestContext, email: string): Promise<void> {
+  const response = await request.post("/api/auth/sign-in/magic-link", { data: { email } });
+  expect(response.ok()).toBe(true);
 }
 
-function getTestDb() {
-  testDbPromise ??= initTestDb();
-  return testDbPromise;
+/**
+ * Reads the plain-text token Better Auth stored for the most recent
+ * magic-link request to `email` (`verification.identifier`; the
+ * plugin's default `storeToken: "plain"`, per
+ * `node_modules/better-auth/dist/plugins/magic-link`, means it is the
+ * exact value the emailed link's `?token=` carries).
+ */
+async function readLatestMagicLinkToken(email: string): Promise<string> {
+  const testDb = await withTestDb();
+  const rows = await testDb.select().from(verification);
+  const matches = rows.filter((row) => JSON.parse(row.value).email === email);
+  const latest = matches.reduce((newest, row) => (row.createdAt > newest.createdAt ? row : newest));
+  return latest.identifier;
 }
+
+async function expireLatestMagicLinkToken(email: string): Promise<void> {
+  const testDb = await withTestDb();
+  const token = await readLatestMagicLinkToken(email);
+  const expiresAt = new Date(Date.now() - (MAGIC_LINK_EXPIRY_MINUTES + 1) * 60 * 1000);
+  await testDb.update(verification).set({ expiresAt }).where(eq(verification.identifier, token));
+}
+
+// Emails in the human-authored `tests.feature` repeat across scenarios
+// (e.g. "ana@example.com"), and `local.db` is a persistent file, not
+// reset between test runs (testing.md: each scenario still sets up its
+// own data — a rerun must land in the same state, not collide with a
+// leftover row from a previous run). Upsert on the unique `email`
+// column instead of a plain insert.
+async function seedExistingMember(email: string, name: string): Promise<void> {
+  const testDb = await withTestDb();
+  const now = new Date();
+  await testDb
+    .insert(user)
+    .values({
+      id: crypto.randomUUID(),
+      name,
+      email,
+      emailVerified: true,
+      nameConfirmedAt: now,
+      createdAt: now,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: user.email,
+      set: { name, nameConfirmedAt: now, updatedAt: now },
+    });
+}
+
+function magicLinkVerifyPath(token: string): string {
+  return `/api/auth/magic-link/verify?${new URLSearchParams({ token, callbackURL: "/" })}`;
+}
+
+async function isSignedIn(page: Page): Promise<boolean> {
+  const cookies = await page.context().cookies();
+  return cookies.some((cookie) => cookie.name.includes("session_token"));
+}
+
+// playwright-bdd has no Cucumber "World"; each scenario runs as its
+// own Playwright test (sequential within a worker, isolated across
+// workers), so a module-level variable carries state between this
+// scenario's own Given/When/Then safely.
+let deviceEmail: string | undefined;
+let expiredLinkEmail: string | undefined;
+let returningMemberEmail: string | undefined;
+let secondDevicePage: Page | undefined;
 
 // Set by the cooldown-seeding `Given` right below, read by the shared
 // "I request a magic link" `When` right after it in the same
@@ -58,6 +100,119 @@ Then("I see the landing page with a hero and an email field", async ({ page }) =
   await expect(page.getByRole("textbox")).toBeVisible();
 });
 
+// --- @T02: verify a magic link (create/reuse account, expiry, name capture) ---
+
+Given("no account exists yet for {string}", async ({ page }, _email: string) => {
+  await page.context().clearCookies();
+});
+
+Given("an account already exists for {string}", async ({ page }, email: string) => {
+  await page.context().clearCookies();
+  await seedExistingMember(email, "Ana");
+});
+
+When("I open the magic link sent to {string}", async ({ page, request }, email: string) => {
+  await requestMagicLink(request, email);
+  const token = await readLatestMagicLinkToken(email);
+  await page.goto(magicLinkVerifyPath(token));
+});
+
+Then("I am signed in", async ({ page }) => {
+  expect(await isSignedIn(page)).toBe(true);
+});
+
+Given("I requested a magic link for {string} on one device", async ({ request }, email: string) => {
+  deviceEmail = email;
+  await requestMagicLink(request, email);
+});
+
+When("I open that magic link on a different device", async ({ browser }) => {
+  if (deviceEmail === undefined) {
+    throw new Error("no magic link was requested for a device");
+  }
+  const token = await readLatestMagicLinkToken(deviceEmail);
+  const otherDevice = await browser.newContext();
+  secondDevicePage = await otherDevice.newPage();
+  await secondDevicePage.goto(magicLinkVerifyPath(token));
+});
+
+Then("I am signed in on that device", async () => {
+  if (secondDevicePage === undefined) {
+    throw new Error("no second device page was opened");
+  }
+  expect(await isSignedIn(secondDevicePage)).toBe(true);
+});
+
+Given(
+  "my magic link for {string} is more than 15 minutes old",
+  async ({ page, request }, email: string) => {
+    await page.context().clearCookies();
+    expiredLinkEmail = email;
+    await requestMagicLink(request, email);
+    await expireLatestMagicLinkToken(email);
+  },
+);
+
+When("I open that magic link", async ({ page }) => {
+  if (expiredLinkEmail === undefined) {
+    throw new Error("no magic link was requested");
+  }
+  const token = await readLatestMagicLinkToken(expiredLinkEmail);
+  await page.goto(magicLinkVerifyPath(token));
+});
+
+Then("I see a button to send a new link", async ({ page }) => {
+  await expect(page.getByRole("button", { name: /send a new link/i })).toBeVisible();
+});
+
+Given("I just verified my magic link for the first time", async ({ page, request }) => {
+  const email = `${crypto.randomUUID()}@example.com`;
+  await requestMagicLink(request, email);
+  const token = await readLatestMagicLinkToken(email);
+  await page.goto(magicLinkVerifyPath(token));
+  await expect(page.getByRole("textbox", { name: /name/i })).toBeVisible();
+});
+
+When("I submit {string} as my name", async ({ page }, name: string) => {
+  await page.getByRole("textbox", { name: /name/i }).fill(name);
+  await page.getByRole("button", { name: /continue/i }).click();
+});
+
+Then("I see the home page", async ({ page }) => {
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /name/i })).toHaveCount(0);
+});
+
+Given(
+  "I am signed in as {string} who already has a name on file",
+  async ({ page }, name: string) => {
+    const email = `${crypto.randomUUID()}@example.com`;
+    returningMemberEmail = email;
+    await page.context().clearCookies();
+    await seedExistingMember(email, name);
+  },
+);
+
+When("I verify a new magic link", async ({ page, request }) => {
+  if (returningMemberEmail === undefined) {
+    throw new Error("no returning member was seeded");
+  }
+  await requestMagicLink(request, returningMemberEmail);
+  const token = await readLatestMagicLinkToken(returningMemberEmail);
+  await page.goto(magicLinkVerifyPath(token));
+});
+
+Then("I see the home page directly, with no name form", async ({ page }) => {
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: /name/i })).toHaveCount(0);
+});
+
+Then("focus moves to the page's heading", async ({ page }) => {
+  await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
+});
+
+// --- @T01: request a magic link (happy path, invalid email, send failure, cooldown) ---
+
 // Shared generic assertion (@T01/@T02/@T03 all use this exact Gherkin
 // phrase for a plain visible-text check): substring, whitespace
 // normalized, same as `common.steps.ts`'s "I see the text {string}".
@@ -77,7 +232,7 @@ When("I request a magic link for {string}", async ({ page }, email: string) => {
     // @T01 scenarios also send real magic links for this fixture
     // email, so a plain happy-path request must not inherit their
     // leftover rows.
-    const testDb = await getTestDb();
+    const testDb = await withTestDb();
     await testDb.delete(verification).where(eq(verification.identifier, email));
   }
 
@@ -132,7 +287,7 @@ Given(
   // biome-ignore lint/correctness/noEmptyPattern: playwright-bdd requires this exact destructuring signature.
   async ({}, previousText: string, email: string) => {
     const previous = Number(previousText);
-    const testDb = await getTestDb();
+    const testDb = await withTestDb();
 
     // Deletes first (testing.md "no order dependence"): other @T01
     // scenarios send real magic links for this same fixture email, so
@@ -163,7 +318,7 @@ Given(
     // Same reasoning as the cooldown seed above: a real send, so it
     // must not inherit another scenario's leftover cooldown count for
     // this fixture email.
-    const testDb = await getTestDb();
+    const testDb = await withTestDb();
     await testDb.delete(verification).where(eq(verification.identifier, email));
 
     await page.goto("/");

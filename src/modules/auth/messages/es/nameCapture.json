@@ -1,5 +1,6 @@
 {
   "title": "¿Cómo te llamas?",
   "nameLabel": "Tu nombre",
+  "error": "Ingresa un nombre (1-50 caracteres)",
   "submit": "Continuar"
 }

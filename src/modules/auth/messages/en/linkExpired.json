@@ -1,5 +1,7 @@
 {
-  "title": "This link expired",
-  "description": "Magic links expire after 15 minutes.",
-  "resend": "Send a new link"
+  "title": "This link expired.",
+  "description": "Magic links expire after 15 minutes. Enter your email to get a new one.",
+  "emailLabel": "Email",
+  "resend": "Send a new link",
+  "sent": "Check your email for a new link"
 }
