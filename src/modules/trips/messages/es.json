@@ -11,5 +11,10 @@
   },
   "placeholder": {
     "title": "La creación de viajes llega pronto"
+  },
+  "nav": {
+    "label": "Principal",
+    "trips": "Viajes",
+    "newTrip": "Nuevo viaje"
   }
 }

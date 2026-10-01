@@ -80,7 +80,7 @@ export function LandingScreen() {
         : undefined;
 
   return (
-    <main className="flex flex-col items-center justify-center gap-4 px-6 py-16 lg:flex-row lg:items-stretch lg:justify-center lg:gap-12 lg:px-16 lg:py-16">
+    <main className="flex min-h-below-header flex-col items-center justify-center gap-4 px-6 py-16 lg:flex-row lg:items-stretch lg:justify-center lg:gap-12 lg:px-16 lg:py-16">
       <div
         aria-hidden="true"
         className="hidden shrink-0 basis-1/3 rounded-lg border border-border bg-surface-2 lg:block"
@@ -90,7 +90,7 @@ export function LandingScreen() {
           <div className="mb-4 motion-safe:animate-logo-in md:mb-6 lg:mb-8">
             <Wordmark size="lg" />
           </div>
-          <div className="mb-4 max-w-prose text-center md:mb-6 lg:mb-8">
+          <div className="mb-4 lg:w-1/2 max-w-prose text-center md:mb-6 lg:mb-8">
             <h1 className="mb-2 text-3xl leading-tight text-accent md:mb-3">
               {translate({ translateId: "auth.landing.title" })}
             </h1>

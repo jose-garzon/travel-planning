@@ -27,20 +27,28 @@ export function NameCaptureScreen({ action, error = false }: NameCaptureScreenPr
   const translate = useTranslatable();
 
   return (
-    <main className="px-6 py-12">
-      <h1 className="mb-8 text-3xl text-accent">
-        {translate({ translateId: "auth.nameCapture.title" })}
-      </h1>
-      <form action={action} className="flex max-w-sm flex-col gap-4">
-        <Input
-          type="text"
-          name="name"
-          label={{ translateId: "auth.nameCapture.nameLabel" }}
-          error={error ? { translateId: "auth.nameCapture.error" } : undefined}
-          autoFocus={error}
-        />
-        <Button type="submit" translateId="auth.nameCapture.submit" />
-      </form>
+    <main className="flex min-h-below-header flex-col items-center justify-center gap-4 px-6 py-16 lg:flex-row lg:items-stretch lg:justify-center lg:gap-12 lg:px-16 lg:py-16">
+      <div
+        aria-hidden="true"
+        className="hidden shrink-0 basis-1/3 rounded-lg border border-border bg-surface-2 lg:block"
+      />
+      <div className="flex w-full flex-col items-center justify-center lg:min-w-0 lg:basis-2/3">
+        <div className="flex w-full flex-col items-center lg:max-w-md">
+          <h1 className="mb-4 text-center text-3xl leading-tight text-accent md:mb-6 lg:mb-8">
+            {translate({ translateId: "auth.nameCapture.title" })}
+          </h1>
+          <form action={action} className="flex w-full max-w-sm flex-col gap-3 md:gap-4">
+            <Input
+              type="text"
+              name="name"
+              label={{ translateId: "auth.nameCapture.nameLabel" }}
+              error={error ? { translateId: "auth.nameCapture.error" } : undefined}
+              autoFocus={error}
+            />
+            <Button type="submit" translateId="auth.nameCapture.submit" />
+          </form>
+        </div>
+      </div>
     </main>
   );
 }

@@ -11,5 +11,10 @@
   },
   "placeholder": {
     "title": "Trip creation is coming soon"
+  },
+  "nav": {
+    "label": "Main",
+    "trips": "Trips",
+    "newTrip": "New trip"
   }
 }

@@ -73,6 +73,7 @@
   --spacing-icon-md: 1.25rem;
   --spacing-icon-lg: 1.5rem;
   --spacing-sheet: 85dvh;
+  --spacing-below-header: calc(100svh - 70px);
 
   --radius-sm: 0.5rem;
   --radius-md: 1rem;
