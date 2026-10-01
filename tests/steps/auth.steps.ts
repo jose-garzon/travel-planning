@@ -7,6 +7,14 @@ import { user, verification, withTestDb } from "./support/db";
 const MAGIC_LINK_EXPIRY_MINUTES = 15;
 
 async function requestMagicLink(request: APIRequestContext, email: string): Promise<void> {
+  // Clears any prior `verification` rows for `email` first (testing.md
+  // "no order dependence"): literal fixture emails like "ana@example.com"
+  // are shared with @T01's scenarios, including the cooldown outline,
+  // which deliberately leaves 3+ recent rows behind on the same email —
+  // with no cleanup, this guaranteed-successful send would itself get
+  // cooldown-blocked (AC-10, now actually enforced) whenever it runs
+  // after that scenario, regardless of run order.
+  await deleteVerificationRowsForEmail(email);
   const response = await request.post("/api/auth/sign-in/magic-link", { data: { email } });
   expect(response.ok()).toBe(true);
 }
