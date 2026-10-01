@@ -1,13 +1,11 @@
 "use client";
 
-import { createAuthClient } from "better-auth/client";
-import { magicLinkClient } from "better-auth/client/plugins";
 import { useState } from "react";
 
-// Browser-only client, no `baseURL` (Better Auth infers it from
-// `window.location.origin`; this file is `ui/`, which must not touch
-// `shared/config` or any server-only module, architecture.md).
-const authClient = createAuthClient({ plugins: [magicLinkClient()] });
+// Better Auth's magic-link route, called with plain `fetch` instead of
+// its client SDK: the SDK alone pushed `/en` past the Lighthouse
+// script budget. Relative URL, so it always targets the current origin.
+const MAGIC_LINK_ENDPOINT = "/api/auth/sign-in/magic-link";
 
 export type RequestMagicLinkStatus = "idle" | "sending" | "sent";
 
@@ -21,7 +19,7 @@ export type UseRequestMagicLinkResult = {
 };
 
 /**
- * Calls Better Auth's magic-link sign-in through its client SDK
+ * Calls Better Auth's magic-link sign-in route
  * (plan.md "Magic-link cooldown": same mounted `/api/auth/[...all]`
  * route, no new HTTP path) and tracks the landing form's state.
  * Client-side email-format validation is `LandingScreen`'s job (AC-9
@@ -35,11 +33,11 @@ export function useRequestMagicLink(): UseRequestMagicLinkResult {
     setStatus("sending");
     setErrorKind(null);
 
-    const { error } = await authClient.signIn.magicLink({ email });
+    const errorCode = await postMagicLinkRequest(email);
 
-    if (error !== null) {
+    if (errorCode !== null) {
       setStatus("idle");
-      setErrorKind(error.code === "MAGIC_LINK_COOLDOWN" ? "cooldown" : "generic");
+      setErrorKind(errorCode === "MAGIC_LINK_COOLDOWN" ? "cooldown" : "generic");
       return;
     }
 
@@ -47,4 +45,22 @@ export function useRequestMagicLink(): UseRequestMagicLinkResult {
   }
 
   return { status, errorKind, requestMagicLink };
+}
+
+/** Returns `null` on success, else Better Auth's error `code` (or `""`). */
+async function postMagicLinkRequest(email: string): Promise<string | null> {
+  try {
+    const response = await fetch(MAGIC_LINK_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    if (response.ok) {
+      return null;
+    }
+    const body: unknown = await response.json().catch(() => null);
+    return typeof body === "object" && body !== null && "code" in body ? String(body.code) : "";
+  } catch {
+    return "";
+  }
 }
