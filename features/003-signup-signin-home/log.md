@@ -205,3 +205,34 @@ caught by any single task's own scoped verification):
    repository query, its integration test's seed shape, and the
    e2e cooldown-seed step — all three need the real
    `identifier=token, value=JSON{email}` shape.
+
+## 2026-09-28 cooldown fix round (continued after session restart)
+implementer's fix landed while unattended (commits c059c18 test,
+a5b04e7 fix) — `json_extract(value, '$.email')` in the repository
+query, matching real-shape seeds in the integration test and the e2e
+cooldown-seed `Given`, plus fixing the same wrong-shape deletes used
+to reset a fixture email's history between scenarios.
+verified myself against actual node_modules/better-auth source again
+(matches my own earlier finding): correct. typecheck/lint clean.
+Reran `--grep "@T01|@T02"` on a fresh db: JSON.parse crash gone, but a
+*new*, deterministic failure appeared — 4 of T02's scenarios that
+share literal fixture emails (e.g. "ana@example.com") with T01's
+cooldown scenario now get genuinely cooldown-blocked when run after
+it, since the cooldown mechanism actually works now. Root cause:
+T02's `requestMagicLink()` helper never cleared prior `verification`
+rows for the target email before sending (T01's own UI-driven steps
+already did this defensively; T02's direct-API helper didn't).
+Fixed directly (mechanical, one call added to the shared helper,
+same pattern already established by T01's commits in the same file):
+commit 030032b.
+Final verification: fresh db, `--grep "@T01|@T02"` x2 — stable, only
+the pre-existing unrelated @F1 font flake. `pnpm test:unit` 238/238.
+Full untagged `--project=desktop` suite: 118/118 of feature 003's own
+scenarios pass; 5 failures total, all pre-existing/unrelated —
+@F1 font flake, @F1 tooltip-hover flake (confirmed passes in
+isolation, ordinary flake under full-suite load), and 3
+`tests/features/smoke.feature` scenarios (expect the old scaffold's
+"Parche" heading/tagline copy, broken since T00's `page.tsx` rewrite
+in commit 855cb67 — a real regression from this feature, to fix at
+Step 6, not blocking any task).
+T02 marked done (Status + Done-when boxes).

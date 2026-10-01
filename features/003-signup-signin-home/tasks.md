@@ -159,7 +159,7 @@ Done when:
 
 ## T02. Verify a magic link: create/reuse account, expiry, name capture
 
-Status: doing
+Status: done
 Depends on: T00
 Model: sonnet
 Scenarios: @T02
@@ -205,14 +205,14 @@ Steps:
    Accessibility, AC-13).
 
 Done when:
-- [ ] Scenarios tagged @T02 pass.
-- [ ] Unit tests: display-name rule at 0, 1, 50, 51 chars; `setDisplayName`
+- [x] Scenarios tagged @T02 pass.
+- [x] Unit tests: display-name rule at 0, 1, 50, 51 chars; `setDisplayName`
       rejects invalid input without writing.
-- [ ] A link opened on a different browser context than the one that
+- [x] A link opened on a different browser context than the one that
       requested it still verifies (EC-2).
-- [ ] After completing sign-in, focus is on the home page's `<h1>`,
+- [x] After completing sign-in, focus is on the home page's `<h1>`,
       not `body` (AC-13; asserted in the AC-5 scenario).
-- [ ] "Signed in, loading your trips" is announced via a live region
+- [x] "Signed in, loading your trips" is announced via a live region
       somewhere between verify completing and home rendering.
 
 
