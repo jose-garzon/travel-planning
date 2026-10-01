@@ -1,21 +1,37 @@
 import type { APIRequestContext, Page } from "@playwright/test";
-import { expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { eq, sql } from "drizzle-orm";
 import { Given, Then, When } from "./fixtures";
 import { user, verification, withTestDb } from "./support/db";
 
 const MAGIC_LINK_EXPIRY_MINUTES = 15;
 
+// `desktop` and `mobile` (playwright.config.ts projects) run the same
+// scenarios concurrently against the one shared dev server and
+// `local.db`. None of @T02's scenarios, nor @T01's cooldown outline,
+// ever display the literal email on screen (unlike a couple of @T01's
+// other scenarios — those stay untouched, calling neither this nor
+// the functions built on it), so every email they touch is scoped to
+// the running project first, keeping the two projects' users/tokens/
+// cooldown-counts independent instead of racing each other for the
+// same literal fixture address (e.g. "ana@example.com", reused
+// verbatim across scenarios in the locked tests.feature).
+function projectScoped(email: string): string {
+  const [localPart, domain] = email.split("@");
+  return `${localPart}+${test.info().project.name}@${domain}`;
+}
+
 async function requestMagicLink(request: APIRequestContext, email: string): Promise<void> {
-  // Clears any prior `verification` rows for `email` first (testing.md
-  // "no order dependence"): literal fixture emails like "ana@example.com"
-  // are shared with @T01's scenarios, including the cooldown outline,
-  // which deliberately leaves 3+ recent rows behind on the same email —
-  // with no cleanup, this guaranteed-successful send would itself get
-  // cooldown-blocked (AC-10, now actually enforced) whenever it runs
-  // after that scenario, regardless of run order.
-  await deleteVerificationRowsForEmail(email);
-  const response = await request.post("/api/auth/sign-in/magic-link", { data: { email } });
+  const scopedEmail = projectScoped(email);
+  // Clears any prior `verification` rows for this (project-scoped)
+  // email first (testing.md "no order dependence"): other scenarios —
+  // including @T01's cooldown outline, which deliberately leaves 3+
+  // recent rows behind — reuse the same literal fixture email, so a
+  // guaranteed-successful send must not inherit their leftover rows.
+  await deleteVerificationRowsForEmail(scopedEmail);
+  const response = await request.post("/api/auth/sign-in/magic-link", {
+    data: { email: scopedEmail },
+  });
   expect(response.ok()).toBe(true);
 }
 
@@ -27,9 +43,10 @@ async function requestMagicLink(request: APIRequestContext, email: string): Prom
  * exact value the emailed link's `?token=` carries).
  */
 async function readLatestMagicLinkToken(email: string): Promise<string> {
+  const scopedEmail = projectScoped(email);
   const testDb = await withTestDb();
   const rows = await testDb.select().from(verification);
-  const matches = rows.filter((row) => JSON.parse(row.value).email === email);
+  const matches = rows.filter((row) => JSON.parse(row.value).email === scopedEmail);
   const latest = matches.reduce((newest, row) => (row.createdAt > newest.createdAt ? row : newest));
   return latest.identifier;
 }
@@ -69,7 +86,7 @@ async function seedExistingMember(email: string, name: string): Promise<void> {
     .values({
       id: crypto.randomUUID(),
       name,
-      email,
+      email: projectScoped(email),
       emailVerified: true,
       nameConfirmedAt: now,
       createdAt: now,
@@ -246,19 +263,31 @@ Then("I see the error {string}", async ({ page }, text: string) => {
   await expect(page.getByText(text)).toBeVisible();
 });
 
+// Set by the cooldown-seeding `Given` right below when it wants the
+// paired "I request a magic link" `When` to target the exact same
+// (possibly project-qualified, see that `Given`'s comment) email it
+// just seeded, instead of the literal string Gherkin passed it.
+let cooldownFlowEmail: string | undefined;
+
 When("I request a magic link for {string}", async ({ page }, email: string) => {
+  let targetEmail = email;
+
   if (skipNextRequestCleanup) {
     skipNextRequestCleanup = false;
+    if (cooldownFlowEmail !== undefined) {
+      targetEmail = cooldownFlowEmail;
+      cooldownFlowEmail = undefined;
+    }
   } else {
     // Deterministic count (testing.md "no order dependence"): other
     // @T01 scenarios also send real magic links for this fixture
     // email, so a plain happy-path request must not inherit their
     // leftover rows.
-    await deleteVerificationRowsForEmail(email);
+    await deleteVerificationRowsForEmail(targetEmail);
   }
 
   await page.goto("/");
-  await page.getByRole("textbox", { name: "Email" }).fill(email);
+  await page.getByRole("textbox", { name: "Email" }).fill(targetEmail);
   await page.getByRole("button", { name: "Continue" }).click();
 });
 
@@ -304,15 +333,31 @@ Given("the email provider is failing", async ({ page }) => {
 // JSON with the email inside) — not `identifier: email` — so this
 // seed exercises the same shape `countRecent` really queries instead
 // of merely being self-consistent with a wrong assumption.
+//
+// Deliberately pushes this email's recent-request count right up to
+// (and, in the Example that expects a block, past) the cooldown
+// threshold — the one @T01 flow that's genuinely sensitive to another
+// concurrent run touching the same literal fixture email. `desktop`
+// and `mobile` (playwright.config.ts projects) both run this same
+// scenario against the one shared dev server/`local.db`, concurrently
+// (no `@desktop` tag here to run it on just one, and the scenario
+// can't be edited to add one, testing.md "locked after red") — so a
+// per-project email suffix keeps the two projects' cooldown counters
+// independent instead of racing each other. Not shown anywhere this
+// scenario asserts on screen (only generic "check your email"/"too
+// many requests" text), so changing the literal value is safe here
+// specifically.
 Given(
   // The outline's `<previous>` sits inside quotes in the scenario
   // template (tests.feature), so the rendered step is `"2"`/`"3"` —
   // `{string}`, not `{int}` (which expects a bare, unquoted number).
   "I requested {string} magic links for {string} within 15 minutes",
   // biome-ignore lint/correctness/noEmptyPattern: playwright-bdd requires this exact destructuring signature.
-  async ({}, previousText: string, email: string) => {
+  async ({}, previousText: string, emailFromGherkin: string) => {
     const previous = Number(previousText);
     const testDb = await withTestDb();
+    const email = projectScoped(emailFromGherkin);
+    cooldownFlowEmail = email;
 
     // Deletes first (testing.md "no order dependence"): other @T01
     // scenarios send real magic links for this same fixture email, so
