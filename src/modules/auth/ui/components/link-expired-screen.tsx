@@ -1,17 +1,12 @@
 "use client";
 
-import { magicLinkClient } from "better-auth/client/plugins";
-import { createAuthClient } from "better-auth/react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
+import { useRequestMagicLink } from "@/modules/auth/ui/hooks/use-request-magic-link";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
 import { useTranslatable } from "@/shared/ui/translatable";
 
-// Duplicated from what will become `use-request-magic-link.ts` (T01):
-// the same few-line Better Auth client-SDK call, not imported from it
-// (plan "Left to implementation" — two call sites, no shared
-// abstraction yet until a third one needs it, code.md #4).
-const authClient = createAuthClient({ plugins: [magicLinkClient()] });
+const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * `/[locale]` when Better Auth's magic-link verify redirect carries
@@ -23,16 +18,29 @@ const authClient = createAuthClient({ plugins: [magicLinkClient()] });
 export function LinkExpiredScreen() {
   const translate = useTranslatable();
   const [email, setEmail] = useState("");
-  const [isSending, setIsSending] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [hasFormatError, setHasFormatError] = useState(false);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const { status, errorKind, requestMagicLink } = useRequestMagicLink();
 
   async function handleResend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsSending(true);
-    const { error } = await authClient.signIn.magicLink({ email });
-    setIsSending(false);
-    setSent(error === null || error === undefined);
+    if (!EMAIL_FORMAT.test(email)) {
+      setHasFormatError(true);
+      emailInputRef.current?.focus();
+      return;
+    }
+    setHasFormatError(false);
+    await requestMagicLink(email);
   }
+
+  const fieldError = hasFormatError
+    ? { translateId: "auth.landing.invalidEmailError" as const }
+    : errorKind === "cooldown"
+      ? { translateId: "auth.landing.cooldownError" as const }
+      : errorKind === "generic"
+        ? { translateId: "auth.landing.genericError" as const }
+        : undefined;
+  const sent = status === "sent";
 
   return (
     <main className="px-6 py-12">
@@ -42,15 +50,21 @@ export function LinkExpiredScreen() {
       <p className="mb-8 text-text-muted">
         {translate({ translateId: "auth.linkExpired.description" })}
       </p>
-      <form onSubmit={handleResend} className="flex max-w-sm flex-col gap-4">
+      <form onSubmit={handleResend} noValidate className="flex max-w-sm flex-col gap-4">
         <Input
           type="email"
+          ref={emailInputRef}
           name="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           label={{ translateId: "auth.linkExpired.emailLabel" }}
+          error={fieldError}
         />
-        <Button type="submit" isLoading={isSending} translateId="auth.linkExpired.resend" />
+        <Button
+          type="submit"
+          isLoading={status === "sending"}
+          translateId="auth.linkExpired.resend"
+        />
       </form>
       <div aria-live="polite">
         {sent && (
