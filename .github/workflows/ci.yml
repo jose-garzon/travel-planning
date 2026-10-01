@@ -12,10 +12,12 @@ concurrency:
 env:
   DATABASE_URL: file:ci.db
   # CI-only throwaway values: a production build (`pnpm start`) refuses
-  # Better Auth's default secret, and has no Resend account to send with.
+  # Better Auth's default secret, has no Resend account to send with, and
+  # would hit Better Auth's per-IP rate limit (every test shares one IP).
   BETTER_AUTH_SECRET: ci-only-not-a-real-secret-0123456789abcdef
   BETTER_AUTH_URL: http://localhost:3000
   MAGIC_LINK_SENDER: console
+  AUTH_RATE_LIMIT: "off"
 
 jobs:
   checks:

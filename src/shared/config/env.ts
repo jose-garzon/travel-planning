@@ -19,6 +19,9 @@ const envSchema = z.object({
   // Overrides the NODE_ENV-based sender choice. CI sets "console": it
   // runs a production build (`pnpm start`) with no Resend account.
   MAGIC_LINK_SENDER: z.enum(["console", "resend"]).optional(),
+  // "off" disables Better Auth's IP rate limit (on by default in
+  // production). CI only: its e2e sends every request from one IP.
+  AUTH_RATE_LIMIT: z.enum(["on", "off"]).optional(),
 });
 
 export const env = envSchema.parse(process.env);

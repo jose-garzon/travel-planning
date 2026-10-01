@@ -30,12 +30,15 @@ const magicLinkAttemptsReader = new VerificationMagicLinkAttemptsRepository();
  * needed because service must not import `data/`). `hooks.before`
  * calls the cooldown check on every magic-link request and throws
  * `MAGIC_LINK_COOLDOWN` when it's reached (plan.md "Magic-link
- * cooldown"); the client SDK surfaces that as `error.code`, which
+ * cooldown"); the response body carries it as `code`, which
  * T01's `use-request-magic-link.ts` branches on.
  */
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
+  // Better Auth's own IP rate limit is on in production builds; CI's
+  // e2e (a production build, every request from one IP) turns it off.
+  ...(env.AUTH_RATE_LIMIT === "off" ? { rateLimit: { enabled: false } } : {}),
   database: drizzleAdapter(db, { provider: "sqlite", schema: authSchema }),
   user: {
     additionalFields: {
