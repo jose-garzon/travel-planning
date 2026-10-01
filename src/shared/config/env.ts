@@ -2,8 +2,26 @@ import "server-only";
 import { z } from "zod";
 
 const envSchema = z.object({
+  // Node/Next sets this; read through `env` rather than raw
+  // `process.env` (D-2: picks the magic-link email sender by it).
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   DATABASE_URL: z.string().min(1).default("file:local.db"),
   DATABASE_AUTH_TOKEN: z.string().optional(),
+  // Optional: Better Auth falls back to its own (insecure outside
+  // production) defaults when unset, and infers `baseURL` from
+  // `BETTER_AUTH_URL` itself. Kept optional so `pnpm dev` and tests
+  // never need them (plan D-2: same reasoning as `RESEND_API_KEY`).
+  BETTER_AUTH_SECRET: z.string().min(1).optional(),
+  BETTER_AUTH_URL: z.string().min(1).optional(),
+  // Required only in production (plan D-2); optional here so `pnpm dev`
+  // doesn't break for everyone without a Resend account.
+  RESEND_API_KEY: z.string().min(1).optional(),
+  // Overrides the NODE_ENV-based sender choice. CI sets "console": it
+  // runs a production build (`pnpm start`) with no Resend account.
+  MAGIC_LINK_SENDER: z.enum(["console", "resend"]).optional(),
+  // "off" disables Better Auth's IP rate limit (on by default in
+  // production). CI only: its e2e sends every request from one IP.
+  AUTH_RATE_LIMIT: z.enum(["on", "off"]).optional(),
 });
 
 export const env = envSchema.parse(process.env);

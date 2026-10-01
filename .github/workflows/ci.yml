@@ -11,6 +11,13 @@ concurrency:
 
 env:
   DATABASE_URL: file:ci.db
+  # CI-only throwaway values: a production build (`pnpm start`) refuses
+  # Better Auth's default secret, has no Resend account to send with, and
+  # would hit Better Auth's per-IP rate limit (every test shares one IP).
+  BETTER_AUTH_SECRET: ci-only-not-a-real-secret-0123456789abcdef
+  BETTER_AUTH_URL: http://localhost:3000
+  MAGIC_LINK_SENDER: console
+  AUTH_RATE_LIMIT: "off"
 
 jobs:
   checks:
@@ -41,6 +48,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm db:migrate
       - run: pnpm build
       - run: pnpm test:e2e
       - uses: actions/upload-artifact@v4
@@ -61,5 +69,6 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate
       - run: pnpm build
       - run: pnpm lhci

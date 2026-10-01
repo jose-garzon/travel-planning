@@ -1,0 +1,11 @@
+{
+  "title": "Planea viajes con tus amigos",
+  "tagline": "Un plan compartido para ciudades, presupuestos y actividades: inicia sesión y empieza a planear en equipo.",
+  "description": "Inicia sesión solo con tu correo. Sin contraseña.",
+  "emailLabel": "Correo electrónico",
+  "submit": "Continuar",
+  "checkEmail": "Revisa tu correo para el enlace de acceso. Lo enviamos a {email}.",
+  "invalidEmailError": "Ingresa un correo electrónico válido",
+  "cooldownError": "Demasiadas solicitudes. Intenta de nuevo en unos minutos.",
+  "genericError": "Algo salió mal. Intenta de nuevo."
+}

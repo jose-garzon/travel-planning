@@ -1,0 +1,6 @@
+{
+  "title": "What should we call you?",
+  "nameLabel": "Your name",
+  "error": "Enter a name (1-50 characters)",
+  "submit": "Continue"
+}

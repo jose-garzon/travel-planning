@@ -16,7 +16,7 @@ Feature: Design system
   Scenario: Fallback fonts render when webfonts fail
     Given webfonts fail to load
     When I open the home page
-    Then I see the heading "Parche"
+    Then I see the heading "Plan trips with your friends"
     And headings use the display fallback fonts
 
   @T01 @AC-16 @EC-2 @perf

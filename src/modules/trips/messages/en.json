@@ -1,0 +1,20 @@
+{
+  "home": {
+    "greeting": "Hi, {name}",
+    "nextTripHeading": "Next trip",
+    "otherTripsHeading": "Other trips"
+  },
+  "emptyState": {
+    "title": "No trips yet",
+    "description": "Create your first trip to start planning.",
+    "cta": "Create your first trip"
+  },
+  "placeholder": {
+    "title": "Trip creation is coming soon"
+  },
+  "nav": {
+    "label": "Main",
+    "trips": "Trips",
+    "newTrip": "New trip"
+  }
+}
