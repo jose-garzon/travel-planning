@@ -50,11 +50,13 @@ class ResendMagicLinkEmailSender implements MagicLinkEmailSender {
 /**
  * Picks the sender by `env.NODE_ENV` (D-2): `ConsoleMagicLinkEmailSender`
  * everywhere except production, `ResendMagicLinkEmailSender` there.
+ * `env.MAGIC_LINK_SENDER` overrides the choice.
  */
 function createMagicLinkEmailSender(): MagicLinkEmailSender {
-  if (env.NODE_ENV === "production") {
+  const sender = env.MAGIC_LINK_SENDER ?? (env.NODE_ENV === "production" ? "resend" : "console");
+  if (sender === "resend") {
     if (env.RESEND_API_KEY === undefined) {
-      throw new Error("RESEND_API_KEY is required in production (see env.ts, plan D-2).");
+      throw new Error("RESEND_API_KEY is required for the Resend sender (see env.ts, plan D-2).");
     }
     return new ResendMagicLinkEmailSender(env.RESEND_API_KEY);
   }

@@ -16,6 +16,9 @@ const envSchema = z.object({
   // Required only in production (plan D-2); optional here so `pnpm dev`
   // doesn't break for everyone without a Resend account.
   RESEND_API_KEY: z.string().min(1).optional(),
+  // Overrides the NODE_ENV-based sender choice. CI sets "console": it
+  // runs a production build (`pnpm start`) with no Resend account.
+  MAGIC_LINK_SENDER: z.enum(["console", "resend"]).optional(),
 });
 
 export const env = envSchema.parse(process.env);
