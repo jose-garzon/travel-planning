@@ -3,7 +3,7 @@ import type { Trip } from "@/modules/trips/domain/trip";
 import type { HomeTripsSummary } from "@/modules/trips/service/get-home-trips-summary";
 import { EmptyTripsState } from "@/modules/trips/ui/components/empty-trips-state";
 import { Link } from "@/shared/i18n/navigation";
-import { Card } from "@/shared/ui/components/card";
+import { Card } from "@/shared/ui/components/card-surface";
 import { Text } from "@/shared/ui/components/text";
 import { useTranslatable } from "@/shared/ui/translatable";
 

@@ -2,22 +2,26 @@
 // ResizeObserver to gate the truncation Tooltip.
 "use client";
 
+// `Card` lives in card-surface.tsx (no Tooltip, no client JS) so pages
+// that only render static cards don't ship Radix Tooltip; re-exported
+// here so `Card`, `CardButton` and `CardLink` keep one import path.
+export type { CardProps } from "@/shared/ui/components/card-surface";
+export { Card } from "@/shared/ui/components/card-surface";
+
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/shared/i18n/navigation";
+import { SURFACE_CLASSES } from "@/shared/ui/components/card-surface";
 import { Tooltip } from "@/shared/ui/components/tooltip";
 import type { Translatable } from "@/shared/ui/translatable";
 import { useTranslatable } from "@/shared/ui/translatable";
 
-export type CardProps = { heading: Translatable; children?: ReactNode };
 export type CardButtonProps = {
   heading: Translatable;
   onClick: () => void;
   children?: ReactNode;
 };
 export type CardLinkProps = { heading: Translatable; href: string; children?: ReactNode };
-
-const SURFACE_CLASSES = "bg-surface-1 border border-border rounded-lg p-4 shadow-sm";
 
 // Interactive primitive rules (plan "Shared primitive rules"): own touch
 // target, transition, hover/focus/active only through the ui-* variants.
@@ -26,7 +30,6 @@ const CLICKABLE_CLASSES =
   "duration-fast ease-out ui-hover:bg-surface-2 ui-focus:outline-2 ui-focus:outline-solid " +
   "ui-focus:outline-focus ui-focus:outline-offset-2 motion-safe:ui-active:scale-97";
 
-const HEADING_CLASSES = "font-semibold text-text";
 const TRUNCATE_HEADING_CLASSES = "block truncate font-semibold text-text";
 
 /**
@@ -57,18 +60,6 @@ function useIsTruncated<T extends HTMLElement>() {
   }, []);
 
   return { ref, isTruncated };
-}
-
-/** Card primitive: a static, non-interactive surface. The heading wraps. */
-export function Card({ heading, children }: CardProps) {
-  const translate = useTranslatable();
-
-  return (
-    <article data-ui="card" className={SURFACE_CLASSES}>
-      <p className={HEADING_CLASSES}>{translate(heading)}</p>
-      {children}
-    </article>
-  );
 }
 
 /**
