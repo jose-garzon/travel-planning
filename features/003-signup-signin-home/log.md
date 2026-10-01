@@ -236,3 +236,30 @@ isolation, ordinary flake under full-suite load), and 3
 in commit 855cb67 — a real regression from this feature, to fix at
 Step 6, not blocking any task).
 T02 marked done (Status + Done-when boxes).
+
+## 2026-09-30 feature verification
+test(auth) 6514c5f: e2e emails scoped per playwright project (user OK'd).
+pnpm test: 10 e2e failures. lint, typecheck, build clean.
+fix round 1 (implementer): 06ac938 smoke + @F1 @T01 follow new landing
+heading. Rerun: 238 e2e passed, 2 failed (@F1 tooltip hover desktop,
+load flake; @F1 late webfonts layout shift mobile, unconfirmed, not
+feature 003). Unit 238/238. Carried to PR.
+Intermittent @T02 magic-link request errors under parallel load seen
+by implementer, not reproduced by me; cause undiagnosed.
+screenshots: evidence/screenshots (desktop, @F3).
+
+## 2026-09-30 feature review
+reviewer: 1 blocker (fixed), 4 major, 5 minor, 1 nit (carried to PR)
+- blocker link-expired-screen.tsx resend swallowed errors, no AC-9
+  check. Fixed 9b2701b, recheck: resolved. T02 desktop 13/13.
+- major  send-magic-link-email.ts  email copy hardcoded English (AC-14)
+- major  home-screen.tsx formatTripDateRange wrong across months/years
+- major  better-auth.ts cooldown not case/space-normalized (bypass)
+- major  link-expired/name-capture screens not centered like landing
+- minor  auth/index.ts setDisplayName ignores session expiresAt
+- minor  [locale]/loading.tsx live region mounted with content
+- minor  home-screen.tsx key={trip.name} not unique
+- minor  send-magic-link-email.ts url not HTML-escaped
+- minor  used links not counted toward cooldown (rows deleted)
+- minor  email regex duplicated landing/link-expired screens
+- nit    h1 programmatic focus outline heavy
