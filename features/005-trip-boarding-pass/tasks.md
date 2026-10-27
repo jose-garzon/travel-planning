@@ -2,6 +2,7 @@
 
 Plan: ./plan.md
 Tests: ./tests.feature
+Status: approved
 
 Status values: todo | doing | done | blocked
 
