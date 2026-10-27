@@ -2,27 +2,45 @@ import { randomUUID } from "node:crypto";
 import { expect } from "@playwright/test";
 import { Given, Then } from "./fixtures";
 import { signInAs } from "./support/session";
+import { seedTrip } from "./support/trips";
 
 /**
  * A unique email per scenario (testing.md "each scenario sets up its
- * own data") carrying the fixture-triggering suffix (plan D-4), so
- * parallel scenarios never race on the same `user` row.
+ * own data"), so parallel scenarios never race on the same `user` row.
  */
-function emailFor(displayName: string, fixtureSuffix: string): string {
-  return `${displayName.toLowerCase()}-${randomUUID().slice(0, 8)}${fixtureSuffix}@example.com`;
+function emailFor(displayName: string): string {
+  return `${displayName.toLowerCase()}-${randomUUID().slice(0, 8)}@example.com`;
 }
 
 Given("I am signed in as {string}", async ({ page }, displayName: string) => {
-  await signInAs(page, { email: emailFor(displayName, ""), displayName });
+  await signInAs(page, { email: emailFor(displayName), displayName });
 });
 
 Given(
   "I am signed in as {string} with trips {string} upcoming and {string} upcoming",
-  async ({ page }, displayName: string, _firstTrip: string, _secondTrip: string) => {
-    // Trip names cannot be parametrized beyond D-4's fixed fixture
-    // ("Colombia trip", "Peru trip"); the `+trips` email pattern is
-    // what actually produces them.
-    await signInAs(page, { email: emailFor(displayName, "+trips"), displayName });
+  async ({ page }, displayName: string, firstTrip: string, secondTrip: string) => {
+    const ownerEmail = emailFor(displayName);
+    await signInAs(page, { email: ownerEmail, displayName });
+    // Fixed dates, not day offsets: the AC-14 i18n scenario asserts the
+    // exact formatted range ("Mar 3 – 10, 2027" / "3 – 10 mar 2027").
+    await seedTrip({
+      ownerEmail,
+      name: firstTrip,
+      currency: "COP",
+      legs: [
+        { from: "Bogota", to: "Medellin", date: "2027-03-03" },
+        { from: "Medellin", to: "Bogota", date: "2027-03-10" },
+      ],
+    });
+    await seedTrip({
+      ownerEmail,
+      name: secondTrip,
+      currency: "PEN",
+      legs: [
+        { from: "Lima", to: "Cusco", date: "2027-06-01" },
+        { from: "Cusco", to: "Lima", date: "2027-06-10" },
+      ],
+    });
   },
 );
 
@@ -30,15 +48,8 @@ Given(
 // Gherkin (`with <trips>`), so each example value needs its own literal
 // step, not a `{string}` parameter.
 Given("I am signed in as {string} with no trips", async ({ page }, displayName: string) => {
-  await signInAs(page, { email: emailFor(displayName, ""), displayName });
+  await signInAs(page, { email: emailFor(displayName), displayName });
 });
-
-Given(
-  "I am signed in as {string} with only trips in the past",
-  async ({ page }, displayName: string) => {
-    await signInAs(page, { email: emailFor(displayName, "+pasttrips"), displayName });
-  },
-);
 
 Then("I see the home page directly, with no landing page", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

@@ -38,7 +38,7 @@ Feature: Account creation, sign-in and home page
   Scenario: The email provider fails to send
     Given the email provider is failing
     When I request a magic link for "ana@example.com"
-    Then I see the error "Something went wrong. Try again."
+    Then I see the error "We couldn’t send the link. Check your connection and try again."
     And my email "ana@example.com" is still in the field
     And the page has no accessibility violations
 
@@ -125,7 +125,6 @@ Feature: Account creation, sign-in and home page
     Examples:
       | trips                       |
       | no trips                    |
-      | only trips in the past      |
 
   @T03 @AC-14 @i18n
   Scenario Outline: Trip dates are locale-formatted
@@ -136,5 +135,5 @@ Feature: Account creation, sign-in and home page
 
     Examples:
       | locale | formatted        |
-      | en     | Mar 3 - 10, 2027 |
-      | es     | 3 - 10 mar 2027  |
+      | en     | Mar 3 – 10, 2027 |
+      | es     | 3 – 10 mar 2027  |

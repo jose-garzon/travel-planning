@@ -24,7 +24,7 @@ export function readTokensCss(cssPath: string = DEFAULT_TOKENS_PATH): string {
  * - `light-dark(<light>, <dark>)` becomes `{ light, dark }`.
  * - `var(--other)` resolves to the value of `--other` (recursively)
  *   when `--other` is defined in the `@theme` block. When it is not
- *   (e.g. `--font-fredoka`, set outside tokens.css by `fonts.ts`),
+ *   (e.g. `--font-barlow-condensed`, set outside tokens.css by `fonts.ts`),
  *   the literal `var(--other)` is returned unchanged.
  * - Every other value (`#rrggbb`, `#rrggbbaa`, `transparent`, plain
  *   lengths, durations, etc.) is returned as its trimmed source text.

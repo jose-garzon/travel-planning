@@ -9,39 +9,45 @@
   --*: initial;
 
   /* Colors: light-dark(<light>, <dark>) follows :root color-scheme.
-     Round 2 (docs/styleguide.md): vibrant travel-journal palette. */
-  --color-bg: light-dark(#fafafa, #16161d);
-  --color-surface-1: light-dark(#ffffff, #1e1e27);
-  --color-surface-2: light-dark(#f5f5f7, #262631);
-  --color-surface-3: light-dark(#f5f4fa, #302f3d);
-  --color-text: light-dark(#18181b, #f4f4f6);
-  --color-text-muted: light-dark(#63636d, #a8a6b3);
-  --color-border: light-dark(#e4e4e7, #38384a);
-  --color-border-strong: light-dark(#8a8894, #6e6c7d);
-  --color-accent: light-dark(#c83812, #ff9666);
-  --color-accent-hover: light-dark(#a82e0d, #ffb877);
-  --color-on-accent: light-dark(#ffffff, #16161d);
+     Metro line world (DESIGN.md): a white ground (night-blue in dark),
+     near-black ink, one magenta route line, teal for people, amber for
+     time. */
+  --color-bg: light-dark(#ffffff, #0e1220);
+  --color-surface-1: light-dark(#ffffff, #161b2e);
+  --color-surface-2: light-dark(#f4f4f1, #1d2338);
+  --color-surface-3: light-dark(#e8e8e4, #272e48);
+  --color-text: light-dark(#141414, #f3f4f7);
+  --color-text-muted: light-dark(#575757, #a9afc2);
+  --color-border: light-dark(#dcdcd7, #2f3652);
+  --color-border-strong: light-dark(#6b6b6b, #7a819c);
+  --color-accent: light-dark(#c4006b, #ff6fb5);
+  --color-accent-hover: light-dark(#9a0054, #ff9acb);
+  --color-on-accent: light-dark(#ffffff, #0e1220);
   --color-focus: var(--color-accent);
-  --color-secondary: light-dark(#0e7a6b, #57e0c7);
-  --color-secondary-hover: light-dark(#084a41, #8cebda);
-  --color-on-secondary: light-dark(#ffffff, #16161d);
+  --color-secondary: light-dark(#00756b, #3fd1c2);
+  --color-secondary-hover: light-dark(#005a52, #7fe2d8);
+  --color-on-secondary: light-dark(#ffffff, #0e1220);
+  --color-sun: light-dark(#ffb000, #ffc23d);
+  --color-on-sun: #141414;
+  --color-line: var(--color-accent);
   --color-success: light-dark(#1f7a3a, #5fd08a);
   --color-warning: light-dark(#8a5a00, #f2c14e);
   --color-error: light-dark(#b42318, #ff8a80);
-  --color-shadow: light-dark(#18181b14, transparent);
-  --color-overlay: light-dark(#18181b99, #000000b3);
+  --color-shadow: light-dark(#14141424, #00000080);
+  --color-overlay: light-dark(#14141499, #000000b3);
   /* Flat, not light-dark() (D-19): masks an arbitrary photo, not the
      app's theme. */
   --color-scrim: #000000a6;
   --color-on-scrim: #ffffff;
 
-  /* Fonts. --font-fredoka / --font-plus-jakarta-sans are set by
-     fonts.ts (next/font `variable`), not defined here. */
-  --font-display: var(--font-fredoka);
-  --font-body: var(--font-plus-jakarta-sans);
+  /* Fonts. --font-barlow-condensed / --font-onest are set by fonts.ts
+     (next/font `variable`), not defined here. */
+  --font-display: var(--font-barlow-condensed);
+  --font-body: var(--font-onest);
   --font-weight-regular: 400;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --font-weight-black: 800;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -50,7 +56,13 @@
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
   --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+  --text-5xl: 4rem;
 
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+
+  --leading-none: 1;
   --leading-tight: 1.15;
   --leading-normal: 1.5;
   --leading-relaxed: 1.7;
@@ -73,6 +85,8 @@
   --spacing-icon-md: 1.25rem;
   --spacing-icon-lg: 1.5rem;
   --spacing-sheet: 85dvh;
+  --spacing-station: 1.75rem;
+  --spacing-line: 0.5rem;
   --spacing-below-header: calc(100svh - 70px);
 
   --radius-sm: 0.5rem;
@@ -98,6 +112,8 @@
   --animate-dialog-in: dialog-in var(--motion-duration-normal) var(--ease-out);
   --animate-dialog-out: dialog-out var(--motion-duration-normal) var(--ease-out);
   --animate-spin: spin 1s linear infinite;
+  --animate-station-in: station-in 450ms var(--ease-out) both;
+  --animate-line-in: line-in 450ms var(--ease-out) both;
   --animate-logo-in: logo-in var(--motion-duration-normal) var(--ease-out);
 
   --container-prose: 70ch;
@@ -171,6 +187,139 @@
 
 @utility duration-normal {
   transition-duration: var(--motion-duration-normal);
+}
+
+/* Route line (DESIGN.md signature): an <ol> of stops. Each stop
+   draws its segment of the line and its station ring; the first stop's
+   segment starts at its ring, the last stop's ends there. */
+@utility route {
+  position: relative;
+  list-style: none;
+  padding: 0;
+}
+
+@utility route-stop {
+  position: relative;
+  padding-left: calc(var(--spacing-station) + var(--spacing-5));
+  padding-bottom: var(--spacing-6);
+  min-height: calc(var(--spacing-station) + var(--spacing-6));
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: calc((var(--spacing-station) - var(--spacing-line)) / 2);
+    top: 0;
+    bottom: 0;
+    width: var(--spacing-line);
+    background-color: var(--color-line);
+    transform-origin: top;
+  }
+
+  &:first-child::before {
+    top: calc(var(--spacing-station) / 2);
+  }
+
+  &:last-child::before {
+    bottom: auto;
+    height: calc(var(--spacing-station) / 2);
+  }
+
+  &:only-child::before {
+    display: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--spacing-station);
+    height: var(--spacing-station);
+    border-radius: var(--radius-full);
+    border: 0.3125rem solid var(--color-text);
+    background-color: var(--color-bg);
+  }
+}
+
+/* The open station: where the next city goes. Dashed ring, line color. */
+@utility route-stop-open {
+  &::after {
+    border-style: dashed;
+    border-color: var(--color-line);
+    border-width: 0.1875rem;
+  }
+
+  &::before {
+    background-color: transparent;
+    background-image: linear-gradient(var(--color-line) 50%, transparent 50%);
+    background-size: 100% var(--spacing-3);
+  }
+}
+
+/* Interchange: the stop that matters now (the next trip's takeoff,
+   home again). Filled ring. */
+@utility route-stop-hub {
+  &::after {
+    background-color: var(--color-line);
+    border-color: var(--color-text);
+  }
+}
+
+/* The station before a just-placed one: its segment draws down to it. */
+@utility route-stop-extend {
+  @media (prefers-reduced-motion: no-preference) {
+    &::before {
+      animation: var(--animate-line-in);
+    }
+  }
+}
+
+/* A stop just added: the last stretch draws in, then the ring pops. */
+@utility route-stop-new {
+  @media (prefers-reduced-motion: no-preference) {
+    &::before {
+      animation: var(--animate-line-in);
+      animation-delay: var(--motion-duration-normal);
+    }
+    &::after {
+      animation: var(--animate-station-in);
+      animation-delay: var(--motion-duration-normal);
+    }
+  }
+}
+
+/* Native date field inside the amber time chip: no box, ink text,
+   tabular numerals, the picker icon in ink. */
+@utility date-chip {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  color-scheme: light;
+  accent-color: var(--color-accent);
+  min-height: var(--spacing-touch);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+}
+
+/* Select with a drawn chevron in ink, themed like the inputs. */
+@utility select-themed {
+  appearance: none;
+  accent-color: var(--color-accent);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--color-text) 50%),
+    linear-gradient(135deg, var(--color-text) 50%, transparent 50%);
+  background-position:
+    calc(100% - var(--spacing-5)) 50%,
+    calc(100% - var(--spacing-4)) 50%;
+  background-size: 0.375rem 0.375rem;
+  background-repeat: no-repeat;
+  padding-right: var(--spacing-10);
 }
 
 @utility scrim-bottom {
@@ -250,6 +399,10 @@
 
 @utility swatch-color-on-secondary {
   background-color: var(--color-on-secondary);
+}
+
+@utility swatch-color-sun {
+  background-color: var(--color-sun);
 }
 
 @utility swatch-color-scrim {
@@ -339,6 +492,27 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes line-in {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes station-in {
+  0% {
+    scale: 0;
+  }
+  60% {
+    scale: 1.2;
+  }
+  100% {
+    scale: 1;
   }
 }
 

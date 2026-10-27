@@ -2,5 +2,8 @@
   "title": "What should we call you?",
   "nameLabel": "Your name",
   "error": "Enter a name (1-50 characters)",
-  "submit": "Continue"
+  "submit": "Continue",
+  "description": "Your crew sees this name on every trip you join.",
+  "previewFallback": "You",
+  "previewMeta": "Joined just now"
 }

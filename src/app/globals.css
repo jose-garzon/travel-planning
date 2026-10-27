@@ -10,7 +10,28 @@
   h2,
   h3,
   h4 {
-    @apply font-display;
+    @apply font-display font-bold uppercase text-balance;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  p {
+    @apply text-pretty;
+  }
+
+  ::selection {
+    @apply bg-sun text-on-sun;
+  }
+
+  input,
+  textarea {
+    @apply caret-accent;
+  }
+
+  /* Headings focused from code (FocusHeading, tabindex=-1) keep focus
+     for screen readers but draw no ring: they are not tab stops, and
+     Chrome marks script focus as focus-visible after typing. */
+  :is(h1, h2, h3)[tabindex="-1"]:focus {
+    @apply outline-none;
   }
 
   @media (prefers-reduced-motion: no-preference) {

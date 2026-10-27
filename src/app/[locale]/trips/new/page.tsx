@@ -1,15 +1,32 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getCurrentUser } from "@/modules/auth";
+import { TripForm } from "@/modules/trips/ui";
+import { Link, redirect } from "@/shared/i18n/navigation";
 
-// Placeholder route (plan "Left to implementation" / D-4): the real
-// Trips feature replaces this. `EmptyTripsState`'s CTA links here.
 export default async function NewTripPage({ params }: PageProps<"/[locale]/trips/new">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "trips.placeholder" });
+
+  if ((await getCurrentUser()) === null) {
+    redirect({ href: "/", locale });
+  }
+
+  const t = await getTranslations({ locale, namespace: "trips.form" });
 
   return (
-    <main className="px-6 py-12">
-      <h1 className="text-3xl text-accent">{t("title")}</h1>
+    <main className="mx-auto w-full max-w-dialog px-6 pt-4 pb-6 lg:pt-10">
+      <div className="mb-6 flex items-center justify-end gap-4">
+        {/* The trip-name field is the visible title; this names the page. */}
+        <h1 className="sr-only">{t("title")}</h1>
+        <Link
+          href="/"
+          className="min-h-touch content-center font-semibold underline underline-offset-4 ui-hover:text-accent"
+        >
+          {t("cancel")}
+        </Link>
+      </div>
+      <p className="mb-8 text-text-muted">{t("intro")}</p>
+      <TripForm />
     </main>
   );
 }

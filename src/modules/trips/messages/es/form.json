@@ -1,0 +1,23 @@
+{
+  "title": "Nuevo viaje",
+  "tripName": "Nombre del viaje",
+  "currency": "Moneda",
+  "leg": "Tramo {number}",
+  "from": "Desde",
+  "to": "Hasta",
+  "submit": "Crear viaje",
+  "errors": {
+    "nameRequired": "El nombre del viaje es obligatorio",
+    "fromRequired": "El origen es obligatorio",
+    "toRequired": "El destino es obligatorio",
+    "saveFailed": "No se pudo guardar el viaje. Revisa tu conexión e inténtalo de nuevo."
+  },
+  "date": "Fecha de salida",
+  "dateHint": "opcional",
+  "cancel": "Cancelar",
+  "intro": "Traza la ruta: de dónde sales y tu siguiente parada. Puedes invitar a tu parche cuando el viaje exista.",
+  "fromPlaceholder": "Salida",
+  "toPlaceholder": "Siguiente parada",
+  "namePlaceholder": "Ponle nombre al viaje",
+  "takeoff": "Salida"
+}

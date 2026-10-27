@@ -288,7 +288,7 @@ When("I request a magic link for {string}", async ({ page }, email: string) => {
 
   await page.goto("/");
   await page.getByRole("textbox", { name: "Email" }).fill(targetEmail);
-  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Email me a sign-in link" }).click();
 });
 
 Then("I see my email {string} on the screen", async ({ page }, email: string) => {
@@ -392,7 +392,7 @@ Given(
 
     await page.goto("/");
     await page.getByRole("textbox", { name: "Email" }).fill(email);
-    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Email me a sign-in link" }).click();
     await expect(page.getByText(email)).toBeVisible();
   },
 );

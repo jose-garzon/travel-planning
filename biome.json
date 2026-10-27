@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!node_modules", "!.next", "!.features-gen", "!src/shared/db/migrations"]
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.next",
+      "!.features-gen",
+      "!src/shared/db/migrations",
+      "!.impeccable"
+    ]
   },
   "formatter": {
     "enabled": true,

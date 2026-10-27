@@ -15,6 +15,12 @@ type InputProps = NativeInput & {
   hint?: Translatable;
   /** Sets `aria-invalid`, the error border and the announced error row. */
   error?: Translatable;
+  /**
+   * `field` (default): labelled box. `station` and `title`: the value is
+   * set in the display face, as a station name or a page title, on a
+   * single rule; the label stays as the accessible name only.
+   */
+  appearance?: "field" | "station" | "title";
 };
 
 const BASE_CLASSES =
@@ -25,6 +31,21 @@ const BASE_CLASSES =
   "disabled:cursor-not-allowed";
 
 const ERROR_CLASSES = "border-error";
+
+const DISPLAY_CLASSES =
+  // A filled station reads as a placed stop: the rule shows only while
+  // empty, hovered or focused.
+  "w-full min-w-0 border-0 border-b-2 border-border-strong not-placeholder-shown:border-transparent " +
+  "bg-transparent px-0 pb-1 " +
+  "font-display font-bold uppercase leading-none tracking-wide text-text outline-focus " +
+  "placeholder:text-text-muted transition duration-fast ease-out " +
+  "ui-hover:border-accent ui-focus:border-accent ui-focus:outline-2 ui-focus:outline-solid " +
+  "ui-focus:outline-offset-4";
+
+const APPEARANCE_CLASSES = {
+  station: `${DISPLAY_CLASSES} text-3xl`,
+  title: `${DISPLAY_CLASSES} text-4xl`,
+} as const;
 
 /**
  * Input primitive: labelled text field with an optional hint and error
@@ -41,7 +62,14 @@ const ERROR_CLASSES = "border-error";
  * them across parent/child keeps both prescribed utilities, unmodified,
  * and both animations actually run.
  */
-export function Input({ label, hint, error, id, ...nativeProps }: InputProps) {
+export function Input({
+  label,
+  hint,
+  error,
+  id,
+  appearance = "field",
+  ...nativeProps
+}: InputProps) {
   const translate = useTranslatable();
   const generatedId = useId();
   const inputId = id ?? generatedId;
@@ -50,8 +78,11 @@ export function Input({ label, hint, error, id, ...nativeProps }: InputProps) {
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
 
   return (
-    <div data-ui="input" className="flex flex-col gap-1">
-      <label htmlFor={inputId} className="text-sm font-semibold text-text">
+    <div data-ui="input" className="flex min-w-0 flex-col gap-1 wrap-anywhere">
+      <label
+        htmlFor={inputId}
+        className={appearance === "field" ? "text-sm font-semibold text-text" : "sr-only"}
+      >
         {translate(label)}
       </label>
       <input
@@ -59,14 +90,17 @@ export function Input({ label, hint, error, id, ...nativeProps }: InputProps) {
         id={inputId}
         aria-invalid={error === undefined ? undefined : true}
         aria-describedby={describedBy}
-        className={cx(BASE_CLASSES, error === undefined ? undefined : ERROR_CLASSES)}
+        className={cx(
+          appearance === "field" ? BASE_CLASSES : APPEARANCE_CLASSES[appearance],
+          error === undefined ? undefined : ERROR_CLASSES,
+        )}
       />
       {hint !== undefined && (
         <p id={hintId} className="text-sm text-text-muted">
           {translate(hint)}
         </p>
       )}
-      <div aria-live="polite">
+      <div aria-live="polite" className="overflow-x-clip">
         {error !== undefined && (
           <p id={errorId} className="animate-fade-in text-sm text-error">
             <span className="inline-flex items-center gap-1 motion-safe:animate-shake">

@@ -1,0 +1,23 @@
+{
+  "greeting": "Hi, {name}",
+  "nextTripHeading": "Next trip",
+  "otherTripsHeading": "Other trips",
+  "created": "Trip created",
+  "emptyState": {
+    "title": "No trips on your line yet",
+    "description": "Start with the route: where you leave from and where you are going. You can invite your crew right after.",
+    "cta": "Create your first trip",
+    "stepRoute": "Draw your route",
+    "stepCrew": "Invite your crew",
+    "stepShare": "Split the budget"
+  },
+  "countdown": "{days, plural, =0 {Today} one {Tomorrow} other {In # days}}",
+  "members": "{count, plural, one {# traveler} other {# travelers}}",
+  "noDates": "Dates to be set",
+  "newTrip": "New trip",
+  "pastHeading": "Past trips",
+  "nextStepDates": "Next: add dates",
+  "solo": "Just you so far",
+  "ended": "Ended {date}",
+  "routeName": "Route: {route}"
+}

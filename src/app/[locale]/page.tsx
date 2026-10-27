@@ -1,16 +1,28 @@
+import { cookies } from "next/headers";
 import { setRequestLocale } from "next-intl/server";
 import { getCurrentUser, setDisplayName } from "@/modules/auth";
 import { LandingScreen, LinkExpiredScreen, NameCaptureScreen } from "@/modules/auth/ui";
-import { getHomeTripsSummary } from "@/modules/trips";
+import { getHomeTrips } from "@/modules/trips";
 import { HomeScreen } from "@/modules/trips/ui";
 import { redirect } from "@/shared/i18n/navigation";
+import type { Locale } from "@/shared/i18n/routing";
 import { FocusHeading } from "@/shared/ui/components/focus-heading";
+import { TIME_ZONE_COOKIE } from "@/shared/ui/components/time-zone-cookie";
 
 // Better Auth's magic-link plugin redirects a signed-out visitor here
 // with this code when the verify token is missing, already consumed
 // or past its expiry (plan "Risks": confirmed at
 // `node_modules/better-auth/dist/plugins/magic-link`, not guessed).
 const EXPIRED_LINK_ERROR = "INVALID_TOKEN";
+
+/** `YYYY-MM-DD` in the user's zone (the `tz` cookie); UTC when absent or invalid (plan D-5). */
+function todayIn(timeZone: string | undefined): string {
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date());
+  } catch {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
 
 // Three-way branch on `getCurrentUser()` (plan "Architecture"): signed
 // out sees the landing page (or, if Better Auth's verify redirect
@@ -19,7 +31,7 @@ const EXPIRED_LINK_ERROR = "INVALID_TOKEN";
 // home page.
 export default async function HomePage({ params, searchParams }: PageProps<"/[locale]">) {
   const { locale } = await params;
-  const { error, nameError } = await searchParams;
+  const { error, nameError, created } = await searchParams;
   setRequestLocale(locale);
 
   // Thin Server Action (architecture.md rule 7: only `app/` calls a
@@ -55,12 +67,22 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
     return <NameCaptureScreen action={submitDisplayName} error={nameError === "1"} />;
   }
 
-  const summary = await getHomeTripsSummary(currentUser.email);
+  const today = todayIn((await cookies()).get(TIME_ZONE_COOKIE)?.value);
+  const summary = await getHomeTrips({
+    userId: currentUser.id,
+    locale: locale as Locale,
+    today,
+  });
 
   return (
     <>
       <FocusHeading />
-      <HomeScreen displayName={currentUser.displayName} summary={summary} />
+      <HomeScreen
+        displayName={currentUser.displayName}
+        summary={summary}
+        today={today}
+        justCreated={created === "1"}
+      />
     </>
   );
 }

@@ -1,0 +1,159 @@
+{
+  "title": "Choose Parche's new visual world",
+  "question": "The roll assigned Chiva Route Board. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "kind": "assigned",
+      "kicker": "THE ROLL",
+      "label": "Chiva Route Board",
+      "lineage": "Colombian chiva buses: painted stripe bands and the hand-lettered list of towns on the side",
+      "thesis": "Your trip is the route painted on the side of the bus: each city you add is lettered onto the board.",
+      "palette": ["#d7261e", "#ffc927", "#1d4fa8", "#19934a", "#16130f", "#ffffff"],
+      "materials": ["sign-painter capitals", "stripe bands", "white body panels"],
+      "viewport": "Phone: stripe-band header with the trip name, the route board below listing stops as lettered rows with a search field and a visible city list under it, one big 'Add stop' action.",
+      "risk": "Turns folkloric costume if stripes go everywhere; stripes stay on the route board and the header only.",
+      "raised": [
+        {
+          "from": "challenger-wayfinding",
+          "raise": "Each step shows only the next decision: the city list answers 'where next?' and nothing else competes."
+        },
+        {
+          "from": "challenger-mascots",
+          "raise": "Every crew member owns one stripe colour, reused on their name, avatar and their share of the budget."
+        },
+        {
+          "from": "challenger-catalog",
+          "raise": "Stops carry strict sequence numbers (1, 2, 3) that every screen reuses."
+        },
+        {
+          "from": "challenger-zones",
+          "raise": "A date clash renders structurally (crossed stripes on the clashing stops), not only as red text."
+        }
+      ],
+      "html": ".impeccable/mocks/decision/assigned.html",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "model-pick",
+      "kind": "pick",
+      "kicker": "IMPECCABLE’S PICK",
+      "label": "Metro Line Diagram",
+      "lineage": "Metro de Medellín / TransMilenio line maps",
+      "thesis": "The route is a transit line: each city is a station, and the line draws itself as you add stops.",
+      "palette": ["#ffffff", "#141414", "#e4007c", "#00a19a", "#ffb000"],
+      "materials": ["thick coloured line", "station dots", "condensed station names"],
+      "viewport": "Phone: vertical line with station dots down the left, city names beside them, an open station slot at the end with the city search and its list.",
+      "risk": "The most predictable answer for a route builder; clean but could feel like any transit app.",
+      "html": ".impeccable/mocks/decision/model-pick.html",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "challenger-wayfinding",
+      "kind": "challenger",
+      "catalogId": "wayfinding-cartography-signage-terminal-yellow-wayfinding",
+      "label": "Terminal Yellow Signs",
+      "verdict": "competitive",
+      "lineage": "airport overhead wayfinding bands",
+      "thesis": "Every screen is a junction sign: one yellow band says what you can do next.",
+      "palette": ["#ffd200", "#111111", "#ffffff", "#2b2b2b"],
+      "materials": ["overhead yellow bands", "monumental city codes", "black pictogram squares"],
+      "viewport": "Phone: a sticky yellow band 'Where are you starting?', monumental code of the chosen city, the city list as sign rows with arrows.",
+      "case": "Wins clarity (each screen names the next move); weaker on identity, airports read generic for a friends' bus-and-plane trip.",
+      "risk": "Reads like an airline app; yellow everywhere tires fast.",
+      "hero": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-terminal-yellow-wayfinding-hero.webp",
+      "html": ".impeccable/mocks/decision/challenger-wayfinding.html",
+      "htmlFrame": "390x844"
+    },
+    {
+      "id": "challenger-mascots",
+      "kind": "challenger",
+      "catalogId": "pop-culture-shelf-character-goods-catalog",
+      "label": "Character Goods Catalog",
+      "verdict": "declined",
+      "lineage": "ranked mascot rosters",
+      "thesis": "Crew as a roster of characters.",
+      "palette": ["#ffd6e0", "#cdeffd", "#ffffff", "#ff5c8a"],
+      "materials": ["pastel cells", "keylines"],
+      "viewport": "Roster grid.",
+      "case": "Loses both axes: trips are not characters.",
+      "risk": "Childish.",
+      "kept": "One fixed colour per person, reused everywhere."
+    },
+    {
+      "id": "challenger-catalog",
+      "kind": "challenger",
+      "catalogId": "brand-identity-canon-saville-catalog-sleeve",
+      "label": "Factory Catalog Sleeve",
+      "verdict": "declined",
+      "lineage": "Factory Records numbering",
+      "thesis": "Everything as a numbered catalog entry.",
+      "palette": ["#0b0b0b", "#ffffff"],
+      "materials": ["matte black", "hairline plot"],
+      "viewport": "Index of numbered entries.",
+      "case": "Loses both: coded labels hide what to do.",
+      "risk": "Cryptic.",
+      "kept": "Strict sequence numbers on every stop."
+    },
+    {
+      "id": "challenger-zones",
+      "kind": "challenger",
+      "catalogId": "operate-b-exposure-record-zone-sheets",
+      "label": "Exposure Zone Sheets",
+      "verdict": "declined",
+      "lineage": "darkroom exposure records",
+      "thesis": "Overlapping sheets with hatched conflicts.",
+      "palette": ["#e9e9e4", "#2a2a2a", "#c2188f"],
+      "materials": ["tracing paper", "hatching"],
+      "viewport": "Stacked sheets.",
+      "case": "Loses both: no tie to friends travelling.",
+      "risk": "Technical, cold.",
+      "kept": "Conflicts drawn as structure, not just colour."
+    },
+    {
+      "id": "challenger-atlas",
+      "kind": "challenger",
+      "catalogId": "notation-diagram-systems-star-atlas",
+      "label": "Star Atlas",
+      "verdict": "declined",
+      "lineage": "celestial charts",
+      "thesis": "Cities as stars, route as constellation.",
+      "palette": ["#0d1633", "#f4f1e8", "#d9412b"],
+      "materials": ["chart dots", "faint lines"],
+      "viewport": "Night chart.",
+      "case": "Loses both: pretty, but no one reads a trip as a sky.",
+      "risk": "Decorative.",
+      "kept": "Dot size as hierarchy: nights stayed set each stop's weight."
+    },
+    {
+      "id": "challenger-bitmap",
+      "kind": "challenger",
+      "catalogId": "emigre-bitmap-specimen",
+      "label": "Bitmap Specimen",
+      "verdict": "declined",
+      "lineage": "Emigre type specimens",
+      "thesis": "Pixel type at poster scale.",
+      "palette": ["#ffffff", "#000000", "#ff3b00"],
+      "materials": ["bitmap type", "halftone"],
+      "viewport": "Specimen page.",
+      "case": "Loses both: no link to the trip or the crew.",
+      "risk": "Retro gimmick.",
+      "kept": "One display form repeated on a strict size ladder."
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "buildPath": { "value": "code" },
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "The category standard",
+    "thesis": "Wanderlog-style planner: white cards, a map, blue accent, executed impeccably.",
+    "palette": ["#ffffff", "#111827", "#2563eb", "#f3f4f6"],
+    "materials": ["clean cards", "map tiles"],
+    "viewport": "Phone: map strip on top, search field, list of added cities as cards.",
+    "risk": "Indistinguishable from every travel planner by design.",
+    "html": ".impeccable/mocks/decision/canon.html",
+    "htmlFrame": "390x844"
+  },
+  "steer": true
+}

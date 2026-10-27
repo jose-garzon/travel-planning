@@ -2,5 +2,8 @@
   "title": "¿Cómo te llamas?",
   "nameLabel": "Tu nombre",
   "error": "Ingresa un nombre (1-50 caracteres)",
-  "submit": "Continuar"
+  "submit": "Continuar",
+  "description": "Tu parche verá este nombre en cada viaje al que te unas.",
+  "previewFallback": "Tú",
+  "previewMeta": "Se unió ahora"
 }

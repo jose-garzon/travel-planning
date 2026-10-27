@@ -1,4 +1,8 @@
-# Plan: Create a trip with a boarding-pass form and see it on home
+# Plan: Create a trip by drawing its route, and see it on home
+
+Redesign note (2026-11-02): UI rows below follow the metro line world
+(DESIGN.md, `RouteLine` in `shared/ui`). Domain, service, API and data
+decisions are unchanged.
 
 Feature: ./feature.md
 Issue: #5
@@ -33,14 +37,14 @@ flowchart LR
 | ---------------------------------- | ------- | ------------------------- |
 | `trips/domain/route.ts`            | domain  | legs, validation (new)    |
 | `trips/domain/route-view.ts`       | domain  | stops from legs (new)     |
-| `trips/domain/current-stop.ts`     | domain  | current card (new)        |
+| `trips/domain/current-stop.ts`     | domain  | current stop (new)        |
 | `trips/domain/trip.ts`             | domain  | legs, version (changed)   |
 | `trips/service/*`                  | service | use cases, ports          |
 | `trips/data/drizzle-trips-repo...` | data    | replaces in-memory reader |
 | `trips/data/city-index.ts`         | data    | city search (new)         |
 | `trips/data/cities.json`           | data    | generated en + es names   |
 | `trips/ui/form/*`                  | ui      | form, combobox (new)      |
-| `trips/ui/home/*`                  | ui      | carousel, cards (new)     |
+| `trips/ui/home/*`                  | ui      | trip line, panels (new)   |
 | `shared/db/schema/trips.ts`        | shared  | tables below (new)        |
 | `app/api/v1/{trips,cities}/**`     | app     | thin handlers (new)       |
 | `app/[locale]/trips/{new,[tripId]}`| app     | pages                     |
@@ -126,14 +130,14 @@ Exported signatures (T01 owns, others consume):
 
 | Component        | Location               | Purpose                       |
 | ---------------- | ---------------------- | ----------------------------- |
-| `TripForm`       | `trips/ui/form/`       | create and edit, boarding pass|
+| `TripForm`       | `trips/ui/form/`       | create and edit, route line   |
 | `LegFields`      | `trips/ui/form/`       | one leg row                   |
 | `CityCombobox`   | `trips/ui/form/`       | WAI-ARIA combobox, `/cities`  |
 | `CurrencySelect` | `trips/ui/form/`       | ISO list, locale default      |
-| `TripCarousel`   | `trips/ui/home/`       | snap carousel / desktop grid  |
-| `StopCard`       | `trips/ui/home/`       | stop boarding pass            |
-| `TakeoffCard`, `BackHomeCard` | `trips/ui/home/` | start and end cards  |
-| `CompactTripCard`| `trips/ui/home/`       | other trips                   |
+| `TripLine`       | `trips/ui/home/`       | vertical / horizontal line    |
+| `StopStation`    | `trips/ui/home/`       | one stop on the line          |
+| takeoff / home   | `RouteLine` hub stops  | filled-ring start and end     |
+| `CompactTrip`    | `trips/ui/home/`       | other trips (Panel)           |
 | `HomeScreen`     | `trips/ui/components/` | changed: uses the above       |
 
 
@@ -148,7 +152,8 @@ Exported signatures (T01 owns, others consume):
 | pages             | `/trips/new`, `/trips/[tripId]` | edit page = trip page |
 
 i18n: `trips.*`, split files
-`messages/<locale>/{home,form,city,cards,edit}.json`
+`messages/<locale>/{home,form,city,cards,edit}.json` (`cards` holds
+the station copy; name kept so T01 files stay valid)
 (ADR 0008), created in T01.
 
 
@@ -160,15 +165,16 @@ i18n: `trips.*`, split files
 | `/cities` p95                 | ≤ 50 ms  | in-memory index, unit timing |
 | Trip write p95                | ≤ 400 ms | 1 transaction                |
 | JS `/trips/new` (gzip)        | ≤ 170 KB | Lighthouse CI; no city data  |
-| Home LCP / CLS                | 2.5 s / 0.1 | Lighthouse CI; cards SSR'd |
+| Home LCP / CLS                | 2.5 s / 0.1 | Lighthouse CI; line SSR'd  |
 | Combobox keystroke            | debounce 150 ms, abort stale | unit test |
 
 
 ## Accessibility notes
 
 - `CityCombobox`: APG "Combobox with listbox popup", `aria-activedescendant`.
-- `TripCarousel`: `region` "Trip stops" + `ul`; arrow keys move focus
-  between cards (roving tabindex); APG carousel is not used (no
+- `TripLine`: `region` "Trip stops" + `ol`; a horizontal line that
+  overflows is a keyboard-scrollable region (no roving tabindex; APG
+  carousel is not used, no
   auto-rotation).
 - Live region in `TripForm` for leg added/removed and save result.
 - Dialogs (`Dialog` from `shared/ui`) for discard and delete.
@@ -196,7 +202,7 @@ Public API needed anyway; form is a client component.
 
 ### D-5. Today = user's local date
 Client sets a `tz` cookie (IANA) once; server computes `today` in that
-zone, fallback UTC. Countdown and current card SSR without shift.
+zone, fallback UTC. Countdown and current stop SSR without shift.
 
 ### D-6. #3 tests edited
 `InMemoryTripsReader` deleted. #3 scenarios seed real trips via a
@@ -219,12 +225,12 @@ region map in `trips/ui/form`; names via `Intl.DisplayNames`; list via
 - `tz` cookie absent on first SSR: one render in UTC; acceptable.
 - Concurrent writes on SQLite: version check inside the transaction.
 - #3 i18n date-range scenario: keep the next-trip date range in the
-  carousel header so it still passes.
+  line header so it still passes.
 
 
 ## Left to implementation
 
-- Card visuals, boarding-pass styling, playful takeoff/back-home: T04
+- Line visuals (DESIGN.md metro line), takeoff/back-home hubs: T04
 - Exact copy (en, es) per message file: owning task
 - City ranking (prefix match, then population): T02
 - Region→currency map contents: T01

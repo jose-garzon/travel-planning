@@ -16,6 +16,8 @@ export type UseRequestMagicLinkResult = {
   status: RequestMagicLinkStatus;
   errorKind: RequestMagicLinkErrorKind | null;
   requestMagicLink: (email: string) => Promise<void>;
+  /** Back to the empty form, e.g. to use another email. */
+  reset: () => void;
 };
 
 /**
@@ -44,7 +46,12 @@ export function useRequestMagicLink(): UseRequestMagicLinkResult {
     setStatus("sent");
   }
 
-  return { status, errorKind, requestMagicLink };
+  function reset() {
+    setStatus("idle");
+    setErrorKind(null);
+  }
+
+  return { status, errorKind, requestMagicLink, reset };
 }
 
 /** Returns `null` on success, else Better Auth's error `code` (or `""`). */

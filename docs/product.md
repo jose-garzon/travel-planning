@@ -1,5 +1,7 @@
 # Product
 
+<!-- impeccable:product-schema 1 -->
+
 Travel Planning helps a group of friends plan and budget a trip
 together. At the end they have a clear itinerary and a clear budget,
 in total and per person.
@@ -19,6 +21,9 @@ join by invite link.
 | editor  | edit cities, activities, budget; use the agent         |
 | viewer  | read everything                                        |
 
+- First run is organizer-first: a new user should understand at once
+  that they can create a trip, lay out its route, then invite their
+  friends. Joining by invite is the secondary path.
 - Exactly one owner. Ownership cannot be transferred.
 - Invites: shareable link, expires in 7 days, no approval needed.
   The owner picks the role (editor or viewer) for the link.
@@ -75,8 +80,30 @@ A key part of the product, not an add-on.
 - Concurrent edits: optimistic version check, warn and reload.
 - Locales: English (default) and Spanish.
 - Design: bold and playful, very easy to read, generous spacing,
-  clear information hierarchy. No generic AI look. Defined in its own
-  feature before any other UI work.
+  clear information hierarchy. No generic AI look. Every screen
+  tells the user what they can do next. Visual world: DESIGN.md.
+
+
+## Positioning
+
+Group planning and group budgeting in one place. Each member
+subscribes to the activities they will join, and that choice drives
+their personal budget. Itinerary tools do not split costs; split
+tools do not know the itinerary.
+
+
+## Product Principles
+
+- The itinerary is a shared list of suggestions; each person opts in.
+- Every number answers "how much does this cost me?" first, then the
+  trip total.
+- Nothing changes without a member's approval (agent included).
+- Read first: most visits are checking the plan, not editing it.
+
+
+## Accessibility
+
+WCAG 2.2 AA. Checked with axe-core in e2e tests.
 
 
 ## Roadmap

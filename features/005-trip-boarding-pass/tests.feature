@@ -1,8 +1,8 @@
 @F005
-Feature: Create a trip with a boarding-pass form and see it on home
+Feature: Create a trip by drawing its route, and see it on home
   As a traveler
-  I want to create a multi-city trip in one form
-  So that I see my route as boarding passes on my home page
+  I want to draw my multi-city route stop by stop
+  So that I see it as a line of stations on my home page
 
   Background:
     Given I am signed in as "Ana"
@@ -49,6 +49,13 @@ Feature: Create a trip with a boarding-pass form and see it on home
       | locale | query | to-field | option        |
       | en     | lond  | To       | LON London    |
       | es     | lond  | Hasta    | LON Londres   |
+
+  @T02 @AC-3 @a11y
+  Scenario: Cities are listed before typing
+    When I start a new trip
+    And I focus leg 1 "To"
+    Then I see a list of city options
+    And the page has no accessibility violations
 
   @T02 @EC-1
   Scenario: From city is not offered as destination
@@ -142,7 +149,7 @@ Feature: Create a trip with a boarding-pass form and see it on home
       | -5    | -1     | BCN     |
 
   @T04 @AC-9 @EC-12
-  Scenario: Earliest trip takes the carousel; others are compact
+  Scenario: Earliest trip takes the home line; others are compact
     Given I have a trip "Peru" with route:
       | from   | to   | day |
       | Lima   | Cusco | +40 |

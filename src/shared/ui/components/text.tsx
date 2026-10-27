@@ -3,7 +3,7 @@ import type { TextContent } from "@/shared/ui/translatable";
 import { useTranslatable } from "@/shared/ui/translatable";
 
 type TextElement = "p" | "span" | "h1" | "h2" | "h3" | "h4" | "strong" | "code";
-type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 type TextFont = "display" | "body";
 type TextWeight = "regular" | "semibold" | "bold";
 type TextLeading = "tight" | "normal" | "relaxed";
@@ -28,6 +28,8 @@ const sizeClasses: Record<TextSize, string> = {
   xl: "text-xl",
   "2xl": "text-2xl",
   "3xl": "text-3xl",
+  "4xl": "text-4xl",
+  "5xl": "text-5xl",
 };
 
 const fontClasses: Record<TextFont, string> = {

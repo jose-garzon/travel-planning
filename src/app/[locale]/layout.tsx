@@ -5,8 +5,9 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/shared/i18n/routing";
 import { SiteHeader } from "@/shared/ui/components/site-header";
+import { TimeZoneCookie } from "@/shared/ui/components/time-zone-cookie";
 import { cx } from "@/shared/ui/cx";
-import { fredoka, plusJakartaSans } from "@/shared/ui/fonts";
+import { barlowCondensed, onest } from "@/shared/ui/fonts";
 import { parseTheme, THEME_COOKIE } from "@/shared/ui/theme";
 import "../globals.css";
 
@@ -33,10 +34,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       lang={locale}
       dir="ltr"
       data-theme={theme}
-      className={cx(fredoka.variable, plusJakartaSans.variable)}
+      className={cx(barlowCondensed.variable, onest.variable)}
     >
       <body>
         <NextIntlClientProvider>
+          <TimeZoneCookie />
           <SiteHeader />
           {children}
         </NextIntlClientProvider>

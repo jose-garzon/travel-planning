@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-02T00:00:00Z",
+  "title": "Design System: Parche",
+  "extensions": {
+    "colorMeta": {
+      "line": {
+        "role": "primary",
+        "displayName": "Route Magenta",
+        "tonalRamp": [
+          "oklch(15% 0.100 355)",
+          "oklch(25% 0.135 355)",
+          "oklch(35% 0.170 355)",
+          "oklch(45% 0.205 355)",
+          "oklch(58% 0.230 355)",
+          "oklch(70% 0.188 355)",
+          "oklch(82% 0.146 355)",
+          "oklch(95% 0.100 355)"
+        ],
+        "canonical": "light-dark(#c4006b, #ff6fb5)"
+      },
+      "line-hover": {
+        "role": "primary",
+        "displayName": "Route Magenta Deep",
+        "tonalRamp": [
+          "oklch(15% 0.092 355)",
+          "oklch(25% 0.124 355)",
+          "oklch(35% 0.156 355)",
+          "oklch(45% 0.188 355)",
+          "oklch(58% 0.210 355)",
+          "oklch(70% 0.172 355)",
+          "oklch(82% 0.134 355)",
+          "oklch(95% 0.092 355)"
+        ]
+      },
+      "on-line": {
+        "role": "primary",
+        "displayName": "On Magenta",
+        "tonalRamp": [
+          "oklch(15% 0.008 355)",
+          "oklch(25% 0.011 355)",
+          "oklch(35% 0.014 355)",
+          "oklch(45% 0.017 355)",
+          "oklch(58% 0.019 355)",
+          "oklch(70% 0.016 355)",
+          "oklch(82% 0.012 355)",
+          "oklch(95% 0.008 355)"
+        ]
+      },
+      "people": {
+        "role": "secondary",
+        "displayName": "Crew Teal",
+        "tonalRamp": [
+          "oklch(15% 0.050 180)",
+          "oklch(25% 0.068 180)",
+          "oklch(35% 0.085 180)",
+          "oklch(45% 0.103 180)",
+          "oklch(58% 0.115 180)",
+          "oklch(70% 0.094 180)",
+          "oklch(82% 0.073 180)",
+          "oklch(95% 0.050 180)"
+        ],
+        "canonical": "light-dark(#00756b, #3fd1c2)"
+      },
+      "people-hover": {
+        "role": "secondary",
+        "displayName": "Crew Teal Deep",
+        "tonalRamp": [
+          "oklch(15% 0.046 180)",
+          "oklch(25% 0.062 180)",
+          "oklch(35% 0.078 180)",
+          "oklch(45% 0.094 180)",
+          "oklch(58% 0.105 180)",
+          "oklch(70% 0.086 180)",
+          "oklch(82% 0.067 180)",
+          "oklch(95% 0.046 180)"
+        ]
+      },
+      "on-people": {
+        "role": "secondary",
+        "displayName": "On Teal",
+        "tonalRamp": [
+          "oklch(15% 0.008 180)",
+          "oklch(25% 0.011 180)",
+          "oklch(35% 0.014 180)",
+          "oklch(45% 0.017 180)",
+          "oklch(58% 0.019 180)",
+          "oklch(70% 0.016 180)",
+          "oklch(82% 0.012 180)",
+          "oklch(95% 0.008 180)"
+        ]
+      },
+      "time": {
+        "role": "tertiary",
+        "displayName": "Timetable Amber",
+        "tonalRamp": [
+          "oklch(15% 0.071 75)",
+          "oklch(25% 0.096 75)",
+          "oklch(35% 0.121 75)",
+          "oklch(45% 0.145 75)",
+          "oklch(58% 0.163 75)",
+          "oklch(70% 0.133 75)",
+          "oklch(82% 0.103 75)",
+          "oklch(95% 0.071 75)"
+        ],
+        "canonical": "light-dark(#ffb000, #ffc23d)"
+      },
+      "on-time": {
+        "role": "tertiary",
+        "displayName": "On Amber Ink",
+        "tonalRamp": [
+          "oklch(15% 0.004 75)",
+          "oklch(25% 0.006 75)",
+          "oklch(35% 0.007 75)",
+          "oklch(45% 0.009 75)",
+          "oklch(58% 0.010 75)",
+          "oklch(70% 0.008 75)",
+          "oklch(82% 0.006 75)",
+          "oklch(95% 0.004 75)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Station Ink",
+        "tonalRamp": [
+          "oklch(15% 0.002 270)",
+          "oklch(25% 0.003 270)",
+          "oklch(35% 0.004 270)",
+          "oklch(45% 0.004 270)",
+          "oklch(58% 0.005 270)",
+          "oklch(70% 0.004 270)",
+          "oklch(82% 0.003 270)",
+          "oklch(95% 0.002 270)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "tonalRamp": [
+          "oklch(15% 0.004 270)",
+          "oklch(25% 0.006 270)",
+          "oklch(35% 0.007 270)",
+          "oklch(45% 0.009 270)",
+          "oklch(58% 0.010 270)",
+          "oklch(70% 0.008 270)",
+          "oklch(82% 0.006 270)",
+          "oklch(95% 0.004 270)"
+        ]
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Platform White / Night Blue",
+        "tonalRamp": [
+          "oklch(15% 0.013 270)",
+          "oklch(25% 0.017 270)",
+          "oklch(35% 0.021 270)",
+          "oklch(45% 0.026 270)",
+          "oklch(58% 0.029 270)",
+          "oklch(70% 0.023 270)",
+          "oklch(82% 0.018 270)",
+          "oklch(95% 0.013 270)"
+        ]
+      },
+      "surface-1": {
+        "role": "neutral",
+        "displayName": "Surface 1",
+        "tonalRamp": [
+          "oklch(15% 0.013 270)",
+          "oklch(25% 0.017 270)",
+          "oklch(35% 0.021 270)",
+          "oklch(45% 0.026 270)",
+          "oklch(58% 0.029 270)",
+          "oklch(70% 0.023 270)",
+          "oklch(82% 0.018 270)",
+          "oklch(95% 0.013 270)"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Surface 2",
+        "tonalRamp": [
+          "oklch(15% 0.004 100)",
+          "oklch(25% 0.006 100)",
+          "oklch(35% 0.007 100)",
+          "oklch(45% 0.009 100)",
+          "oklch(58% 0.010 100)",
+          "oklch(70% 0.008 100)",
+          "oklch(82% 0.006 100)",
+          "oklch(95% 0.004 100)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "tonalRamp": [
+          "oklch(15% 0.004 100)",
+          "oklch(25% 0.006 100)",
+          "oklch(35% 0.007 100)",
+          "oklch(45% 0.009 100)",
+          "oklch(58% 0.010 100)",
+          "oklch(70% 0.008 100)",
+          "oklch(82% 0.006 100)",
+          "oklch(95% 0.004 100)"
+        ]
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule",
+        "tonalRamp": [
+          "oklch(15% 0.004 270)",
+          "oklch(25% 0.006 270)",
+          "oklch(35% 0.007 270)",
+          "oklch(45% 0.009 270)",
+          "oklch(58% 0.010 270)",
+          "oklch(70% 0.008 270)",
+          "oklch(82% 0.006 270)",
+          "oklch(95% 0.004 270)"
+        ]
+      },
+      "error": {
+        "role": "neutral",
+        "displayName": "Error Red",
+        "tonalRamp": [
+          "oklch(15% 0.071 28)",
+          "oklch(25% 0.096 28)",
+          "oklch(35% 0.121 28)",
+          "oklch(45% 0.145 28)",
+          "oklch(58% 0.163 28)",
+          "oklch(70% 0.133 28)",
+          "oklch(82% 0.103 28)",
+          "oklch(95% 0.071 28)"
+        ]
+      },
+      "success": {
+        "role": "neutral",
+        "displayName": "Success Green",
+        "tonalRamp": [
+          "oklch(15% 0.054 150)",
+          "oklch(25% 0.073 150)",
+          "oklch(35% 0.092 150)",
+          "oklch(45% 0.111 150)",
+          "oklch(58% 0.124 150)",
+          "oklch(70% 0.102 150)",
+          "oklch(82% 0.079 150)",
+          "oklch(95% 0.054 150)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page titles and the next trip's name. Upper case, leading none. Barlow Condensed loads with display: optional so a late swap never rewraps headings."
+      },
+      "title-field": {
+        "displayName": "Title Field",
+        "purpose": "The trip-name input on create trip: the field is the page title."
+      },
+      "station": {
+        "displayName": "Station",
+        "purpose": "Station inputs and large route stations."
+      },
+      "station-sm": {
+        "displayName": "Station Small",
+        "purpose": "Stations in lists, card headings."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "The parche mark, weight 800."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All running text, Onest."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Muted intro paragraph under a title."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, chips, meta lines."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-md",
+        "value": "0 4px 12px var(--color-shadow), 0 1px 3px var(--color-shadow)",
+        "purpose": "Floating layers only (dialogs, tooltips). Transparent in dark mode. Never on panels."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Default easing for every transition and animation."
+      },
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Hover, focus and colour transitions."
+      },
+      {
+        "name": "duration-normal",
+        "value": "250ms",
+        "purpose": "Sheets, dialogs; also the delay before a new stop draws in."
+      },
+      {
+        "name": "line-in",
+        "value": "line-in 450ms ease-out both",
+        "purpose": "Signature: a segment scales down from the top to a new station. motion-safe only."
+      },
+      {
+        "name": "station-in",
+        "value": "station-in 450ms ease-out both",
+        "purpose": "Signature: the new station's ring pops (0, 1.2, 1). motion-safe only."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "40rem"
+      },
+      {
+        "name": "md",
+        "value": "48rem"
+      },
+      {
+        "name": "lg",
+        "value": "64rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action on a screen. Ink pill; turns line magenta on hover.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Create trip</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:2.75rem;min-width:2.75rem;padding:0.75rem 1.5rem;border-radius:9999px;font-family:var(--font-body),system-ui,sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:background-color 150ms cubic-bezier(0.22,1,0.36,1),color 150ms cubic-bezier(0.22,1,0.36,1),scale 150ms cubic-bezier(0.22,1,0.36,1);border:2px solid transparent;}.ds-btn:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;}@media (prefers-reduced-motion:no-preference){.ds-btn:active{scale:0.97;}}.ds-btn-primary{background:var(--color-text);color:var(--color-bg);}.ds-btn-primary:hover{background:var(--color-accent-hover);color:var(--color-on-accent);}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Lesser actions: surface pill with a 2px ink rule.",
+      "html": "<button class=\"ds-btn ds-btn-secondary\">Resend link</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:2.75rem;min-width:2.75rem;padding:0.75rem 1.5rem;border-radius:9999px;font-family:var(--font-body),system-ui,sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:background-color 150ms cubic-bezier(0.22,1,0.36,1),color 150ms cubic-bezier(0.22,1,0.36,1),scale 150ms cubic-bezier(0.22,1,0.36,1);border:2px solid transparent;}.ds-btn:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;}@media (prefers-reduced-motion:no-preference){.ds-btn:active{scale:0.97;}}.ds-btn-secondary{background:var(--color-surface-1);color:var(--color-text);border-color:var(--color-text);}.ds-btn-secondary:hover{background:var(--color-surface-2);}"
+    },
+    {
+      "name": "Sun Button",
+      "kind": "button",
+      "refersTo": "button-sun",
+      "description": "Actions on line- or people-coloured panels.",
+      "html": "<div class=\"ds-on-line\"><button class=\"ds-btn ds-btn-sun\">Invite</button></div>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:2.75rem;min-width:2.75rem;padding:0.75rem 1.5rem;border-radius:9999px;font-family:var(--font-body),system-ui,sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:background-color 150ms cubic-bezier(0.22,1,0.36,1),color 150ms cubic-bezier(0.22,1,0.36,1),scale 150ms cubic-bezier(0.22,1,0.36,1);border:2px solid transparent;}.ds-btn:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;}@media (prefers-reduced-motion:no-preference){.ds-btn:active{scale:0.97;}}.ds-on-line{background:var(--color-accent);padding:1.5rem;border-radius:1rem;}.ds-btn-sun{background:var(--color-sun);color:var(--color-on-sun);}.ds-btn-sun:hover{background:var(--color-surface-1);}"
+    },
+    {
+      "name": "Field Input",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Labelled box for plain text such as email.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Email</span><input class=\"ds-input\" type=\"email\" placeholder=\"you@example.com\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:0.25rem;font-family:var(--font-body),system-ui,sans-serif;}.ds-field-label{font-size:0.875rem;font-weight:600;color:var(--color-text);}.ds-input{min-height:2.75rem;padding:0 1rem;border-radius:1rem;border:1px solid var(--color-border-strong);background:var(--color-surface-1);color:var(--color-text);font-size:1rem;caret-color:var(--color-accent);transition:border-color 150ms cubic-bezier(0.22,1,0.36,1);}.ds-input:hover{border-color:var(--color-accent);}.ds-input:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;}"
+    },
+    {
+      "name": "Route Line",
+      "kind": "custom",
+      "refersTo": "route-line",
+      "description": "Signature: a trip's cities as stations on one thick magenta line. Hub (filled), default, and open (dashed) stops; the new stop draws in and its ring pops.",
+      "html": "<ol class=\"ds-route\"><li class=\"ds-stop ds-hub\"><span class=\"ds-name\">Bogota</span><span class=\"ds-meta\">Takeoff · Mar 3</span></li><li class=\"ds-stop ds-new\"><span class=\"ds-name\">Cartagena</span><span class=\"ds-meta\">Mar 5</span></li><li class=\"ds-stop ds-open\"><span class=\"ds-name ds-placeholder\">Next stop</span></li></ol>",
+      "css": ".ds-route{position:relative;list-style:none;padding:0;margin:0;}.ds-stop{position:relative;padding-left:3rem;padding-bottom:1.5rem;min-height:3.25rem;}.ds-stop::before{content:'';position:absolute;left:0.625rem;top:0;bottom:0;width:0.5rem;background:var(--color-accent);transform-origin:top;}.ds-stop:first-child::before{top:0.875rem;}.ds-stop:last-child::before{bottom:auto;height:0.875rem;}.ds-stop::after{content:'';position:absolute;left:0;top:0;width:1.75rem;height:1.75rem;box-sizing:border-box;border-radius:9999px;border:0.3125rem solid var(--color-text);background:var(--color-bg);}.ds-hub::after{background:var(--color-accent);}.ds-open::after{border:0.1875rem dashed var(--color-accent);}.ds-open::before{background:linear-gradient(var(--color-accent) 50%,transparent 50%);background-size:100% 0.75rem;}.ds-name{display:block;font-family:var(--font-display),'Arial Narrow',sans-serif;font-weight:700;font-size:1.75rem;line-height:1;letter-spacing:0.02em;text-transform:uppercase;color:var(--color-text);}.ds-placeholder{color:var(--color-text-muted);}.ds-meta{display:block;margin-top:0.25rem;font-family:var(--font-body),system-ui,sans-serif;font-size:0.875rem;color:var(--color-text-muted);}@keyframes ds-line-in{from{transform:scaleY(0)}to{transform:scaleY(1)}}@keyframes ds-station-in{0%{scale:0}60%{scale:1.2}100%{scale:1}}@media (prefers-reduced-motion:no-preference){.ds-new::before{animation:ds-line-in 450ms cubic-bezier(0.22,1,0.36,1) 250ms both;}.ds-new::after{animation:ds-station-in 450ms cubic-bezier(0.22,1,0.36,1) 250ms both;}}"
+    },
+    {
+      "name": "Station Input",
+      "kind": "input",
+      "refersTo": "input-station",
+      "description": "A city field set as a station name on a single rule; the rule hides once filled.",
+      "html": "<input class=\"ds-station\" placeholder=\"Next stop\" aria-label=\"To\">",
+      "css": ".ds-station{width:100%;border:0;border-bottom:2px solid var(--color-border-strong);background:transparent;padding:0 0 0.25rem;font-family:var(--font-display),'Arial Narrow',sans-serif;font-weight:700;font-size:2.25rem;line-height:1;letter-spacing:0.02em;text-transform:uppercase;color:var(--color-text);caret-color:var(--color-accent);transition:border-color 150ms cubic-bezier(0.22,1,0.36,1);}.ds-station::placeholder{color:var(--color-text-muted);}.ds-station:not(:placeholder-shown){border-bottom-color:transparent;}.ds-station:hover,.ds-station:focus-visible{border-bottom-color:var(--color-accent);}.ds-station:focus-visible{outline:2px solid var(--color-accent);outline-offset:4px;}"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel-plain",
+      "description": "Flat signboard: surface fill, 2px ink rule, no shadow. Link panels turn the rule magenta on hover and focus.",
+      "html": "<a class=\"ds-panel\" href=\"#\"><span class=\"ds-panel-title\">Caribbean run</span><span class=\"ds-panel-route\">Bogota → Cartagena → Bogota</span></a>",
+      "css": ".ds-panel{display:block;padding:1.25rem;border-radius:1rem;border:2px solid var(--color-text);background:var(--color-surface-1);color:var(--color-text);text-decoration:none;font-family:var(--font-body),system-ui,sans-serif;transition:border-color 150ms cubic-bezier(0.22,1,0.36,1);}.ds-panel:hover,.ds-panel:focus-visible{border-color:var(--color-accent);}.ds-panel:focus-visible{outline:2px solid var(--color-accent);outline-offset:4px;}.ds-panel-title{display:block;margin-bottom:0.5rem;font-family:var(--font-display),'Arial Narrow',sans-serif;font-weight:700;font-size:2.25rem;line-height:1;letter-spacing:0.02em;text-transform:uppercase;}.ds-panel-route{font-weight:600;color:var(--color-accent);}"
+    },
+    {
+      "name": "Time and People Chips",
+      "kind": "chip",
+      "refersTo": "chip-time",
+      "description": "Amber for dates and countdowns, teal for the crew. Facts, not controls.",
+      "html": "<span class=\"ds-chips\"><span class=\"ds-chip ds-chip-time\">In 12 days</span><span class=\"ds-chip ds-chip-people\">4 travelers</span></span>",
+      "css": ".ds-chips{display:flex;flex-wrap:wrap;gap:0.5rem;}.ds-chip{padding:0.25rem 0.75rem;border-radius:9999px;font-family:var(--font-body),system-ui,sans-serif;font-size:0.875rem;font-weight:600;}.ds-chip-time{background:var(--color-sun);color:var(--color-on-sun);}.ds-chip-people{background:var(--color-secondary);color:var(--color-on-secondary);}"
+    },
+    {
+      "name": "Wordmark",
+      "kind": "nav",
+      "refersTo": "wordmark",
+      "description": "A stretch of magenta line ending in a filled station ring, then parche in display caps.",
+      "html": "<a class=\"ds-wordmark\" href=\"#\"><span class=\"ds-wm-line\"></span><span class=\"ds-wm-ring\"></span>parche</a>",
+      "css": ".ds-wordmark{display:inline-flex;align-items:center;gap:0.5rem;font-family:var(--font-display),'Arial Narrow',sans-serif;font-weight:800;font-size:1.75rem;line-height:1;letter-spacing:0.02em;text-transform:uppercase;color:var(--color-text);text-decoration:none;border-radius:9999px;}.ds-wordmark:focus-visible{outline:2px solid var(--color-accent);outline-offset:4px;}.ds-wm-line{display:inline-block;width:1rem;height:0.5rem;background:var(--color-accent);border-radius:9999px 0 0 9999px;margin-right:-0.5rem;}.ds-wm-ring{display:inline-block;width:1.25rem;height:1.25rem;box-sizing:border-box;border-radius:9999px;border:4px solid var(--color-text);background:var(--color-accent);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Metro Line",
+    "overview": "A trip is a metro line. Cities are stations; the route is one thick magenta line that grows a station each time a city is added. The ground is plain white (deep night-blue in dark), the ink near-black, and every heading reads like a station sign: condensed, bold, upper case. It replaces the card-list-over-a-map habit of travel apps with the diagram itself.\n\nThe signature is the line drawing down to a new station: when a city is committed, the segment above it grows from the top and the station's ring pops (overshoots, then settles). It plays only under `motion-safe`; reduced motion shows the placed station at once.",
+    "keyCharacteristics": [
+      "One route colour, one line, ringed stations, a dashed open station for \"next\".",
+      "Colours have jobs: line, people, time. Nothing else is coloured.",
+      "Flat signboards with a 2px ink rule; no shadows on the page.",
+      "Condensed upper-case display over a plain, legible body face."
+    ],
+    "rules": [
+      {
+        "name": "The Colours Have Jobs Rule",
+        "body": "Magenta is the route and the brand, teal is people, amber is time. Do not use one for another's job, and never colour a heading.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Button Rule",
+        "body": "The primary button is ink, not magenta, so the line colour stays with the route. It turns line-coloured on hover.",
+        "section": "colors"
+      },
+      {
+        "name": "The Station Sign Rule",
+        "body": "Anything that names a place or a trip is set in the display face; anything that explains is set in Onest.",
+        "section": "typography"
+      },
+      {
+        "name": "The Stations Are the Controls Rule",
+        "body": "On a form, the city fields are the stations: each is an Input with the station appearance inside a route-stop, and the date sits in that station's meta as a time chip. Do not build a form beside the line and a picture of the line next to it.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do show a trip as its line, cities as stations, in order.",
+      "Do keep magenta for the route and brand, teal for people, amber for time.",
+      "Do gate every line and ring animation on `motion-safe`.",
+      "Do take every value from a `tokens.css` utility."
+    ],
+    "donts": [
+      "Don't put a kicker or eyebrow above a heading; the heading speaks.",
+      "Don't put shadows on panels, or tilt anything.",
+      "Don't use the line colour for primary buttons or headings.",
+      "Don't hold raw colours, lengths or durations outside `tokens.css`."
+    ]
+  }
+}

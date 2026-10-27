@@ -1,0 +1,23 @@
+{
+  "title": "New trip",
+  "tripName": "Trip name",
+  "currency": "Currency",
+  "leg": "Leg {number}",
+  "from": "From",
+  "to": "To",
+  "submit": "Create trip",
+  "errors": {
+    "nameRequired": "Trip name is required",
+    "fromRequired": "Origin is required",
+    "toRequired": "Destination is required",
+    "saveFailed": "Couldn’t save the trip. Check your connection and try again."
+  },
+  "date": "Departure date",
+  "dateHint": "optional",
+  "cancel": "Cancel",
+  "intro": "Draw the route: where you leave from, then your next stop. You can invite your crew once the trip exists.",
+  "fromPlaceholder": "Leaving from",
+  "toPlaceholder": "Next stop",
+  "namePlaceholder": "Name your trip",
+  "takeoff": "Takeoff"
+}

@@ -6,7 +6,9 @@ import { Given, Then, When } from "./fixtures";
 // the "en" route; "I open the styleguide in {string}" opens the
 // given locale's route.
 Given("I open the styleguide", async ({ page }) => {
-  await page.goto("/en/styleguide");
+  // Wait for hydration: a hover sent before React attaches the
+  // tooltip's pointer handlers is never seen again.
+  await page.goto("/en/styleguide", { waitUntil: "networkidle" });
 });
 
 When("I open the styleguide in {string}", async ({ page }, locale: string) => {

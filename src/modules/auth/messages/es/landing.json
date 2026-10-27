@@ -1,11 +1,35 @@
 {
   "title": "Planea viajes con tus amigos",
   "tagline": "Un plan compartido para ciudades, presupuestos y actividades: inicia sesión y empieza a planear en equipo.",
-  "description": "Inicia sesión solo con tu correo. Sin contraseña.",
+  "description": "Inicia sesión solo con tu correo. Sin contraseña. Abre el enlace que te enviamos y listo.",
   "emailLabel": "Correo electrónico",
-  "submit": "Continuar",
+  "submit": "Envíame un enlace de acceso",
   "checkEmail": "Revisa tu correo para el enlace de acceso. Lo enviamos a {email}.",
   "invalidEmailError": "Ingresa un correo electrónico válido",
   "cooldownError": "Demasiadas solicitudes. Intenta de nuevo en unos minutos.",
-  "genericError": "Algo salió mal. Intenta de nuevo."
+  "genericError": "No pudimos enviar el enlace. Revisa tu conexión e intenta de nuevo.",
+  "example": {
+    "label": "Viaje de ejemplo",
+    "name": "Costa con el parche",
+    "takeoff": "Bogotá",
+    "takeoffMeta": "Salida · 3 mar",
+    "stop1": "Cartagena",
+    "stop1Meta": "3 – 7 mar · 4 amigos",
+    "stop2": "Santa Marta",
+    "stop2Meta": "Caminata al Tayrona · van 3",
+    "home": "Bogotá",
+    "homeMeta": "Regreso · 10 mar",
+    "perPerson": "$412 por persona"
+  },
+  "resend": "¿No te llegó? Enviar de nuevo",
+  "changeEmail": "Usar otro correo",
+  "steps": {
+    "label": "Cómo funciona",
+    "route": "Traza tu ruta",
+    "routeMeta": "Agrega ciudades en orden, con fechas.",
+    "crew": "Suma a tu parche",
+    "crewMeta": "Tus amigos se unen con un enlace.",
+    "share": "Mira tu parte",
+    "shareMeta": "Lo que te cuesta a ti, no solo el total."
+  }
 }

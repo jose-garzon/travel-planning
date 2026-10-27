@@ -1,4 +1,4 @@
-# Create a trip with a boarding-pass form and see it on home
+# Create a trip by drawing its route, and see it on home
 
 Issue: #5
 Status: approved
@@ -7,20 +7,28 @@ Owner: Jose Garzon
 
 ## Summary
 
-A signed-in user creates a trip with an interactive form styled as a
-boarding pass: a trip name, a currency and a multi-city route of legs
+A signed-in user creates a trip by drawing its route as a metro line
+(DESIGN.md): a trip name, a currency and a multi-city route of legs
 (Bogotá → Madrid → Barcelona → Rome → Bogotá), with optional dates.
-The home page then shows the next trip as a carousel of boarding-pass
-cards, one per city stop, with the current stop emphasized. The owner
-can edit or delete the trip later.
+Each city is a station; the next one is an open station with a city
+search and a visible list of cities. The home page then shows the next
+trip as that line, one station per stop, with the current stop
+emphasized. The owner can edit or delete the trip later.
+
+Redesign note (2026-11-02): the boarding-pass form and carousel of
+cards were replaced by the metro line world. Behaviour, rules and
+acceptance criteria are unchanged except AC-3 (visible city list),
+AC-7 to AC-9 (a timeline of trip rows, each with its route as a
+short line, instead of the carousel) and the "Add stop" label.
 
 
 ## Problem
 
 Signed-in users land on a home page with an empty state and no way to
 create a trip. Every later feature (members, itinerary, budget, agent)
-needs a trip with destinations. Airline multi-city search is the mental
-model people already know for routes, so the form reuses it.
+needs a trip with destinations. A transit line diagram is the mental
+model people already read for "stops in order", so the form draws the
+route as one, and the next step is always the open station.
 
 Success metric: 80% of started trip forms are submitted; median time to
 create a 3-stop trip is under 90 seconds.
@@ -44,9 +52,10 @@ one member: its owner.
 - **Leg**: From city → To city, with an optional date (departure day).
 - **Stop**: the To city of a leg that is not the return home. A stop
   arrives on its leg's date and leaves on the next leg's date.
-- **Origin**: the From city of leg 1. Shown as the Takeoff card.
+- **Origin**: the From city of leg 1. Shown as the Takeoff station
+  (filled ring).
 - **Return home**: a last leg whose To city equals the origin. Shown as
-  the Back home card, not as a stop.
+  the Back home station (filled ring), not as a stop.
 - **Trip date range**: first dated leg to last dated leg.
 
 
@@ -57,15 +66,20 @@ one member: its owner.
 Actor: member
 Trigger: "Create trip" on home (empty state CTA or header button)
 
-1. The boarding-pass form opens with one empty leg.
+1. The route form opens: the trip name, the Takeoff station and one
+   open station (dashed ring) for the first stop.
 2. User types the trip name.
 3. Currency is preselected from the browser locale region (`es-CO` →
    COP, `en-US` → USD; fallback USD). User may change it.
-4. User picks From and To for leg 1 with autocomplete ("BOG Bogotá").
-   The To list excludes the leg's From city.
+4. User picks From and To for leg 1. Focusing a city field shows a
+   list of suggested cities right away (popular cities for the
+   browser region, then recent picks); typing filters it ("BOG
+   Bogotá"). The To list excludes the leg's From city. The picked
+   city is drawn as the station name and the ring closes.
 5. User optionally picks a date.
-6. User clicks "Add leg". The new leg's From is filled with the
-   previous leg's To. User picks To and optional date.
+6. User clicks "Add stop". The line extends to a new open station; its
+   leg's From is the previous leg's To. User picks To and optional
+   date.
 7. User clicks "Add return home". A last leg is added from the last To
    back to the origin.
 8. User clicks "Create trip".
@@ -88,20 +102,25 @@ Alternate flows:
 Actor: owner
 Trigger: open home
 
-1. The next trip (upcoming or in progress) shows as a carousel:
-   Takeoff card, one card per stop, Back home card (if round trip).
-2. The current stop card is larger and labeled "Current stop".
-3. Other trips show below in "Other trips" as compact cards with only
-   the first leg (codes and date).
+1. Every trip shows on one timeline, one same-size row per trip: the
+   next trip (upcoming or in progress) first with a line-coloured
+   rule, then other upcoming trips by start date, then "Past trips",
+   quiet, most recent first.
+2. Each row: trip name, date range, the route as a short line of
+   station codes (BOG ━ CTG ━ SMR ━ BOG, hubs filled), and its next
+   step: countdown, "Next: add dates" when undated, "Just you so far"
+   while solo; past rows show "Ended <date>".
+3. On the next trip's row the current stop's station is larger and
+   labeled "Current stop".
 
 Result: user sees where they are or go next, and what follows.
 
 ### UC-3: Edit a trip
 
 Actor: owner
-Trigger: open a trip from home (card or compact card)
+Trigger: open a trip from home (next trip or compact panel)
 
-1. The same boarding-pass form opens prefilled.
+1. The same route form opens prefilled.
 2. User changes name, currency or legs (same rules as UC-1).
 3. User clicks "Save changes".
 
@@ -123,36 +142,37 @@ Trigger: "Delete trip" in the edit form
 Result: trip deleted, user back on home, toast "Trip deleted".
 
 
-## Current card rules
+## Current stop rules
 
 - Before the trip: the first stop is current.
 - During the trip: the stop where today ≥ arrival date and today <
   departure date (next leg's date) is current.
 - After the last dated leg: no current stop; the trip moves to "Other
-  trips" and the next upcoming trip takes the carousel.
+  trips" and the next upcoming trip takes the home line.
 - Stops without dates are never current, except when all legs are
   undated: then the first stop is current.
-- The carousel starts scrolled to the current card.
+- On a horizontal line that overflows, it starts scrolled to the
+  current stop.
 
 
-## Card content
+## Station content
 
-Stop card:
+Stop station:
 - To code large (MAD), city name smaller (Madrid)
 - "Stop 2 of 5"
 - Arrive date prominent ("Arrive 20 Feb"); departure smaller ("leave
   23 Feb"); "Date TBD" when unknown
 - Nights at the stop ("3 nights"), only when both dates are known
-- Countdown on the current card ("in 12 days", "today")
-- Header strip: trip name and member count ("1 traveler")
+- Countdown on the current stop ("in 12 days", "today")
+- Above the line: trip name and member count ("1 traveler")
 
-Takeoff card (start): smaller, playful. Origin code, departure date,
+Takeoff station (start): filled ring. Origin code, departure date,
 countdown to trip start ("47 days to go", "Today!", "On the way").
 
-Back home card (end): smaller, playful. Origin code, return date,
+Back home station (end): filled ring. Origin code, return date,
 countdown to trip end ("Trip ends in 60 days").
 
-Compact card (other trips): trip name, first leg codes (LIM → CUZ),
+Compact panel (other trips): trip name, first leg codes (LIM → CUZ),
 first leg date.
 
 
@@ -162,12 +182,12 @@ first leg date.
 | ------------ | ----------------------------- | ----------------------------- |
 | empty        | no trips                      | existing empty state, CTA     |
 |              |                               | "Create your first trip"      |
-| loading      | home or form data loading     | skeleton cards / form         |
-| undated      | all legs without dates        | "Date TBD" on cards, first    |
+| loading      | home or form data loading     | skeleton line / form          |
+| undated      | all legs without dates        | "Date TBD" on stops, first    |
 |              |                               | stop current                  |
 | past only    | all trips ended               | "No upcoming trips" + Create  |
 |              |                               | trip, then Other trips        |
-| success      | trip created or saved         | home with carousel, toast     |
+| success      | trip created or saved         | home with the line, toast     |
 |              |                               | "Trip created" / "Saved"      |
 | save error   | server or network failure     | inline error, data kept       |
 | conflict     | version mismatch on save      | reload message (UC-3 3a)      |
@@ -180,22 +200,26 @@ first leg date.
 - EC-1. From = To on a leg: To list excludes From; typed free text
   equal to From shows "Destination must differ from origin".
 - EC-2. Same city in different legs (BOG → CTG → BOG → MDE): valid,
-  separate cards.
+  separate stations.
 - EC-3. Leg date earlier than a previous dated leg: "Must be on or
   after <date>" on that leg.
 - EC-4. Same day for two legs: valid (0 nights, nights label hidden).
 - EC-5. Date in the past at creation: "Pick today or a later date".
   On edit, existing past dates are kept and allowed.
 - EC-6. Undated legs between dated ones: allowed, not checked.
-- EC-7. Maximum 10 legs: "Add leg" disabled with hint "Up to 10 legs".
+- EC-7. Maximum 10 legs: "Add stop" disabled with hint "Up to 10
+  stops".
 - EC-8. Minimum 1 leg: remove button hidden on the only leg.
 - EC-9. Removing a middle leg: next leg's From re-chains.
 - EC-10. Last leg already returns to origin: "Add return home" hidden.
 - EC-11. Trip name: required, 1-60 characters, trimmed.
 - EC-12. Two trips overlapping in time: allowed; the one starting
-  first is the carousel trip.
-- EC-13. Long city names (40+ chars): truncate with ellipsis on cards,
+  first is the home line trip.
+- EC-13. Long city names (40+ chars): wrap on the vertical line;
+  truncate with ellipsis on the horizontal line and compact panels,
   full name in accessible name and tooltip.
+- EC-14. City list with no match: the list shows "No city found. Use
+  '<text>' as typed" as its only option (alternate flow 4a).
 
 
 ## Errors
@@ -215,76 +239,86 @@ first leg date.
 
 ## UI
 
-Form (create and edit):
+Visual world: DESIGN.md (metro line). Form (create and edit), mobile:
 
 ```
-┌─ BOARDING PASS ─────────────────────────┐
-│ Trip name [ Europe with friends      ]  │
-│ Currency  [ COP – Colombian peso   ▾ ]  │
-├─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤
-│ LEG 1   FROM [BOG Bogotá ] → TO [MAD ▾] │
-│         DATE [20 Feb 2027] (optional) ✕ │
-│ LEG 2   FROM [MAD Madrid ] → TO [BCN ▾] │
-│         DATE [23 Feb 2027]            ✕ │
-│ [+ Add leg]        [↺ Add return home]  │
-├─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤
-│ ▌▌▌▍▌▌▍▌▌     [ Create trip ]           │
-└─────────────────────────────────────────┘
+NEW TRIP
+Start with the route: where you leave from
+and your first stop.
+
+Trip name [ Europe with friends          ]
+
+ ●  BOGOTÁ                Takeoff
+ ┃  From [ Bogotá                     ]
+ ┃
+ ○  MADRID                Leg 1
+ ┃  To   [ mad|                       ]
+ ┃  ┌────────────────────────────────┐
+ ┃  │ MAD  Madrid        Spain       │
+ ┃  │ MDE  Medellín      Colombia    │
+ ┃  │ MAN  Manchester    UK          │
+ ┃  └────────────────────────────────┘
+ ┃  Date [ 20 Feb 2027 ] (optional)   ✕
+ ┊
+ ◌  [+ Add stop]   [↺ Add return home]
+
+Currency [ COP – Colombian peso ▾ ]
+[ Create trip ]  [ Cancel ]
 ```
 
-Edit mode: button reads "Save changes"; "Delete trip" below.
+The open station (◌, dashed ring) is always the next thing to do.
+Picking a city closes its ring and draws the line down to the next
+station (motion-safe). Edit mode: button reads "Save changes";
+"Delete trip" below.
 
-Home, mobile: horizontal carousel, scroll snap, cards almost full
-width so the next card peeks in.
+Home, mobile: the next trip as a vertical line.
 
 ```
-Europe with friends · 1 traveler
-┌──────────────────────────────┐┌──
-│ CURRENT STOP      Stop 2 of 5││ BC
-│ MAD  Madrid                  ││
-│ Arrive 20 Feb                ││
-│ leave 23 Feb · 3 nights      ││
-│ in 12 days                   ││
-└──────────────────────────────┘└──
+Europe with friends · 1 traveler · in 12 days
+ ●  BOG  Takeoff · 20 Feb
+ ┃
+ ◉  MAD  Madrid        CURRENT STOP · Stop 1 of 3
+ ┃       Arrive 20 Feb · leave 23 Feb · 3 nights
+ ○  BCN  Barcelona     Stop 2 of 3
+ ┃
+ ●  BOG  Back home · 3 Mar
 Other trips
 ┌──────────────────────────────┐
-│ Peru trip  LIM → CUZ  1 Jul  │
+│ PERU TRIP  LIM → CUZ  1 Jul  │
 └──────────────────────────────┘
 ```
 
-Takeoff card: "✈ Takeoff BOG · 47 days to go".
-Back home card: "🏠 Back home BOG · trip ends in 60 days".
-
-Home, desktop: grid, current card large, the rest smaller.
+Home, desktop: the same line laid horizontally across the page, the
+current stop's station larger.
 
 ```
-┌────────────────────┐┌─────────┐┌─────────┐
-│ CURRENT STOP       ││BCN 23Feb││FCO 28Feb│
-│ MAD Madrid         │├─────────┤├─────────┤
-│ Arrive 20 Feb      ││CDG 3 Mar││🏠 BOG   │
-│ leave 23 · 3 nights│└─────────┘└─────────┘
-└────────────────────┘
+ ●━━━━━━━━━━◉━━━━━━━━━━○━━━━━━━━━━○━━━━━━━━━━●
+BOG        MAD         BCN        CDG        BOG
+Takeoff    CURRENT     23 Feb     3 Mar      Back home
+20 Feb     3 nights
 ```
 
 
 ## Accessibility
 
 - Keyboard: form fields in visual order, leg by leg. City autocomplete
-  follows the WAI-ARIA combobox pattern. Carousel is focusable;
-  arrow keys move between cards. No traps.
-- Screen reader: carousel is a `region` named "Trip stops" containing
-  a list. Each card's text includes "Stop 2 of 5"; the current card
-  includes "Current stop" as text, not only size. Adding or removing a
+  follows the WAI-ARIA combobox pattern; the suggestion list opens on
+  focus and is navigable with arrow keys. A horizontal line that
+  overflows scrolls with the keyboard. No traps.
+- Screen reader: the home line is a `region` named "Trip stops"
+  containing an ordered list. Each station's text includes "Stop 2 of
+  5"; the current stop includes "Current stop" as text, not only size
+  or a filled ring. Adding or removing a
   leg is announced ("Leg 3 added", "Leg 2 removed"). Save result and
   errors announced via a live region.
-- Focus: after "Add leg", focus goes to the new leg's To field. After
+- Focus: after "Add stop", focus goes to the new leg's To field. After
   removing a leg, focus goes to the previous leg's remove button (or
-  "Add leg" if none). On submit errors, focus the first invalid field.
+  "Add stop" if none). On submit errors, focus the first invalid field.
   After create or save, focus moves to the home `<h1>`. Dialogs trap
   and return focus.
-- Motion and contrast: no smooth scrolling or card animation under
-  `prefers-reduced-motion`. Emoji on Takeoff/Back home cards are
-  decorative (`aria-hidden`), with text labels. Errors use text and
+- Motion and contrast: no line draw-in, station pop or smooth
+  scrolling under `prefers-reduced-motion`. Rings and the line are
+  decorative CSS; every station has text labels. Errors use text and
   icon, not only color. Touch targets 44×44 px.
 
 
@@ -299,8 +333,10 @@ Home, desktop: grid, current card large, the rest smaller.
 - Currency: ISO 4217 list with localized names. Default from the
   browser locale region; fallback USD. No geolocation prompt.
 - City names: shown as in the city list; codes are not translated.
-- Text length: plan for +40% (Spanish); no fixed-width text on cards.
-- Layout uses logical CSS properties; carousel direction follows `dir`.
+- Text length: plan for +40% (Spanish); no fixed-width text on
+  stations.
+- Layout uses logical CSS properties; the horizontal line follows
+  `dir`.
 
 
 ## Acceptance criteria
@@ -311,9 +347,10 @@ Home, desktop: grid, current card large, the rest smaller.
 - AC-2. Given a leg, when the user adds a leg, then its From is the
   previous leg's To; when they remove a middle leg, then the next
   leg's From re-chains to the previous leg's To.
-- AC-3. Given a city picker, when the user types, then autocomplete
-  shows "CODE City" options, and the To options exclude the leg's
-  From.
+- AC-3. Given a city picker, when it gets focus, then a list of
+  suggested cities shows before any typing; when the user types, then
+  the list filters to "CODE City" options; the To options exclude the
+  leg's From.
 - AC-4. Given legs with dates, when a later leg's date is before an
   earlier dated leg, or a new date is in the past, then an inline
   error shows on that leg and submit is blocked.
@@ -322,15 +359,14 @@ Home, desktop: grid, current card large, the rest smaller.
   hidden once the route returns home.
 - AC-6. Given a new form, then currency defaults from the browser
   locale region, falling back to USD.
-- AC-7. Given a trip, when home loads, then the next trip shows as
-  Takeoff card, one card per stop, and Back home card if round trip;
-  each stop card shows arrive date, smaller leave date, nights and
-  "Stop N of M".
-- AC-8. Given today's date, then the current stop follows the current
-  card rules, is larger, labeled "Current stop", and the carousel
-  starts on it.
-- AC-9. Given other trips, then they show below as compact cards with
-  name, first leg codes and first leg date.
+- AC-7. Given trips, when home loads, then every trip shows as a
+  timeline row with its route as a line of station codes (origin,
+  each stop, home if round trip) and its next step.
+- AC-8. Given today's date, then on the next trip's row the current
+  stop follows the current stop rules, is larger and labeled "Current
+  stop".
+- AC-9. Given other trips, then upcoming ones follow the next trip by
+  start date and ended ones show under "Past trips".
 - AC-10. Given the owner opens a trip, when they edit and save, then
   the trip updates; when the version is stale, then the conflict
   message shows and nothing is saved.
@@ -343,7 +379,7 @@ Home, desktop: grid, current card large, the rest smaller.
 ## Out of scope
 
 - Invite links, editor/viewer roles, removing members (#6).
-- Activities, itinerary, budget on cards (later features).
+- Activities, itinerary, budget on the line (later features).
 - Transit duration, flight numbers, times of day.
 - Real flight/airport API; city list is bundled and static.
 - Separate trip detail page (edit form serves as trip page for now).

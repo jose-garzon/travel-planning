@@ -3,11 +3,11 @@ import { Given, Then, When } from "./fixtures";
 
 const WEBFONT_LOAD_DELAY_MS = 500;
 
-// D-10: Fredoka's configured fallback stack. Checking that headings
+// D-10: Barlow Condensed's configured fallback stack. Checking that headings
 // list it in their computed font-family proves the fallback is wired
 // up; the browser picks the first available family from that list
 // once the real webfont fails to load (EC-2, AC-16).
-const DISPLAY_FALLBACK_FONTS = ["ui-rounded", "system-ui", "sans-serif"];
+const DISPLAY_FALLBACK_FONTS = ["Arial Narrow", "system-ui", "sans-serif"];
 
 Given("webfonts fail to load", async ({ page }) => {
   await page.route("**/*.woff2", (route) => route.abort());

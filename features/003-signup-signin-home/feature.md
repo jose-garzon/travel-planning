@@ -142,7 +142,7 @@ Result: member is invited to create a trip.
 | Failure                    | Message to user               | Recovery              |
 | --------------------------- | ------------------------------ | ---------------------- |
 | Invalid email format        | "Enter a valid email address" | Fix and resubmit       |
-| Email send fails            | "Something went wrong. Try again." | Resubmit same email |
+| Email send fails            | "We couldn’t send the link. Check your connection and try again." | Resubmit same email |
 | Rate limit hit (4th in 15m) | "Too many requests. Try again in a few minutes." | Wait, retry later |
 | Link expired                | "This link expired."          | Button: send a new link |
 | Name invalid                | "Enter a name (1-50 characters)" | Fix and resubmit    |

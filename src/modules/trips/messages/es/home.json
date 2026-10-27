@@ -1,0 +1,23 @@
+{
+  "greeting": "Hola, {name}",
+  "nextTripHeading": "Próximo viaje",
+  "otherTripsHeading": "Otros viajes",
+  "created": "Viaje creado",
+  "emptyState": {
+    "title": "Aún no hay viajes en tu línea",
+    "description": "Empieza por la ruta: de dónde sales y a dónde van. Justo después puedes invitar a tu parche.",
+    "cta": "Crea tu primer viaje",
+    "stepRoute": "Traza tu ruta",
+    "stepCrew": "Invita a tu parche",
+    "stepShare": "Divide el presupuesto"
+  },
+  "countdown": "{days, plural, =0 {Hoy} one {Mañana} other {En # días}}",
+  "members": "{count, plural, one {# viajero} other {# viajeros}}",
+  "noDates": "Fechas por definir",
+  "newTrip": "Nuevo viaje",
+  "pastHeading": "Viajes pasados",
+  "nextStepDates": "Siguiente: agrega fechas",
+  "solo": "Por ahora solo tú",
+  "ended": "Terminó el {date}",
+  "routeName": "Ruta: {route}"
+}

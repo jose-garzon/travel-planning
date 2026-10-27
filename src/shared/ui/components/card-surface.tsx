@@ -4,9 +4,9 @@ import { useTranslatable } from "@/shared/ui/translatable";
 
 export type CardProps = { heading: Translatable; children?: ReactNode };
 
-export const SURFACE_CLASSES = "bg-surface-1 border border-border rounded-lg p-4 shadow-sm";
+export const SURFACE_CLASSES = "rounded-md border-2 border-text bg-surface-1 p-5";
 
-const HEADING_CLASSES = "font-semibold text-text";
+const HEADING_CLASSES = "font-display text-2xl font-bold uppercase leading-tight text-text";
 
 /** Card primitive: a static, non-interactive surface. The heading wraps. */
 export function Card({ heading, children }: CardProps) {

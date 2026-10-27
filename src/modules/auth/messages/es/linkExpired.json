@@ -1,7 +1,7 @@
 {
   "title": "Este enlace venció.",
-  "description": "Los enlaces mágicos vencen a los 15 minutos. Ingresa tu correo para recibir uno nuevo.",
+  "description": "No pasa nada: los enlaces de acceso duran solo 15 minutos, para proteger tu cuenta. Ingresa tu correo y te enviamos uno nuevo.",
   "emailLabel": "Correo electrónico",
   "resend": "Enviar un enlace nuevo",
-  "sent": "Revisa tu correo para un enlace nuevo"
+  "sent": "Enlace nuevo en camino. Revisa tu correo."
 }

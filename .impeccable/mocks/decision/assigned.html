@@ -1,0 +1,42 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=390">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Onest:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}body{width:390px;height:844px;overflow:hidden;background:#fff;font-family:Onest,sans-serif;color:#16130f}
+.bands{height:18px;background:linear-gradient(#d7261e 0 25%,#ffc927 25% 50%,#1d4fa8 50% 75%,#19934a 75%)}
+header{padding:14px 20px 10px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:Bungee;font-size:20px;color:#d7261e}.x{font-weight:600;font-size:15px}
+h1{font-family:Bungee;font-size:30px;line-height:1;padding:6px 20px 4px}
+.sub{padding:0 20px 14px;font-size:15px;color:#4a443c}
+.board{margin:0 16px;border:3px solid #16130f;border-radius:14px;overflow:hidden}
+.board .top{background:#1d4fa8;color:#fff;font-family:Bungee;font-size:13px;letter-spacing:.06em;padding:8px 14px}
+.stop{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:2px solid #16130f}
+.n{width:30px;height:30px;border-radius:50%;background:#ffc927;font-family:Bungee;font-size:14px;display:grid;place-items:center;border:2px solid #16130f}
+.city{font-family:Bungee;font-size:21px;line-height:1}.meta{font-size:13px;color:#4a443c}
+.stop .d{margin-left:auto;font-size:13px;font-weight:600;background:#f2efe9;padding:4px 8px;border-radius:8px}
+.next{border-top:2px dashed #16130f;padding:12px 14px;background:#fff8e1}
+.q{font-weight:800;font-size:16px;margin-bottom:8px}
+.search{border:2px solid #16130f;border-radius:10px;padding:10px 12px;font-size:16px}
+.list{margin:8px 0 0}.opt{display:flex;justify-content:space-between;padding:10px 4px;border-bottom:1px solid #e3ddd2;font-size:16px}
+.opt b{font-weight:800}.opt span{color:#4a443c;font-size:13px}
+.cta{position:absolute;left:16px;right:16px;bottom:22px;background:#d7261e;color:#fff;font-family:Bungee;font-size:17px;text-align:center;padding:16px;border-radius:14px;border:3px solid #16130f}
+.crew{display:flex;gap:6px;padding:0 20px 12px}.av{width:26px;height:26px;border-radius:50%;border:2px solid #16130f;font-size:12px;font-weight:800;display:grid;place-items:center}
+</style></head><body>
+<div class="bands"></div>
+<header><span class="logo">PARCHE</span><span class="x">Cancel</span></header>
+<h1>Costa con el parche</h1>
+<p class="sub">Add the cities in order. You'll invite your crew next.</p>
+<div class="crew"><span class="av" style="background:#ffc927">L</span><span class="av" style="background:#1d4fa8;color:#fff">+</span></div>
+<div class="board">
+ <div class="top">ROUTE · 2 STOPS · 8 NIGHTS</div>
+ <div class="stop"><span class="n">1</span><div><div class="city">Bogotá</div><div class="meta">Takeoff</div></div><span class="d">Mar 3</span></div>
+ <div class="stop"><span class="n">2</span><div><div class="city">Cartagena</div><div class="meta">5 nights</div></div><span class="d">Mar 3–8</span></div>
+ <div class="next"><div class="q">Where next?</div>
+  <div class="search">San|</div>
+  <div class="list">
+   <div class="opt"><b>Santa Marta</b><span>Colombia · 4h by bus</span></div>
+   <div class="opt"><b>San Andrés</b><span>Colombia · flight</span></div>
+   <div class="opt"><b>San Gil</b><span>Colombia</span></div>
+  </div></div>
+</div>
+<div class="cta">ADD SANTA MARTA</div>
+</body></html>

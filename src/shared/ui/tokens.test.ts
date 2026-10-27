@@ -35,9 +35,12 @@ const FONT_SIZE_TOKENS: Record<string, string> = {
   "text-xl": "1.375rem",
   "text-2xl": "1.75rem",
   "text-3xl": "2.25rem",
+  "text-4xl": "3rem",
+  "text-5xl": "4rem",
 };
 
 const LINE_HEIGHT_TOKENS: Record<string, string> = {
+  "leading-none": "1",
   "leading-tight": "1.15",
   "leading-normal": "1.5",
   "leading-relaxed": "1.7",
@@ -114,8 +117,8 @@ describe("tokens.css", () => {
   it("defines the display and body font family tokens", () => {
     const tokens = readTokens();
 
-    expect(tokens["font-display"]).toBe("var(--font-fredoka)");
-    expect(tokens["font-body"]).toBe("var(--font-plus-jakarta-sans)");
+    expect(tokens["font-display"]).toBe("var(--font-barlow-condensed)");
+    expect(tokens["font-body"]).toBe("var(--font-onest)");
   });
 
   it.each(Object.entries(FONT_SIZE_TOKENS))("defines --%s as %s (rem)", (name, expected) => {

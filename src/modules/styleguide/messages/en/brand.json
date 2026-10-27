@@ -1,9 +1,9 @@
 {
   "title": "Brand",
   "name": "Parche",
-  "meaning": "In Colombian Spanish, your group of friends and the plan you make together (\"¿cuál es el parche?\"). In English, a patch, like the travel patches sewn on a backpack.",
+  "meaning": "In Colombian Spanish, your group of friends and the plan you make together (\"¿cuál es el parche?\").",
   "wordmark": "Wordmark direction",
-  "wordmarkDirection": "Lowercase \"parche\" in Fredoka, accent color, optionally inside a stitched patch-shaped badge. Final SVG artwork out of scope.",
+  "wordmarkDirection": "\"PARCHE\" in Barlow Condensed capitals, led by a short stretch of magenta line ending in a station ring.",
   "voice": {
     "friend": {
       "title": "Speak like a friend",

@@ -1,4 +1,4 @@
-# Tasks: Create a trip with a boarding-pass form and see it on home
+# Tasks: Create a trip by drawing its route, and see it on home
 
 Plan: ./plan.md
 Tests: ./tests.feature
@@ -21,7 +21,7 @@ their own file. Each task has its own step file.
 
 ## T01. Create a trip (happy path, real storage)
 
-Status: todo
+Status: done
 Depends on: -
 Model: sonnet
 Scenarios: @T01
@@ -87,11 +87,11 @@ Steps:
    created"; focus moves to home `<h1>`.
 
 Done when:
-- [ ] Scenarios tagged @T01 and all #3 scenarios pass
-- [ ] Unit tests: `validateRoute` rules, `createTrip` owner membership,
+- [x] Scenarios tagged @T01 and all #3 scenarios pass
+- [x] Unit tests: `validateRoute` rules, `createTrip` owner membership,
   region→currency default and USD fallback
-- [ ] Integration: home read issues ≤ 2 queries
-- [ ] `pnpm lint:deps` passes; no `InMemoryTripsReader` left
+- [x] Integration: home read issues ≤ 2 queries
+- [x] `pnpm lint:deps` passes; no `InMemoryTripsReader` left
 
 Notes:
 - Messages loader: copy `src/modules/auth/messages/load.ts`.
@@ -104,7 +104,7 @@ Status: todo
 Depends on: T01
 Model: sonnet
 Scenarios: @T02
-Covers: AC-3, EC-1
+Covers: AC-3, EC-1, EC-14
 
 Files:
 - `scripts/build-cities.ts` (new, D-1; not part of the app bundle)
@@ -123,12 +123,18 @@ Steps:
    max 8; `localizeName(cityId, locale)`.
 3. Combobox: APG pattern, debounced fetch, abort stale requests,
    `exclude` prop (the leg's From), free text kept on blur.
+4. Suggestions on focus (AC-3): the list opens before typing with
+   popular cities for the browser region (a `popular` flag in
+   `cities.json`), max 8; "No city found" option keeps free text
+   (EC-14). Rows: code, city, country, in the metro line type
+   (DESIGN.md); the picked city fills the station name.
 
 Done when:
 - [ ] Scenarios tagged @T02 pass
 - [ ] Unit: search ranking, accent-insensitive, exclude, locale names
 - [ ] Unit: combobox keyboard (arrows, Enter, Escape), excluded city
-  absent, free text fallback, stale request ignored
+  absent, free text fallback, stale request ignored, list open on
+  focus
 - [ ] `/trips/new` JS ≤ 170 KB gzip (`pnpm build` output)
 
 
@@ -162,7 +168,7 @@ Done when:
 - [ ] Submit with errors focuses the first invalid field
 
 
-## T04. Home: boarding-pass carousel and other trips
+## T04. Home: the trip line and other trips
 
 Status: todo
 Depends on: T01
@@ -177,24 +183,24 @@ Files:
   `currentStopIndex`, `daysBetween`)
 - `src/modules/trips/service/get-home-trips.ts` + `.test.ts` (past
   trips into other trips; next trip pick)
-- `src/modules/trips/ui/home/trip-carousel.tsx` + `.test.tsx`
-- `src/modules/trips/ui/home/stop-card.tsx`
-- `src/modules/trips/ui/home/takeoff-card.tsx`
-- `src/modules/trips/ui/home/back-home-card.tsx`
-- `src/modules/trips/ui/home/compact-trip-card.tsx`
+- `src/modules/trips/ui/home/trip-line.tsx` + `.test.tsx` (built on
+  `shared/ui/components/route-line.tsx`; horizontal variant on `lg`)
+- `src/modules/trips/ui/home/stop-station.tsx`
+- `src/modules/trips/ui/home/compact-trip.tsx`
 - `src/modules/trips/ui/components/home-screen.tsx`
 - `src/modules/trips/messages/{en,es}/{home,cards}.json`
 - `tests/steps/trip-home.steps.ts` (new)
 
 Steps:
-1. Domain view + current stop rules (feature.md "Current card rules").
-2. Cards and carousel: mobile snap, desktop grid, starts on current.
-3. Compact cards link to `/trips/[tripId]`.
+1. Domain view + current stop rules (feature.md "Current stop rules").
+2. Trip line: vertical on mobile, horizontal on `lg`, scrolled to the
+   current stop; replaces the interim line in `home-screen.tsx`.
+3. Compact panels link to `/trips/[tripId]`.
 
 Done when:
 - [ ] Scenarios tagged @T04 pass, desktop and mobile
 - [ ] Unit: current stop before/during/after/undated; nights; ICU
-  plurals; carousel arrow-key navigation
+  plurals; horizontal line keyboard scroll
 - [ ] Lighthouse: home CLS ≤ 0.1
 
 
@@ -239,7 +245,7 @@ Done when:
 | AC-6      | T01     | Currency defaults from browser locale        |
 | AC-7      | T04     | Home shows takeoff, stops and back home      |
 | AC-8      | T04     | Current stop follows today                   |
-| AC-9      | T04     | Other trips show as compact cards            |
+| AC-9      | T04     | Other trips show as compact panels           |
 | AC-10     | T05     | Edit a trip; stale edit conflict             |
 | AC-11     | T05     | Delete a trip                                |
 | AC-12     | T05     | Leaving with unsaved changes                 |
@@ -252,5 +258,5 @@ Done when:
 | EC-9      | T03     | Adding legs chains cities; removing re-chains|
 | EC-10     | T03     | Add the return home leg                      |
 | EC-11     | T01     | Trip name is required                        |
-| EC-12     | T04     | Earliest trip takes the carousel             |
+| EC-12     | T04     | Earliest trip takes the home line            |
 | EC-13     | T04     | unit: long names truncated, full accessible name |

@@ -18,7 +18,7 @@ describe("Button", () => {
   });
 
   it.each([
-    ["primary", "bg-accent"],
+    ["primary", "bg-text"],
     ["secondary", "bg-surface-1"],
   ] as const)("maps variant=%s to its token background class", (variant, className) => {
     renderWithIntl(<Button variant={variant}>Save trip</Button>);
@@ -113,7 +113,7 @@ describe("Button", () => {
 
   describe("buttonClasses", () => {
     it.each([
-      ["primary", "bg-accent"],
+      ["primary", "bg-text"],
       ["secondary", "bg-surface-1"],
     ] as const)("maps variant=%s to its token background class", (variant, className) => {
       expect(buttonClasses({ variant })).toContain(className);

@@ -1,23 +1,35 @@
 import "server-only";
-import { InMemoryTripsReader } from "@/modules/trips/data/in-memory-trips-reader";
-import { getHomeTripsSummary as getHomeTripsSummaryUseCase } from "@/modules/trips/service/get-home-trips-summary";
+import { cityIndex } from "@/modules/trips/data/city-index";
+import { DrizzleTripsRepository } from "@/modules/trips/data/drizzle-trips-repository";
+import type { CreateTripCommand } from "@/modules/trips/service/create-trip";
+import { createTrip as createTripUseCase } from "@/modules/trips/service/create-trip";
+import type { GetHomeTripsQuery } from "@/modules/trips/service/get-home-trips";
+import { getHomeTrips as getHomeTripsUseCase } from "@/modules/trips/service/get-home-trips";
+import { toTripDto } from "@/modules/trips/service/schemas";
 import type { Locale } from "@/shared/i18n/routing";
 
-export type { HomeTripsSummary } from "@/modules/trips/service/get-home-trips-summary";
+export type { RouteViolation } from "@/modules/trips/domain/route";
+export type { TripsMessages } from "@/modules/trips/messages/load";
+export { loadTripsMessages } from "@/modules/trips/messages/load";
+export type { HomeTrips } from "@/modules/trips/service/get-home-trips";
+export type { TripDto, TripInput } from "@/modules/trips/service/schemas";
+export { tripInputSchema } from "@/modules/trips/service/schemas";
 
-const tripsReader = new InMemoryTripsReader();
+const deps = { trips: new DrizzleTripsRepository(), cities: cityIndex };
 
-/** Home summary for the signed-in member's email (plan "Contracts"). */
-export async function getHomeTripsSummary(email: string) {
-  return getHomeTripsSummaryUseCase(email, tripsReader);
+/** Saves a trip owned by `userId`, or returns the route violations (plan "Contracts"). */
+export function createTrip(command: CreateTripCommand) {
+  return createTripUseCase(command, deps);
 }
 
-/** Loads `trips.*` messages for `locale` (single {en,es} pair; no split needed yet, ADR 0008). */
-export async function loadTripsMessages(locale: Locale) {
-  return (await import(`@/modules/trips/messages/${locale}.json`)).default;
+/** Next trip and the other trips for the home page. */
+export function getHomeTrips(query: GetHomeTripsQuery) {
+  return getHomeTripsUseCase(query, deps);
 }
 
-// Type-only re-export (not the JSON itself) so `_composition/i18n-request.ts`
-// can type the merged messages through this module's public API, per
-// `app-uses-public-api` (dependency-cruiser).
-export type TripsMessages = Awaited<ReturnType<typeof loadTripsMessages>>;
+/** Every trip of `userId`, newest first as stored (cursor paging is not needed yet). */
+export async function listMyTrips({ userId, locale }: { userId: string; locale: Locale }) {
+  const trips = await deps.trips.listForUser(userId);
+
+  return trips.map((trip) => toTripDto(trip, (city) => deps.cities.localizeName(city, locale)));
+}
