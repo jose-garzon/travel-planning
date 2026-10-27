@@ -35,8 +35,7 @@ If two modules need to talk, the app layer connects them (see
 | Module         | Owns                                               |
 | -------------- | -------------------------------------------------- |
 | `auth`         | sessions, sign in (magic link), current user       |
-| `trips`        | trip, members, roles, invites                      |
-| `destinations` | cities in a trip with date ranges                  |
+| `trips`        | trip, route (legs), members, roles, invites        |
 | `itinerary`    | activities scheduled on days, participants         |
 | `budget`       | cost items, categories, splits, totals             |
 | `agent`        | LLM agent: prompts, tools, search, suggestions     |
