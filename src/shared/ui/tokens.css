@@ -241,42 +241,6 @@
   }
 }
 
-/* Horizontal route (use as `lg:route-horizontal` on a `route`): stops
-   side by side, each drawing its segment across the top and its ring
-   at the left, text below. Wider than its box scrolls. */
-@utility route-horizontal {
-  display: flex;
-  width: max-content;
-  min-width: 100%;
-
-  & > li {
-    flex: none;
-    min-width: 14rem;
-    min-height: 0;
-    padding: calc(var(--spacing-station) + var(--spacing-5)) var(--spacing-6) 0 0;
-  }
-
-  & > li::before {
-    left: 0;
-    right: 0;
-    bottom: auto;
-    width: auto;
-    height: var(--spacing-line);
-    top: calc((var(--spacing-station) - var(--spacing-line)) / 2);
-  }
-
-  & > li:first-child::before {
-    left: calc(var(--spacing-station) / 2);
-    top: calc((var(--spacing-station) - var(--spacing-line)) / 2);
-  }
-
-  & > li:last-child::before {
-    right: auto;
-    width: calc(var(--spacing-station) / 2);
-    height: var(--spacing-line);
-  }
-}
-
 /* The open station: where the next city goes. Dashed ring, line color. */
 @utility route-stop-open {
   &::after {

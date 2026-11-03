@@ -19,7 +19,5 @@
   "nextStepDates": "Next: add dates",
   "solo": "Just you so far",
   "ended": "Ended {date}",
-  "routeName": "Route: {route}",
-  "noUpcoming": "No upcoming trips",
-  "openTrip": "Open trip"
+  "routeName": "Route: {route}"
 }

@@ -1,4 +1,5 @@
 import type { Trip } from "@/modules/trips/domain/trip";
+import { tripDateRange } from "@/modules/trips/domain/trip";
 import type { CityNames, TripRepository } from "@/modules/trips/service/ports";
 import type { TripDto } from "@/modules/trips/service/schemas";
 import { toTripDto } from "@/modules/trips/service/schemas";

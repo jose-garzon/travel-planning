@@ -1,17 +1,1 @@
-{
-  "stopsLabel": "Paradas del viaje",
-  "takeoff": "Despegue",
-  "backHome": "De vuelta a casa",
-  "stopOf": "Parada {number} de {total}",
-  "arrive": "Llegas el {date}",
-  "leave": "sales el {date}",
-  "leaves": "Sales el {date}",
-  "returns": "Vuelves el {date}",
-  "dateTbd": "Fecha por definir",
-  "nights": "{count, plural, one {# noche} other {# noches}}",
-  "current": "Parada actual",
-  "stopCountdown": "{days, plural, =0 {Hoy} one {Mañana} other {En # días}}",
-  "takeoffCountdown": "{days, plural, =0 {¡Hoy!} one {Falta # día} other {Faltan # días}}",
-  "onTheWay": "En camino",
-  "tripEnds": "{days, plural, =0 {El viaje termina hoy} one {El viaje termina en # día} other {El viaje termina en # días}}"
-}
+{}
