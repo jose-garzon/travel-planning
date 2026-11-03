@@ -56,3 +56,5 @@ extra files: trips/index.ts (searchCities), leg-fields.tsx (exclude)
 ## 2026-11-03 10:42 visual gate: waiting
 ready for review: T01 (still unanswered), T02 city combobox, T03
 multi-leg form. T04 blocked (plan gap).
+
+## 2026-11-03 visual gate: approved
