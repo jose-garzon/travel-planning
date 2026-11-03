@@ -170,7 +170,7 @@ Done when:
 
 ## T04. Home: the trip line and other trips
 
-Status: blocked (plan: tests.feature 'Current stop follows today' Example #3 has all legs past, contradicts past-trips rule)
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T04

@@ -89,3 +89,8 @@ fixed: "Add stop"/"Add return home" copy; delete -> home + toast (new
 shared Toast), error toast on failure; API errors localized
 (trips.errors); real 404 via not-found.tsx. commits cd9ac8a..c9f8cf9
 verified: 348 unit, 86 e2e desktop, typecheck, lint 0 errors
+
+## 2026-11-03 T04 unblocked
+user approved: Example #3 of "Current stop follows today" changed to
+-5 | +1 | MAD (was -5 | -1 | BCN, contradicted past-trips rule)
+resumed T04 (TEST_SHA 1b8a442)

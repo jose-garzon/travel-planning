@@ -146,7 +146,7 @@ Feature: Create a trip by drawing its route, and see it on home
       | first | second | current |
       | +10   | +13    | MAD     |
       | -2    | +3     | MAD     |
-      | -5    | -1     | BCN     |
+      | -5    | +1     | MAD     |
 
   @T04 @AC-9 @EC-12
   Scenario: Earliest trip takes the home line; others are compact
