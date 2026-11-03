@@ -16,6 +16,8 @@ type HomeScreenProps = {
   today: string;
   /** Shows the "Trip created" confirmation after a successful create. */
   justCreated?: boolean;
+  /** Shows the "Trip deleted" confirmation after a delete. */
+  justDeleted?: boolean;
 };
 
 const NEXT_TRIP_HEADING_ID = "next-trip-heading";
@@ -62,7 +64,13 @@ function formatTripDateRange(trip: TripDto, locale: string): string | null {
  * first, past ones under their own heading); or the empty state when
  * there are none (plan "Contracts", `nextTrip: null`).
  */
-export function HomeScreen({ displayName, summary, today, justCreated = false }: HomeScreenProps) {
+export function HomeScreen({
+  displayName,
+  summary,
+  today,
+  justCreated = false,
+  justDeleted = false,
+}: HomeScreenProps) {
   const translate = useTranslatable();
   const locale = useLocale();
   const { nextTrip, otherTrips } = summary;
@@ -82,6 +90,12 @@ export function HomeScreen({ displayName, summary, today, justCreated = false }:
       {justCreated && (
         <p role="status" className="mb-4 font-semibold text-success">
           {translate({ translateId: "trips.home.created" })}
+        </p>
+      )}
+
+      {justDeleted && (
+        <p role="status" className="mb-4 font-semibold text-success">
+          {translate({ translateId: "trips.edit.deleted" })}
         </p>
       )}
 

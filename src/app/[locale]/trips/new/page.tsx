@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentUser } from "@/modules/auth";
 import { TripForm } from "@/modules/trips/ui";
-import { Link, redirect } from "@/shared/i18n/navigation";
+import { redirect } from "@/shared/i18n/navigation";
 
 export default async function NewTripPage({ params }: PageProps<"/[locale]/trips/new">) {
   const { locale } = await params;
@@ -15,16 +15,8 @@ export default async function NewTripPage({ params }: PageProps<"/[locale]/trips
 
   return (
     <main className="mx-auto w-full max-w-dialog px-6 pt-4 pb-6 lg:pt-10">
-      <div className="mb-6 flex items-center justify-end gap-4">
-        {/* The trip-name field is the visible title; this names the page. */}
-        <h1 className="sr-only">{t("title")}</h1>
-        <Link
-          href="/"
-          className="min-h-touch content-center font-semibold underline underline-offset-4 ui-hover:text-accent"
-        >
-          {t("cancel")}
-        </Link>
-      </div>
+      {/* The trip-name field is the visible title; this names the page. */}
+      <h1 className="sr-only">{t("title")}</h1>
       <p className="mb-8 text-text-muted">{t("intro")}</p>
       <TripForm />
     </main>

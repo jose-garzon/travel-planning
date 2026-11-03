@@ -29,13 +29,29 @@ const INITIAL: State = {
   change: null,
 };
 
+/** The route of a saved trip, as the editor starts with it. */
+export type InitialLeg = { from: CityRef; to: CityRef; date: string | null };
+
+function stateFrom(legs: InitialLeg[]): State {
+  const [first] = legs;
+  if (first === undefined) {
+    return INITIAL;
+  }
+  return {
+    origin: first.from,
+    stops: legs.map((leg, key) => ({ key, to: leg.to, date: leg.date ?? "" })),
+    nextKey: legs.length,
+    change: null,
+  };
+}
+
 function sameName(a: CityRef, b: CityRef): boolean {
   return a.name.trim().toLowerCase() === b.name.trim().toLowerCase();
 }
 
 /** Route state for the trip form: legs chained from one origin, 1 to 10 legs. */
-export function useRouteEditor() {
-  const [state, setState] = useState<State>(INITIAL);
+export function useRouteEditor(initialLegs: InitialLeg[] = []) {
+  const [state, setState] = useState<State>(() => stateFrom(initialLegs));
   const { origin, stops, change } = state;
 
   const legs: EditorLeg[] = stops.map((stop, index) => ({

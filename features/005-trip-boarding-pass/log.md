@@ -48,3 +48,7 @@ merged. /trips/new gzip JS ~200 KB by implementer count (T01 baseline 198 KB); 1
 ## 2026-11-02 21:43 T04 round 1
 implementer (sonnet): red OK (04e08b1), 4 scenarios/7 examples, 23 unit tests; one test-fix commit (expectation BAR not BCN)
 merged. For PR: 1-day grace so a non-return trip ends the day after its last leg (needed by example -5/-1); newest tokens.css utility outside Files; next trip shows full line (per tests.feature), others compact. Lighthouse CLS not run.
+
+## 2026-11-02 21:51 T05 round 1
+implementer (sonnet): red OK (185fed0), 4 scenarios, 14 unit + 4 integration tests; green OK
+merged. For PR: no separate offline message (reuses save-failed text); focus-return not unit-tested; Cancel link moved into TripForm.

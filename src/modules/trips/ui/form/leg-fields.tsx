@@ -15,6 +15,10 @@ type LegFieldsProps = {
   legNumber: number;
   /** Leg 1 edits its From; later legs show the previous To, read-only. */
   fromName: string | null;
+  /** Text the From field starts with (leg 1 of a saved trip). */
+  initialFromName?: string;
+  /** The To station starts placed (a saved trip), not open. */
+  isInitiallyPlaced?: boolean;
   /** Text the To field starts with (a return home leg starts at the origin). */
   initialToName?: string;
   dateError?: Translatable;
@@ -51,6 +55,8 @@ function StationMeta({ children }: { children: React.ReactNode }) {
 export function LegFields({
   legNumber,
   fromName,
+  initialFromName,
+  isInitiallyPlaced = false,
   initialToName,
   dateError,
   onRemove,
@@ -68,7 +74,7 @@ export function LegFields({
 }: LegFieldsProps) {
   const translate = useTranslatable();
   const dateId = useId();
-  const [isToPlaced, setIsToPlaced] = useState(false);
+  const [isToPlaced, setIsToPlaced] = useState(isInitiallyPlaced);
   const placed = isToPlaced && toName !== "";
 
   return (
@@ -84,6 +90,7 @@ export function LegFields({
               label={{ translateId: "trips.form.from" }}
               placeholder={translate({ translateId: "trips.form.fromPlaceholder" })}
               error={fromError}
+              defaultValue={initialFromName}
               onChange={onFromChange}
             />
           ) : (

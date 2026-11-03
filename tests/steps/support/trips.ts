@@ -111,3 +111,29 @@ export async function seedTrip({
 
   return tripId;
 }
+
+/** The id of the trip `name` owned by `ownerEmail` (the seeding step does not keep it). */
+export async function findTripId(ownerEmail: string, name: string): Promise<string> {
+  await busyTimeoutReady;
+
+  const found = await client.execute({
+    sql:
+      "SELECT t.id FROM trip t JOIN trip_member m ON m.trip_id = t.id " +
+      "JOIN user u ON u.id = m.user_id WHERE u.email = ? AND t.name = ?",
+    args: [ownerEmail, name],
+  });
+  const id = found.rows[0]?.id;
+  if (typeof id !== "string") {
+    throw new Error(`findTripId: no trip "${name}" for ${ownerEmail}`);
+  }
+  return id;
+}
+
+/** Simulates another member saving the trip: its version moves on. */
+export async function bumpTripVersion(tripId: string): Promise<void> {
+  await busyTimeoutReady;
+  await client.execute({
+    sql: "UPDATE trip SET version = version + 1 WHERE id = ?",
+    args: [tripId],
+  });
+}

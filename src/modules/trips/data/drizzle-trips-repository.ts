@@ -1,9 +1,14 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import type { CityRef, Leg, Trip } from "@/modules/trips/domain/trip";
-import type { CreateTripRecord, TripRepository } from "@/modules/trips/service/ports";
+import type {
+  CreateTripRecord,
+  TripEditRepository,
+  TripRepository,
+  UpdateTripRecord,
+} from "@/modules/trips/service/ports";
 import { db } from "@/shared/db/client";
 import { trip, tripLeg, tripMember } from "@/shared/db/schema/trips";
 
@@ -17,7 +22,86 @@ function toLeg(row: LegRow): Leg {
 }
 
 /** `TripRepository` adapter over Drizzle (plan "Data model"). */
-export class DrizzleTripsRepository implements TripRepository {
+export class DrizzleTripsRepository implements TripRepository, TripEditRepository {
+  /** The trip with the member's role and its legs, or null when missing or not a member. */
+  async findForMember(tripId: string, userId: string): Promise<Trip | null> {
+    const rows = await db
+      .select({
+        id: trip.id,
+        name: trip.name,
+        currency: trip.currency,
+        version: trip.version,
+        role: tripMember.role,
+        memberCount: sql<number>`(select count(*) from ${tripMember} as m where m.trip_id = ${trip.id})`,
+      })
+      .from(tripMember)
+      .innerJoin(trip, eq(tripMember.tripId, trip.id))
+      .where(and(eq(tripMember.userId, userId), eq(trip.id, tripId)));
+    const row = rows[0];
+    if (row === undefined) {
+      return null;
+    }
+
+    const legRows = await db
+      .select()
+      .from(tripLeg)
+      .where(eq(tripLeg.tripId, tripId))
+      .orderBy(tripLeg.position);
+
+    return { ...row, memberCount: Number(row.memberCount), legs: legRows.map(toLeg) };
+  }
+
+  /** One transaction: the version-guarded update, then the legs are replaced; stale rolls back. */
+  async update({ tripId, input, expectedVersion, now }: UpdateTripRecord): Promise<Trip | null> {
+    const isSaved = await db.transaction(async (tx) => {
+      const updated = await tx
+        .update(trip)
+        .set({
+          name: input.name,
+          currency: input.currency,
+          version: expectedVersion + 1,
+          updatedAt: now,
+        })
+        .where(and(eq(trip.id, tripId), eq(trip.version, expectedVersion)))
+        .returning({ id: trip.id });
+      if (updated.length === 0) {
+        return false;
+      }
+
+      await tx.delete(tripLeg).where(eq(tripLeg.tripId, tripId));
+      await tx.insert(tripLeg).values(
+        input.legs.map((leg, position) => ({
+          id: randomUUID(),
+          tripId,
+          position,
+          fromCityId: leg.from.cityId,
+          fromCode: leg.from.code,
+          fromName: leg.from.name,
+          toCityId: leg.to.cityId,
+          toCode: leg.to.code,
+          toName: leg.to.name,
+          date: leg.date,
+        })),
+      );
+      return true;
+    });
+    if (!isSaved) {
+      return null;
+    }
+
+    const [owner] = await db
+      .select({ userId: tripMember.userId })
+      .from(tripMember)
+      .where(eq(tripMember.tripId, tripId));
+
+    return owner ? this.findForMember(tripId, owner.userId) : null;
+  }
+
+  /** Members and legs go with the trip (`ON DELETE CASCADE`). */
+  async remove(tripId: string): Promise<void> {
+    await db.delete(trip).where(eq(trip.id, tripId));
+  }
+
   /** One atomic batch: trip, owner membership and all legs, or nothing. */
   async create({ ownerId, input, now }: CreateTripRecord): Promise<Trip> {
     const id = randomUUID();
