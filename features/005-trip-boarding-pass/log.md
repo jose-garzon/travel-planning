@@ -83,3 +83,9 @@ reviewer: 2 blocker, 3 major, 3 minor, 1 nit
 fix round 1: efc03a1 test, d5b912f fix. verified: 103 unit, 72 e2e desktop
 reviewer: both blockers resolved, approved
 - minor  trips/[tripId]/page.tsx:23 soft 404 (200); move to not-found.tsx
+
+## 2026-11-03 user change requests
+fixed: "Add stop"/"Add return home" copy; delete -> home + toast (new
+shared Toast), error toast on failure; API errors localized
+(trips.errors); real 404 via not-found.tsx. commits cd9ac8a..c9f8cf9
+verified: 348 unit, 86 e2e desktop, typecheck, lint 0 errors
