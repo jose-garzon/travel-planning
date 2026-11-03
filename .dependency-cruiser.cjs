@@ -30,12 +30,13 @@ module.exports = {
     },
     {
       name: "app-uses-public-api",
-      comment: "Outside a module, import only its index.ts (server) or ui/index.ts (client).",
+      comment:
+        "Outside a module, import only its index.ts (server) ui/index.ts or ui/entries/*.ts (client).",
       severity: "error",
       from: { path: "^src/", pathNot: "^src/modules/" },
       to: {
         path: "^src/modules/[^/]+/",
-        pathNot: "^src/modules/[^/]+/(index\\.ts|ui/index\\.ts)$",
+        pathNot: "^src/modules/[^/]+/(index\\.ts|ui/index\\.ts|ui/entries/[^/]+\\.ts)$",
       },
     },
 

@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentUser } from "@/modules/auth";
-import { TripForm } from "@/modules/trips/ui";
+import { TripForm } from "@/modules/trips/ui/entries/form";
 import { redirect } from "@/shared/i18n/navigation";
 
 export default async function NewTripPage({ params }: PageProps<"/[locale]/trips/new">) {

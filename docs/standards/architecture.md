@@ -79,8 +79,14 @@ Dependency direction:
 | ui       | domain, service **types**, `shared/ui`, `shared/i18n` | data, `shared/db` |
 | index.ts | anything in its module, `shared`       | other modules         |
 
-Outside a module, only `modules/<m>/index.ts` (server) and
-`modules/<m>/ui/index.ts` (client) may be imported.
+Outside a module, only `modules/<m>/index.ts` (server),
+`modules/<m>/ui/index.ts` (client) and `modules/<m>/ui/entries/*.ts`
+(client) may be imported.
+
+Use `ui/entries/<screen>.ts` for heavy client trees used by one route
+(a form with dialogs, a search box). A barrel that re-exports a client
+component puts it in the bundle of every page that imports the
+barrel, even when the page never renders it.
 
 
 ## Rules

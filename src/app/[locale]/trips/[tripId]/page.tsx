@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentUser } from "@/modules/auth";
 import { getTrip } from "@/modules/trips";
-import { TripForm } from "@/modules/trips/ui";
+import { TripForm } from "@/modules/trips/ui/entries/form";
 import { redirect } from "@/shared/i18n/navigation";
 import type { Locale } from "@/shared/i18n/routing";
 
