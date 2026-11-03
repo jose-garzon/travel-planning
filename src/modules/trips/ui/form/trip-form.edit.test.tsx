@@ -98,20 +98,32 @@ describe("TripForm in edit mode", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(/connection/i);
   });
 
-  it("deletes only after the dialog is confirmed, then says so", async () => {
+  it("deletes only after the dialog is confirmed, then goes home with a deleted flag", async () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
     const user = setup();
 
     await user.click(screen.getByRole("button", { name: "Delete trip" }));
     expect(fetchMock).not.toHaveBeenCalled();
-    const dialog = screen.getByRole("dialog", { name: "Delete this trip?" });
     await user.click(screen.getByRole("button", { name: /^Delete$/ }));
 
-    expect(await screen.findByText("Trip deleted")).toBeVisible();
+    await waitFor(() =>
+      expect(push).toHaveBeenCalledWith({ pathname: "/", query: { deleted: "1" } }),
+    );
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe("/api/v1/trips/trip-1");
     expect(init.method).toBe("DELETE");
-    expect(dialog).not.toBeVisible();
+  });
+
+  it("shows an error toast and stays on the form when the delete fails", async () => {
+    fetchMock.mockResolvedValue(new Response(null, { status: 500 }));
+    const user = setup();
+
+    await user.click(screen.getByRole("button", { name: "Delete trip" }));
+    await user.click(screen.getByRole("button", { name: /^Delete$/ }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(/couldn’t delete the trip/i);
+    expect(push).not.toHaveBeenCalled();
+    expect(screen.getByLabelText("Trip name")).toHaveValue("Europe");
   });
 
   it("returns focus to the delete button when the dialog is dismissed", async () => {
