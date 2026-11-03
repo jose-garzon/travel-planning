@@ -39,6 +39,14 @@ pnpm dev
 Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`.
 
 
+## Data attribution
+
+City search uses [OurAirports](https://ourairports.com/data/) (public
+domain) joined to [GeoNames](https://www.geonames.org/) city names
+(CC BY 4.0). Rebuild the list with
+`node --experimental-strip-types scripts/build-cities.ts`.
+
+
 ## License
 
 All rights reserved. See [LICENSE](LICENSE).

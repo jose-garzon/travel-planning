@@ -97,6 +97,7 @@ export function LegFields({
               label={{ translateId: "trips.form.to" }}
               placeholder={translate({ translateId: "trips.form.toPlaceholder" })}
               error={errors.to}
+              exclude={leg.from.cityId}
               onChange={(city) => {
                 onToChange(city);
                 if (city.name === "") {

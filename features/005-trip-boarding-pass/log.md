@@ -46,3 +46,13 @@ expects current BCN) contradicts "Past trips move to other trips" and
 feature.md current-stop rules. Fix the example (2nd leg after today).
 also outside Files: shared/ui/tokens.css, tests/steps/support/trips.ts
 worktree kept: .worktrees/T04
+
+## 2026-11-03 10:40 T02 rounds 1-2
+implementer (sonnet): red OK, green OK; round 2 = rebase onto T03
+(conflict in leg-fields.tsx). verified: 80 unit, @T02|@T03 desktop 58
+open: /trips/new <=170 KB gzip not measured (Lighthouse CI)
+extra files: trips/index.ts (searchCities), leg-fields.tsx (exclude)
+
+## 2026-11-03 10:42 visual gate: waiting
+ready for review: T01 (still unanswered), T02 city combobox, T03
+multi-leg form. T04 blocked (plan gap).

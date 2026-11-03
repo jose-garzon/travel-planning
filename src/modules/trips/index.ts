@@ -33,3 +33,26 @@ export async function listMyTrips({ userId, locale }: { userId: string; locale: 
 
   return trips.map((trip) => toTripDto(trip, (city) => deps.cities.localizeName(city, locale)));
 }
+
+/**
+ * Cities for the combobox: matches of `query` (2+ characters), or the
+ * popular cities of `region` while there is no query yet (plan "Contracts").
+ */
+export function searchCities({
+  query,
+  locale,
+  region,
+  exclude,
+}: {
+  query: string;
+  locale: Locale;
+  region?: string | null;
+  exclude?: string | null;
+}) {
+  const text = query.trim();
+  if (text === "") {
+    return deps.cities.popular({ locale, region, exclude });
+  }
+
+  return text.length < 2 ? [] : deps.cities.search(text, { locale, exclude });
+}
