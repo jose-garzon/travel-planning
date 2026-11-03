@@ -170,7 +170,7 @@ Done when:
 
 ## T04. Home: the trip line and other trips
 
-Status: done
+Status: dropped (moved out of scope 2026-11-03; user rejected the design)
 Depends on: T01
 Model: sonnet
 Scenarios: @T04
@@ -198,8 +198,8 @@ Steps:
 3. Compact panels link to `/trips/[tripId]`.
 
 Done when:
-- [x] Scenarios tagged @T04 pass, desktop and mobile
-- [x] Unit: current stop before/during/after/undated; nights; ICU
+- [ ] Scenarios tagged @T04 pass, desktop and mobile
+- [ ] Unit: current stop before/during/after/undated; nights; ICU
   plurals; horizontal line keyboard scroll
 - [x] Lighthouse: home CLS ≤ 0.1
 
@@ -243,9 +243,9 @@ Done when:
 | AC-4      | T03     | Invalid dates block the save                 |
 | AC-5      | T03     | Add the return home leg                      |
 | AC-6      | T01     | Currency defaults from browser locale        |
-| AC-7      | T04     | Home shows takeoff, stops and back home      |
-| AC-8      | T04     | Current stop follows today                   |
-| AC-9      | T04     | Other trips show as compact panels           |
+| AC-7      | -       | out of scope (T04 dropped)                   |
+| AC-8      | -       | out of scope (T04 dropped)                   |
+| AC-9      | -       | out of scope (T04 dropped)                   |
 | AC-10     | T05     | Edit a trip; stale edit conflict             |
 | AC-11     | T05     | Delete a trip                                |
 | AC-12     | T05     | Leaving with unsaved changes                 |
@@ -258,5 +258,5 @@ Done when:
 | EC-9      | T03     | Adding legs chains cities; removing re-chains|
 | EC-10     | T03     | Add the return home leg                      |
 | EC-11     | T01     | Trip name is required                        |
-| EC-12     | T04     | Earliest trip takes the home line            |
-| EC-13     | T04     | unit: long names truncated, full accessible name |
+| EC-12     | -       | out of scope (T04 dropped)                   |
+| EC-13     | -       | out of scope (T04 dropped)                   |
