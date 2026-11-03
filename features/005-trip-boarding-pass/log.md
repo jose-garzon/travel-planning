@@ -33,3 +33,8 @@ then upcoming, then "Past trips"), each with its route as a short line
 of station codes and its next step. UC-2 and AC-7 to AC-9 updated; the
 full station-by-station line moves to the trip page (T05 form).
 T04 keeps the current-stop rules, shown on the next trip's row.
+
+## 2026-11-03 10:05 T03 round 1
+implementer (sonnet): red OK (5beef27), 6 scenarios, 24 unit tests
+green OK (verified: 55 unit, @T03 e2e desktop)
+notes: legs 2+ From read-only Input; tz cookie (D-5) not wired

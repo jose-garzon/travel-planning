@@ -10,7 +10,10 @@
     "nameRequired": "Trip name is required",
     "fromRequired": "Origin is required",
     "toRequired": "Destination is required",
-    "saveFailed": "Couldn’t save the trip. Check your connection and try again."
+    "saveFailed": "Couldn’t save the trip. Check your connection and try again.",
+    "sameCity": "Pick a different city",
+    "dateOrder": "Must be on or after {date}",
+    "datePast": "Pick today or a later date"
   },
   "date": "Departure date",
   "dateHint": "optional",
@@ -19,5 +22,11 @@
   "fromPlaceholder": "Leaving from",
   "toPlaceholder": "Next stop",
   "namePlaceholder": "Name your trip",
-  "takeoff": "Takeoff"
+  "takeoff": "Takeoff",
+  "addLeg": "Add a leg",
+  "addReturnHome": "Add return home leg",
+  "removeLeg": "Remove leg {number}",
+  "legLimit": "Up to {max} legs",
+  "legAdded": "Leg {number} added",
+  "legRemoved": "Leg {number} removed"
 }

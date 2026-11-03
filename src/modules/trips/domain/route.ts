@@ -18,7 +18,7 @@ function normalizedName(city: CityRef): string {
 }
 
 /** Same id when both are known cities; otherwise free text compared by name. */
-function isSameCity(a: CityRef, b: CityRef): boolean {
+export function isSameCity(a: CityRef, b: CityRef): boolean {
   if (a.cityId !== null && b.cityId !== null) {
     return a.cityId === b.cityId;
   }
@@ -26,10 +26,11 @@ function isSameCity(a: CityRef, b: CityRef): boolean {
 }
 
 /**
- * Route rules (plan "Contracts"). `today` and `previousLegs` belong to
- * the date rules (`DATE_ORDER`, `DATE_PAST`), added with the dates task.
+ * Route rules (plan "Contracts"). `DATE_PAST` applies to new dates only:
+ * with `previousLegs` (update), a date unchanged at the same position is
+ * kept even when it has since passed.
  */
-export function validateRoute({ legs }: RouteInput): RouteViolation[] {
+export function validateRoute({ legs, today, previousLegs }: RouteInput): RouteViolation[] {
   if (legs.length === 0) {
     return [{ legIndex: null, rule: "NO_LEGS" }];
   }
@@ -37,7 +38,24 @@ export function validateRoute({ legs }: RouteInput): RouteViolation[] {
     return [{ legIndex: null, rule: "TOO_MANY_LEGS" }];
   }
 
-  return legs.flatMap((leg, legIndex): RouteViolation[] =>
-    isSameCity(leg.from, leg.to) ? [{ legIndex, rule: "SAME_CITY" }] : [],
-  );
+  let lastDate: string | null = null;
+
+  return legs.flatMap((leg, legIndex): RouteViolation[] => {
+    const violations: RouteViolation[] = [];
+    if (isSameCity(leg.from, leg.to)) {
+      violations.push({ legIndex, rule: "SAME_CITY" });
+    }
+    if (leg.date !== null) {
+      if (lastDate !== null && leg.date < lastDate) {
+        violations.push({ legIndex, rule: "DATE_ORDER" });
+      }
+      const isUnchanged = previousLegs?.[legIndex]?.date === leg.date;
+      if (leg.date < today && !isUnchanged) {
+        violations.push({ legIndex, rule: "DATE_PAST" });
+      }
+      lastDate = leg.date;
+    }
+
+    return violations;
+  });
 }

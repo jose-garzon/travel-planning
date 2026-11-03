@@ -1,25 +1,24 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useId, useState } from "react";
 import type { CityRef } from "@/modules/trips/domain/trip";
 import { CityCombobox } from "@/modules/trips/ui/form/city-combobox";
+import type { EditorLeg, LegErrors } from "@/modules/trips/ui/form/use-route-editor";
+import { Button } from "@/shared/ui/components/button";
+import { Input } from "@/shared/ui/components/input";
 import { cx } from "@/shared/ui/cx";
-import type { Translatable } from "@/shared/ui/translatable";
 import { useTranslatable } from "@/shared/ui/translatable";
 
 type LegFieldsProps = {
   legNumber: number;
-  fromError?: Translatable;
-  toError?: Translatable;
-  fromRef?: React.Ref<HTMLInputElement>;
-  toRef?: React.Ref<HTMLInputElement>;
+  leg: EditorLeg;
+  errors: LegErrors;
   onFromChange: (city: CityRef) => void;
   onToChange: (city: CityRef) => void;
-  /** To city as typed: the station is placed once it has one and loses focus. */
-  toName: string;
-  /** Departure date, `YYYY-MM-DD` or "" when not set yet. */
-  date: string;
   onDateChange: (date: string) => void;
+  onRemove: () => void;
+  canRemove: boolean;
 };
 
 /** The amber meta line under a station: time lives here (DESIGN.md). */
@@ -37,55 +36,76 @@ function StationMeta({ children }: { children: React.ReactNode }) {
  */
 export function LegFields({
   legNumber,
-  fromError,
-  toError,
-  fromRef,
-  toRef,
+  leg,
+  errors,
   onFromChange,
   onToChange,
-  toName,
-  date,
   onDateChange,
+  onRemove,
+  canRemove,
 }: LegFieldsProps) {
   const translate = useTranslatable();
   const dateId = useId();
+  const dateErrorId = `${dateId}-error`;
   const [isToPlaced, setIsToPlaced] = useState(false);
-  const placed = isToPlaced && toName !== "";
+  const placed = (isToPlaced || leg.isReturn) && leg.to.name !== "";
+  const isFirst = legNumber === 1;
 
   return (
-    <fieldset>
+    <fieldset data-leg-id={leg.id}>
       <legend className="sr-only">
         {translate({ translateId: "trips.form.leg", values: { number: legNumber } })}
       </legend>
       <ol className="route">
         <li className={cx("route-stop route-stop-hub", placed && "route-stop-extend")}>
-          <CityCombobox
-            ref={fromRef}
-            label={{ translateId: "trips.form.from" }}
-            placeholder={translate({ translateId: "trips.form.fromPlaceholder" })}
-            error={fromError}
-            onChange={onFromChange}
-          />
-          <StationMeta>
-            <span className="rounded-full bg-sun px-3 py-1 font-semibold text-on-sun">
-              {translate({ translateId: "trips.form.takeoff" })}
-            </span>
-          </StationMeta>
+          {isFirst ? (
+            <CityCombobox
+              label={{ translateId: "trips.form.from" }}
+              placeholder={translate({ translateId: "trips.form.fromPlaceholder" })}
+              error={errors.from}
+              onChange={onFromChange}
+            />
+          ) : (
+            <Input
+              appearance="station"
+              label={{ translateId: "trips.form.from" }}
+              value={leg.from.name}
+              readOnly
+            />
+          )}
+          {isFirst && (
+            <StationMeta>
+              <span className="rounded-full bg-sun px-3 py-1 font-semibold text-on-sun">
+                {translate({ translateId: "trips.form.takeoff" })}
+              </span>
+            </StationMeta>
+          )}
         </li>
-        <li className={cx("route-stop", placed ? "route-stop-new" : "route-stop-open")}>
-          <CityCombobox
-            ref={toRef}
-            label={{ translateId: "trips.form.to" }}
-            placeholder={translate({ translateId: "trips.form.toPlaceholder" })}
-            error={toError}
-            onChange={(city) => {
-              onToChange(city);
-              if (city.name === "") {
-                setIsToPlaced(false);
-              }
-            }}
-            onCommit={() => setIsToPlaced(true)}
-          />
+        <li
+          data-field="to"
+          className={cx("route-stop", placed ? "route-stop-new" : "route-stop-open")}
+        >
+          {leg.isReturn ? (
+            <Input
+              appearance="station"
+              label={{ translateId: "trips.form.to" }}
+              value={leg.to.name}
+              readOnly
+            />
+          ) : (
+            <CityCombobox
+              label={{ translateId: "trips.form.to" }}
+              placeholder={translate({ translateId: "trips.form.toPlaceholder" })}
+              error={errors.to}
+              onChange={(city) => {
+                onToChange(city);
+                if (city.name === "") {
+                  setIsToPlaced(false);
+                }
+              }}
+              onCommit={() => setIsToPlaced(true)}
+            />
+          )}
           <StationMeta>
             <label
               htmlFor={dateId}
@@ -100,12 +120,30 @@ export function LegFields({
               <input
                 id={dateId}
                 type="date"
-                value={date}
+                value={leg.date}
+                aria-invalid={errors.date === undefined ? undefined : true}
+                aria-describedby={errors.date === undefined ? undefined : dateErrorId}
                 onChange={(event) => onDateChange(event.target.value)}
                 className="date-chip"
               />
             </label>
+            <Button
+              type="button"
+              variant="outline"
+              icon={X}
+              labelHidden
+              disabled={!canRemove}
+              data-remove=""
+              translateId="trips.form.removeLeg"
+              values={{ number: legNumber }}
+              onClick={onRemove}
+            />
           </StationMeta>
+          {errors.date !== undefined && (
+            <p id={dateErrorId} className="mt-1 text-sm text-error">
+              {translate(errors.date)}
+            </p>
+          )}
         </li>
       </ol>
     </fieldset>

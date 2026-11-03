@@ -10,7 +10,10 @@
     "nameRequired": "El nombre del viaje es obligatorio",
     "fromRequired": "El origen es obligatorio",
     "toRequired": "El destino es obligatorio",
-    "saveFailed": "No se pudo guardar el viaje. Revisa tu conexión e inténtalo de nuevo."
+    "saveFailed": "No se pudo guardar el viaje. Revisa tu conexión e inténtalo de nuevo.",
+    "sameCity": "Elige otra ciudad",
+    "dateOrder": "Debe ser el {date} o después",
+    "datePast": "Elige hoy o una fecha posterior"
   },
   "date": "Fecha de salida",
   "dateHint": "opcional",
@@ -19,5 +22,11 @@
   "fromPlaceholder": "Salida",
   "toPlaceholder": "Siguiente parada",
   "namePlaceholder": "Ponle nombre al viaje",
-  "takeoff": "Salida"
+  "takeoff": "Salida",
+  "addLeg": "Añadir tramo",
+  "addReturnHome": "Añadir tramo de regreso",
+  "removeLeg": "Quitar tramo {number}",
+  "legLimit": "Hasta {max} tramos",
+  "legAdded": "Tramo {number} añadido",
+  "legRemoved": "Tramo {number} quitado"
 }
