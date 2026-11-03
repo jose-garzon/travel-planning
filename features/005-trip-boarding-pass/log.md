@@ -44,3 +44,7 @@ merged. Note: touched city-combobox.tsx (defaultValue prop) outside Files.
 ## 2026-11-02 21:42 T02 round 2
 implementer (sonnet): red OK (15afb3d), 4 scenarios, 26 unit tests; rebased on T03, combobox listbox renamed (test fixture fix commit)
 merged. /trips/new gzip JS ~200 KB by implementer count (T01 baseline 198 KB); 170 KB budget unverified (carried to PR). /cities got extra params exclude, region.
+
+## 2026-11-02 21:43 T04 round 1
+implementer (sonnet): red OK (04e08b1), 4 scenarios/7 examples, 23 unit tests; one test-fix commit (expectation BAR not BCN)
+merged. For PR: 1-day grace so a non-return trip ends the day after its last leg (needed by example -5/-1); newest tokens.css utility outside Files; next trip shows full line (per tests.feature), others compact. Lighthouse CLS not run.

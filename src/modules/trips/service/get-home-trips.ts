@@ -1,3 +1,4 @@
+import { tripHasEnded } from "@/modules/trips/domain/current-stop";
 import type { Trip } from "@/modules/trips/domain/trip";
 import { tripDateRange } from "@/modules/trips/domain/trip";
 import type { CityNames, TripRepository } from "@/modules/trips/service/ports";
@@ -21,7 +22,7 @@ function startOf(dto: TripDto): string {
 }
 
 function hasEnded(dto: TripDto, today: string): boolean {
-  return dto.endDate !== null && dto.endDate < today;
+  return tripHasEnded({ legs: dto.legs, today });
 }
 
 /**

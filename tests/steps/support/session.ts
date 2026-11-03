@@ -27,6 +27,17 @@ const busyTimeoutReady = client.execute("PRAGMA busy_timeout = 5000;");
 const SESSION_COOKIE_NAME = "better-auth.session_token";
 const SESSION_TTL_MS = 60 * 60 * 1000;
 
+const emailByPage = new WeakMap<Page, string>();
+
+/** Email of the member `signInAs` signed in on `page`, for seeding their data. */
+export function signedInEmail(page: Page): string {
+  const email = emailByPage.get(page);
+  if (email === undefined) {
+    throw new Error("signedInEmail: no member is signed in on this page");
+  }
+  return email;
+}
+
 type SignInOptions = {
   /**
    * Must be unique per call: scenarios run in parallel (testing.md
@@ -48,6 +59,7 @@ type SignInOptions = {
  */
 export async function signInAs(page: Page, { email, displayName }: SignInOptions): Promise<void> {
   await busyTimeoutReady;
+  emailByPage.set(page, email);
 
   const now = new Date();
   const userId = randomUUID();

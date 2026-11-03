@@ -1,1 +1,17 @@
-{}
+{
+  "routeLabel": "Route",
+  "takeoff": "Takeoff",
+  "backHome": "Back home",
+  "stopOf": "Stop {position} of {total}",
+  "nights": "{count, plural, one {# night} other {# nights}}",
+  "arrive": "Arrive {date}",
+  "leave": "Leave {date}",
+  "departs": "Departs {date}",
+  "returns": "Returns {date}",
+  "dateTbd": "Date TBD",
+  "toGo": "{days, plural, =0 {Today!} one {1 day to go} other {# days to go}}",
+  "onTheWay": "On the way",
+  "endsIn": "{days, plural, =0 {Trip ends today} one {Trip ends tomorrow} other {Trip ends in # days}}",
+  "here": "You are here",
+  "firstLeg": "{from} → {to}"
+}

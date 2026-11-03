@@ -40,9 +40,25 @@ function legDate({ dayOffset, date }: SeedLeg): string | null {
   return new Date(Date.now() + dayOffset * DAY_MS).toISOString().slice(0, 10);
 }
 
-/** Free-text city: no id, code is the first 3 letters (plan "Data model"). */
+// Airport codes the scenarios spell out (BOG, MAD, BCN, LIM, CUZ).
+const KNOWN_CODES: Record<string, string> = {
+  bogota: "BOG",
+  madrid: "MAD",
+  barcelona: "BCN",
+  lima: "LIM",
+  cusco: "CUZ",
+};
+
+function plain(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+/** Free-text city: no id; a known airport code, else the first 3 letters (plan "Data model"). */
 function cityColumns(name: string): [null, string, string] {
-  return [null, name.slice(0, 3).toUpperCase(), name];
+  return [null, KNOWN_CODES[plain(name)] ?? name.slice(0, 3).toUpperCase(), name];
 }
 
 /** Inserts a trip owned by the user with `ownerEmail` (must already exist). */
