@@ -12,6 +12,8 @@ type CityComboboxProps = {
   /** Fires when the user leaves the field: the station is placed. */
   onCommit?: () => void;
   placeholder?: string;
+  /** Text shown on mount (e.g. a return home leg starts at the origin). */
+  defaultValue?: string;
   ref?: React.Ref<HTMLInputElement>;
 };
 
@@ -29,9 +31,10 @@ export function CityCombobox({
   onChange,
   onCommit,
   placeholder,
+  defaultValue = "",
   ref,
 }: CityComboboxProps) {
-  const [text, setText] = useState("");
+  const [text, setText] = useState(defaultValue);
 
   return (
     <Input

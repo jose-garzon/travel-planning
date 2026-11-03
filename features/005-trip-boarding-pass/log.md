@@ -33,3 +33,10 @@ then upcoming, then "Past trips"), each with its route as a short line
 of station codes and its next step. UC-2 and AC-7 to AC-9 updated; the
 full station-by-station line moves to the trip page (T05 form).
 T04 keeps the current-stop rules, shown on the next trip's row.
+
+## 2026-11-02 21:28 visual gate: approved
+user waived gate; T01 UI reviewed by user.
+
+## 2026-11-02 21:34 T03 round 1
+implementer (sonnet): red OK (9a54176), 6 scenarios, 13 unit tests; green OK
+merged. Note: touched city-combobox.tsx (defaultValue prop) outside Files.

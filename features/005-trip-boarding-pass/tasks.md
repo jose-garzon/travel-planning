@@ -100,7 +100,7 @@ Notes:
 
 ## T02. City search with localized names
 
-Status: todo
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T02
@@ -140,7 +140,7 @@ Done when:
 
 ## T03. Multi-leg route editing and date rules
 
-Status: todo
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T03
@@ -163,14 +163,14 @@ Steps:
 3. Live region announcements; focus rules from feature.md.
 
 Done when:
-- [ ] Scenarios tagged @T03 pass
-- [ ] Unit: every rule and EC-2..EC-10 in domain or hook tests
-- [ ] Submit with errors focuses the first invalid field
+- [x] Scenarios tagged @T03 pass
+- [x] Unit: every rule and EC-2..EC-10 in domain or hook tests
+- [x] Submit with errors focuses the first invalid field
 
 
 ## T04. Home: the trip line and other trips
 
-Status: todo
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T04
