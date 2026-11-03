@@ -1,1 +1,17 @@
-{}
+{
+  "title": "Editar viaje",
+  "submit": "Guardar cambios",
+  "delete": "Eliminar viaje",
+  "deleteTitle": "¿Eliminar este viaje?",
+  "deleteDescription": "El viaje y su ruta se eliminan para todos. No se puede deshacer.",
+  "deleteConfirm": "Eliminar",
+  "deleteFailed": "No se pudo eliminar el viaje. Revisa tu conexión e inténtalo de nuevo.",
+  "deleted": "Viaje eliminado",
+  "conflict": "Este viaje cambió. Recarga para ver lo último.",
+  "reload": "Recargar",
+  "discardTitle": "¿Descartar cambios?",
+  "discardDescription": "Los cambios en este viaje no se han guardado.",
+  "discard": "Descartar",
+  "keepEditing": "Seguir editando",
+  "close": "Cerrar"
+}

@@ -15,6 +15,24 @@ export type TripRepository = {
   listForUser(userId: string): Promise<Trip[]>;
 };
 
+export type UpdateTripRecord = {
+  tripId: string;
+  input: TripInput;
+  /** The write only lands when the stored version still equals this. */
+  expectedVersion: number;
+  now: Date;
+};
+
+/** Persistence port for reading one trip, editing and deleting it. */
+export type TripEditRepository = {
+  /** The trip with the member's role; null when missing or the user is not a member. */
+  findForMember(tripId: string, userId: string): Promise<Trip | null>;
+  /** Replaces name, currency and legs and bumps the version; null when the version is stale. */
+  update(record: UpdateTripRecord): Promise<Trip | null>;
+  /** Removes the trip with its members and legs. */
+  remove(tripId: string): Promise<void>;
+};
+
 /** City names port: localizes a stored city for the request locale. */
 export type CityNames = {
   localizeName(city: { cityId: string | null; name: string }, locale: Locale): string;

@@ -31,7 +31,7 @@ function todayIn(timeZone: string | undefined): string {
 // home page.
 export default async function HomePage({ params, searchParams }: PageProps<"/[locale]">) {
   const { locale } = await params;
-  const { error, nameError, created } = await searchParams;
+  const { error, nameError, created, deleted } = await searchParams;
   setRequestLocale(locale);
 
   // Thin Server Action (architecture.md rule 7: only `app/` calls a
@@ -82,6 +82,7 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
         summary={summary}
         today={today}
         justCreated={created === "1"}
+        justDeleted={deleted === "1"}
       />
     </>
   );

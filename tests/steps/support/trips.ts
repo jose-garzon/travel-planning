@@ -40,9 +40,25 @@ function legDate({ dayOffset, date }: SeedLeg): string | null {
   return new Date(Date.now() + dayOffset * DAY_MS).toISOString().slice(0, 10);
 }
 
-/** Free-text city: no id, code is the first 3 letters (plan "Data model"). */
+// Airport codes the scenarios spell out (BOG, MAD, BCN, LIM, CUZ).
+const KNOWN_CODES: Record<string, string> = {
+  bogota: "BOG",
+  madrid: "MAD",
+  barcelona: "BCN",
+  lima: "LIM",
+  cusco: "CUZ",
+};
+
+function plain(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+/** Free-text city: no id; a known airport code, else the first 3 letters (plan "Data model"). */
 function cityColumns(name: string): [null, string, string] {
-  return [null, name.slice(0, 3).toUpperCase(), name];
+  return [null, KNOWN_CODES[plain(name)] ?? name.slice(0, 3).toUpperCase(), name];
 }
 
 /** Inserts a trip owned by the user with `ownerEmail` (must already exist). */
@@ -94,4 +110,30 @@ export async function seedTrip({
   );
 
   return tripId;
+}
+
+/** The id of the trip `name` owned by `ownerEmail` (the seeding step does not keep it). */
+export async function findTripId(ownerEmail: string, name: string): Promise<string> {
+  await busyTimeoutReady;
+
+  const found = await client.execute({
+    sql:
+      "SELECT t.id FROM trip t JOIN trip_member m ON m.trip_id = t.id " +
+      "JOIN user u ON u.id = m.user_id WHERE u.email = ? AND t.name = ?",
+    args: [ownerEmail, name],
+  });
+  const id = found.rows[0]?.id;
+  if (typeof id !== "string") {
+    throw new Error(`findTripId: no trip "${name}" for ${ownerEmail}`);
+  }
+  return id;
+}
+
+/** Simulates another member saving the trip: its version moves on. */
+export async function bumpTripVersion(tripId: string): Promise<void> {
+  await busyTimeoutReady;
+  await client.execute({
+    sql: "UPDATE trip SET version = version + 1 WHERE id = ?",
+    args: [tripId],
+  });
 }

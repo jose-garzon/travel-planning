@@ -100,7 +100,7 @@ Notes:
 
 ## T02. City search with localized names
 
-Status: todo
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T02
@@ -130,17 +130,17 @@ Steps:
    (DESIGN.md); the picked city fills the station name.
 
 Done when:
-- [ ] Scenarios tagged @T02 pass
-- [ ] Unit: search ranking, accent-insensitive, exclude, locale names
-- [ ] Unit: combobox keyboard (arrows, Enter, Escape), excluded city
+- [x] Scenarios tagged @T02 pass
+- [x] Unit: search ranking, accent-insensitive, exclude, locale names
+- [x] Unit: combobox keyboard (arrows, Enter, Escape), excluded city
   absent, free text fallback, stale request ignored, list open on
   focus
-- [ ] `/trips/new` JS ≤ 170 KB gzip (`pnpm build` output)
+- [x] `/trips/new` JS ≤ 170 KB gzip (`pnpm build` output)
 
 
 ## T03. Multi-leg route editing and date rules
 
-Status: todo
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T03
@@ -163,14 +163,14 @@ Steps:
 3. Live region announcements; focus rules from feature.md.
 
 Done when:
-- [ ] Scenarios tagged @T03 pass
-- [ ] Unit: every rule and EC-2..EC-10 in domain or hook tests
-- [ ] Submit with errors focuses the first invalid field
+- [x] Scenarios tagged @T03 pass
+- [x] Unit: every rule and EC-2..EC-10 in domain or hook tests
+- [x] Submit with errors focuses the first invalid field
 
 
 ## T04. Home: the trip line and other trips
 
-Status: todo
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T04
@@ -198,15 +198,15 @@ Steps:
 3. Compact panels link to `/trips/[tripId]`.
 
 Done when:
-- [ ] Scenarios tagged @T04 pass, desktop and mobile
-- [ ] Unit: current stop before/during/after/undated; nights; ICU
+- [x] Scenarios tagged @T04 pass, desktop and mobile
+- [x] Unit: current stop before/during/after/undated; nights; ICU
   plurals; horizontal line keyboard scroll
-- [ ] Lighthouse: home CLS ≤ 0.1
+- [x] Lighthouse: home CLS ≤ 0.1
 
 
 ## T05. Edit, delete, conflicts and leaving the form
 
-Status: todo
+Status: done
 Depends on: T03 (and T01)
 Model: sonnet
 Scenarios: @T05
@@ -227,10 +227,10 @@ Files:
 - `tests/steps/trip-edit.steps.ts` (new)
 
 Done when:
-- [ ] Scenarios tagged @T05 pass
-- [ ] Unit: owner-only, not-found for non-members, stale version →
+- [x] Scenarios tagged @T05 pass
+- [x] Unit: owner-only, not-found for non-members, stale version →
   `TRIP_VERSION_CONFLICT`, cascade delete
-- [ ] Focus returns to trigger after each dialog closes
+- [x] Focus returns to trigger after each dialog closes
 
 
 ## Coverage

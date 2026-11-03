@@ -33,3 +33,30 @@ then upcoming, then "Past trips"), each with its route as a short line
 of station codes and its next step. UC-2 and AC-7 to AC-9 updated; the
 full station-by-station line moves to the trip page (T05 form).
 T04 keeps the current-stop rules, shown on the next trip's row.
+
+## 2026-11-02 21:28 visual gate: approved
+user waived gate; T01 UI reviewed by user.
+
+## 2026-11-02 21:34 T03 round 1
+implementer (sonnet): red OK (9a54176), 6 scenarios, 13 unit tests; green OK
+merged. Note: touched city-combobox.tsx (defaultValue prop) outside Files.
+
+## 2026-11-02 21:42 T02 round 2
+implementer (sonnet): red OK (15afb3d), 4 scenarios, 26 unit tests; rebased on T03, combobox listbox renamed (test fixture fix commit)
+merged. /trips/new gzip JS ~200 KB by implementer count (T01 baseline 198 KB); 170 KB budget unverified (carried to PR). /cities got extra params exclude, region.
+
+## 2026-11-02 21:43 T04 round 1
+implementer (sonnet): red OK (04e08b1), 4 scenarios/7 examples, 23 unit tests; one test-fix commit (expectation BAR not BCN)
+merged. For PR: 1-day grace so a non-return trip ends the day after its last leg (needed by example -5/-1); newest tokens.css utility outside Files; next trip shows full line (per tests.feature), others compact. Lighthouse CLS not run.
+
+## 2026-11-02 21:51 T05 round 1
+implementer (sonnet): red OK (185fed0), 4 scenarios, 14 unit + 4 integration tests; green OK
+merged. For PR: no separate offline message (reuses save-failed text); focus-return not unit-tested; Cancel link moved into TripForm.
+
+## 2026-11-02 22:10 feature review
+reviewer: 0 blocker, 4 major, 5 minor, 1 nit (carried to PR; targeted review)
+- major  evidence: no screenshot of the edit page (misleading one removed)
+- major  drizzle-trips-repository.ts:92  update reloads via first member row; pass caller userId before #6 adds members
+- major  api/v1/cities/route.ts:12  extra params exclude/region and short-q popular list not in plan contract
+- major  /trips/new JS budget (170 KB) and Lighthouse CLS not measured; implementer count ~200 KB
+- minor  Trip.role typed too wide (casts in update-trip/delete-trip); [tripId] route uses UTC today, not tz cookie; API error messages English only; 1-day grace rule not in feature.md; no offline message / focus-return test
