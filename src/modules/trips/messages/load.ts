@@ -2,6 +2,7 @@ import type { Locale } from "@/shared/i18n/routing";
 import type cardsEn from "./en/cards.json";
 import type cityEn from "./en/city.json";
 import type editEn from "./en/edit.json";
+import type errorsEn from "./en/errors.json";
 import type formEn from "./en/form.json";
 import type homeEn from "./en/home.json";
 
@@ -12,9 +13,10 @@ export type TripsMessages = {
   city: typeof cityEn;
   cards: typeof cardsEn;
   edit: typeof editEn;
+  errors: typeof errorsEn;
 };
 
-const NAMESPACES = ["home", "form", "city", "cards", "edit"] as const;
+const NAMESPACES = ["home", "form", "city", "cards", "edit", "errors"] as const;
 
 /** Loads every `trips.<namespace>` message file for `locale` (auth load.ts pattern). */
 export async function loadTripsMessages(locale: Locale): Promise<TripsMessages> {

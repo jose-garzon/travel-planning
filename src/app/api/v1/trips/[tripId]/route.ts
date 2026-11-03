@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/modules/auth";
 import { deleteTrip, getTrip, tripInputSchema, updateTrip } from "@/modules/trips";
@@ -22,20 +23,10 @@ const STATUS: Record<ErrorCode, number> = {
   TRIP_VERSION_CONFLICT: 409,
 };
 
-const MESSAGES: Record<ErrorCode, string> = {
-  VALIDATION_FAILED: "The trip is invalid.",
-  ROUTE_INVALID: "The route is invalid.",
-  UNAUTHENTICATED: "Sign in to manage trips.",
-  TRIP_FORBIDDEN: "Only the owner can change this trip.",
-  TRIP_NOT_FOUND: "Trip not found.",
-  TRIP_VERSION_CONFLICT: "This trip changed. Reload to see the latest.",
-};
+async function errorResponse(request: Request, code: ErrorCode, details?: unknown) {
+  const t = await getTranslations({ locale: localeOf(request), namespace: "trips.errors" });
 
-function errorResponse(code: ErrorCode, details?: unknown) {
-  return Response.json(
-    { error: { code, message: MESSAGES[code], details } },
-    { status: STATUS[code] },
-  );
+  return Response.json({ error: { code, message: t(code), details } }, { status: STATUS[code] });
 }
 
 /** `Accept-Language` matched to `en`/`es` (plan "Contracts"); `en` otherwise. */
@@ -62,7 +53,7 @@ type Context = { params: Promise<{ tripId: string }> };
 export async function GET(request: Request, { params }: Context) {
   const currentUser = await getCurrentUser();
   if (currentUser === null) {
-    return errorResponse("UNAUTHENTICATED");
+    return await errorResponse(request, "UNAUTHENTICATED");
   }
 
   const result = await getTrip({
@@ -71,13 +62,13 @@ export async function GET(request: Request, { params }: Context) {
     locale: localeOf(request),
   });
 
-  return result.ok ? Response.json(result.value) : errorResponse(result.error.code);
+  return result.ok ? Response.json(result.value) : await errorResponse(request, result.error.code);
 }
 
 export async function PATCH(request: Request, { params }: Context) {
   const currentUser = await getCurrentUser();
   if (currentUser === null) {
-    return errorResponse("UNAUTHENTICATED");
+    return await errorResponse(request, "UNAUTHENTICATED");
   }
 
   const body = await request.json().catch(() => null);
@@ -87,7 +78,7 @@ export async function PATCH(request: Request, { params }: Context) {
       field: issue.path.join("."),
       message: issue.message,
     }));
-    return errorResponse("VALIDATION_FAILED", details);
+    return await errorResponse(request, "VALIDATION_FAILED", details);
   }
 
   const { version, ...input } = parsed.data;
@@ -104,17 +95,19 @@ export async function PATCH(request: Request, { params }: Context) {
   }
 
   return result.error.code === "ROUTE_INVALID"
-    ? errorResponse("ROUTE_INVALID", result.error.violations)
-    : errorResponse(result.error.code);
+    ? await errorResponse(request, "ROUTE_INVALID", result.error.violations)
+    : await errorResponse(request, result.error.code);
 }
 
-export async function DELETE(_request: Request, { params }: Context) {
+export async function DELETE(request: Request, { params }: Context) {
   const currentUser = await getCurrentUser();
   if (currentUser === null) {
-    return errorResponse("UNAUTHENTICATED");
+    return await errorResponse(request, "UNAUTHENTICATED");
   }
 
   const result = await deleteTrip({ tripId: (await params).tripId, userId: currentUser.id });
 
-  return result.ok ? new Response(null, { status: 204 }) : errorResponse(result.error.code);
+  return result.ok
+    ? new Response(null, { status: 204 })
+    : await errorResponse(request, result.error.code);
 }
