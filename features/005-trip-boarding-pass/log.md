@@ -38,3 +38,11 @@ T04 keeps the current-stop rules, shown on the next trip's row.
 implementer (sonnet): red OK (5beef27), 6 scenarios, 24 unit tests
 green OK (verified: 55 unit, @T03 e2e desktop)
 notes: legs 2+ From read-only Input; tz cookie (D-5) not wired
+
+## 2026-11-03 10:15 T04 round 1
+implementer (sonnet): red OK (1b8a442), 6/7 @T04 desktop pass
+blocked: plan gap. "Current stop follows today" Example #3 (legs -5,-1,
+expects current BCN) contradicts "Past trips move to other trips" and
+feature.md current-stop rules. Fix the example (2nd leg after today).
+also outside Files: shared/ui/tokens.css, tests/steps/support/trips.ts
+worktree kept: .worktrees/T04
