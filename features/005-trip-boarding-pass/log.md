@@ -78,3 +78,8 @@ reviewer: 2 blocker, 3 major, 3 minor, 1 nit
 - minor   trip-form.tsx:236 discard uses full reload
 - minor   api cities/route.ts:14 q has no length cap
 - nit     /trips/new JS budget unmeasured
+
+## 2026-11-03 blocker recheck
+fix round 1: efc03a1 test, d5b912f fix. verified: 103 unit, 72 e2e desktop
+reviewer: both blockers resolved, approved
+- minor  trips/[tripId]/page.tsx:23 soft 404 (200); move to not-found.tsx
