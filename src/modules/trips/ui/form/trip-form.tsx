@@ -158,7 +158,7 @@ export function TripForm({ trip }: { trip?: TripDto }) {
   }, [submitAttempt]);
 
   // Focus rules (feature.md "Accessibility"): new leg's To field; after a
-  // removal the previous leg's remove button, or "Add a leg" when none.
+  // removal the previous leg's remove button, or "Add stop" when none.
   // biome-ignore lint/correctness/useExhaustiveDependencies: runs once per change
   useEffect(() => {
     if (change === null) {
