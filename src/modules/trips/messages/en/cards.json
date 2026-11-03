@@ -1,1 +1,17 @@
-{}
+{
+  "stopsLabel": "Trip stops",
+  "takeoff": "Takeoff",
+  "backHome": "Back home",
+  "stopOf": "Stop {number} of {total}",
+  "arrive": "Arrive {date}",
+  "leave": "leave {date}",
+  "leaves": "Leaves {date}",
+  "returns": "Returns {date}",
+  "dateTbd": "Date TBD",
+  "nights": "{count, plural, one {# night} other {# nights}}",
+  "current": "Current stop",
+  "stopCountdown": "{days, plural, =0 {Today} one {Tomorrow} other {In # days}}",
+  "takeoffCountdown": "{days, plural, =0 {Today!} one {# day to go} other {# days to go}}",
+  "onTheWay": "On the way",
+  "tripEnds": "{days, plural, =0 {Trip ends today} one {Trip ends in # day} other {Trip ends in # days}}"
+}

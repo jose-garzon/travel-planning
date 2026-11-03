@@ -19,6 +19,9 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export type SeedLeg = {
   from: string;
   to: string;
+  /** Station codes; default to the first 3 letters of the name. */
+  fromCode?: string;
+  toCode?: string;
   dayOffset?: number;
   date?: string;
 };
@@ -41,8 +44,10 @@ function legDate({ dayOffset, date }: SeedLeg): string | null {
 }
 
 /** Free-text city: no id, code is the first 3 letters (plan "Data model"). */
-function cityColumns(name: string): [null, string, string] {
-  return [null, name.slice(0, 3).toUpperCase(), name];
+const KNOWN_CODES: Record<string, string> = { Barcelona: "BCN", Cusco: "CUZ" };
+
+function cityColumns(name: string, code?: string): [null, string, string] {
+  return [null, code ?? KNOWN_CODES[name] ?? name.slice(0, 3).toUpperCase(), name];
 }
 
 /** Inserts a trip owned by the user with `ownerEmail` (must already exist). */
@@ -84,8 +89,8 @@ export async function seedTrip({
           randomUUID(),
           tripId,
           position,
-          ...cityColumns(leg.from),
-          ...cityColumns(leg.to),
+          ...cityColumns(leg.from, leg.fromCode),
+          ...cityColumns(leg.to, leg.toCode),
           legDate(leg),
         ],
       })),

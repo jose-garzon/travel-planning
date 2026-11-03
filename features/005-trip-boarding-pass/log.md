@@ -94,3 +94,9 @@ verified: 348 unit, 86 e2e desktop, typecheck, lint 0 errors
 user approved: Example #3 of "Current stop follows today" changed to
 -5 | +1 | MAD (was -5 | -1 | BCN, contradicted past-trips rule)
 resumed T04 (TEST_SHA 1b8a442)
+
+## 2026-11-03 T04 round 2
+rebased (TEST_SHA now 91c7e5f). verified: 374 unit, @F005 desktop 25/25
+step dedupe after TEST_SHA in wip commit: removed T04 copy of "I have a
+trip ... with route:" (T05 owns it); no assertion changes. accepted.
+open: Lighthouse home CLS not run (CI)

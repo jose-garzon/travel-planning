@@ -170,7 +170,7 @@ Done when:
 
 ## T04. Home: the trip line and other trips
 
-Status: doing
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T04
@@ -198,8 +198,8 @@ Steps:
 3. Compact panels link to `/trips/[tripId]`.
 
 Done when:
-- [ ] Scenarios tagged @T04 pass, desktop and mobile
-- [ ] Unit: current stop before/during/after/undated; nights; ICU
+- [x] Scenarios tagged @T04 pass, desktop and mobile
+- [x] Unit: current stop before/during/after/undated; nights; ICU
   plurals; horizontal line keyboard scroll
 - [ ] Lighthouse: home CLS ≤ 0.1
 
