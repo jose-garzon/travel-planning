@@ -100,7 +100,7 @@ Notes:
 
 ## T02. City search with localized names
 
-Status: doing
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T02
@@ -130,12 +130,12 @@ Steps:
    (DESIGN.md); the picked city fills the station name.
 
 Done when:
-- [ ] Scenarios tagged @T02 pass
-- [ ] Unit: search ranking, accent-insensitive, exclude, locale names
-- [ ] Unit: combobox keyboard (arrows, Enter, Escape), excluded city
+- [x] Scenarios tagged @T02 pass
+- [x] Unit: search ranking, accent-insensitive, exclude, locale names
+- [x] Unit: combobox keyboard (arrows, Enter, Escape), excluded city
   absent, free text fallback, stale request ignored, list open on
   focus
-- [ ] `/trips/new` JS ≤ 170 KB gzip (`pnpm build` output)
+- [x] `/trips/new` JS ≤ 170 KB gzip (`pnpm build` output)
 
 
 ## T03. Multi-leg route editing and date rules

@@ -40,3 +40,7 @@ user waived gate; T01 UI reviewed by user.
 ## 2026-11-02 21:34 T03 round 1
 implementer (sonnet): red OK (9a54176), 6 scenarios, 13 unit tests; green OK
 merged. Note: touched city-combobox.tsx (defaultValue prop) outside Files.
+
+## 2026-11-02 21:42 T02 round 2
+implementer (sonnet): red OK (15afb3d), 4 scenarios, 26 unit tests; rebased on T03, combobox listbox renamed (test fixture fix commit)
+merged. /trips/new gzip JS ~200 KB by implementer count (T01 baseline 198 KB); 170 KB budget unverified (carried to PR). /cities got extra params exclude, region.

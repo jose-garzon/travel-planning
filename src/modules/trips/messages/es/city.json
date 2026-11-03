@@ -1,1 +1,5 @@
-{}
+{
+  "noResults": "Ninguna ciudad encontrada",
+  "results": "{count, plural, one {# ciudad disponible} other {# ciudades disponibles}}",
+  "suggestions": "Ciudades sugeridas"
+}

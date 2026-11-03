@@ -1,5 +1,5 @@
 import "server-only";
-import { cityIndex } from "@/modules/trips/data/city-index";
+import { type CitySearch, cityIndex } from "@/modules/trips/data/city-index";
 import { DrizzleTripsRepository } from "@/modules/trips/data/drizzle-trips-repository";
 import type { CreateTripCommand } from "@/modules/trips/service/create-trip";
 import { createTrip as createTripUseCase } from "@/modules/trips/service/create-trip";
@@ -32,4 +32,9 @@ export async function listMyTrips({ userId, locale }: { userId: string; locale: 
   const trips = await deps.trips.listForUser(userId);
 
   return trips.map((trip) => toTripDto(trip, (city) => deps.cities.localizeName(city, locale)));
+}
+
+/** Up to 8 cities for the combobox; popular ones when the query is short. */
+export function searchCities(request: CitySearch) {
+  return deps.cities.search(request);
 }

@@ -28,6 +28,8 @@ type LegFieldsProps = {
   onToChange: (city: CityRef) => void;
   /** To city as typed: the station is placed once it has one and loses focus. */
   toName: string;
+  /** City id of the From, so the To list does not offer it. */
+  fromCityId?: string | null;
   /** Departure date, `YYYY-MM-DD` or "" when not set yet. */
   date: string;
   onDateChange: (date: string) => void;
@@ -60,6 +62,7 @@ export function LegFields({
   onFromChange,
   onToChange,
   toName,
+  fromCityId = null,
   date,
   onDateChange,
 }: LegFieldsProps) {
@@ -104,6 +107,7 @@ export function LegFields({
             placeholder={translate({ translateId: "trips.form.toPlaceholder" })}
             error={toError}
             defaultValue={initialToName}
+            exclude={fromCityId}
             onChange={(city) => {
               onToChange(city);
               if (city.name === "") {

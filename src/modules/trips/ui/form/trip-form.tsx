@@ -166,6 +166,7 @@ export function TripForm() {
           key={leg.key}
           legNumber={index + 1}
           fromName={index === 0 ? null : leg.from.name}
+          fromCityId={leg.from.cityId}
           initialToName={leg.to.name}
           toRef={(element) => {
             toRefs.current.set(leg.key, element);

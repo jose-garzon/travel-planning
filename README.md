@@ -39,6 +39,15 @@ pnpm dev
 Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`.
 
 
+## Data sources
+
+The bundled city list (`src/modules/trips/data/cities.json`, built by
+`scripts/build-cities.ts`) uses [GeoNames](https://www.geonames.org/)
+data, licensed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), and
+[OurAirports](https://ourairports.com/) data (public domain).
+
+
 ## License
 
 All rights reserved. See [LICENSE](LICENSE).
