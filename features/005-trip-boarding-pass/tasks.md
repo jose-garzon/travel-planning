@@ -206,7 +206,7 @@ Done when:
 
 ## T05. Edit, delete, conflicts and leaving the form
 
-Status: todo
+Status: doing
 Depends on: T03 (and T01)
 Model: sonnet
 Scenarios: @T05
