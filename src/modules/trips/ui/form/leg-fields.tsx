@@ -47,7 +47,7 @@ export function LegFields({
   const translate = useTranslatable();
   const dateId = useId();
   const dateErrorId = `${dateId}-error`;
-  const [isToPlaced, setIsToPlaced] = useState(false);
+  const [isToPlaced, setIsToPlaced] = useState(leg.to.name !== "");
   const placed = (isToPlaced || leg.isReturn) && leg.to.name !== "";
   const isFirst = legNumber === 1;
 
@@ -63,6 +63,7 @@ export function LegFields({
               label={{ translateId: "trips.form.from" }}
               placeholder={translate({ translateId: "trips.form.fromPlaceholder" })}
               error={errors.from}
+              defaultValue={leg.from.name}
               onChange={onFromChange}
             />
           ) : (
@@ -97,6 +98,7 @@ export function LegFields({
               label={{ translateId: "trips.form.to" }}
               placeholder={translate({ translateId: "trips.form.toPlaceholder" })}
               error={errors.to}
+              defaultValue={leg.to.name}
               exclude={leg.from.cityId}
               onChange={(city) => {
                 onToChange(city);

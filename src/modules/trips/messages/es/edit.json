@@ -15,5 +15,7 @@
   "discardTitle": "¿Descartar los cambios?",
   "discardDescription": "Tienes cambios sin guardar. Si sales ahora, se perderán.",
   "discardConfirm": "Descartar",
-  "discardKeep": "Seguir editando"
+  "discardKeep": "Seguir editando",
+  "notFound": "Este viaje no existe o no es tuyo.",
+  "goHome": "Ir al inicio"
 }

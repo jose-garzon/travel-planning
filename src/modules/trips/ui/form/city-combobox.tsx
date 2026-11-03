@@ -17,6 +17,8 @@ type CityComboboxProps = {
   /** City id left out of the list: the leg's From (EC-1). */
   exclude?: string | null;
   placeholder?: string;
+  /** Text shown first: the saved city name when editing. */
+  defaultValue?: string;
   ref?: React.Ref<HTMLInputElement>;
 };
 
@@ -48,12 +50,13 @@ export function CityCombobox({
   onCommit,
   exclude = null,
   placeholder,
+  defaultValue = "",
   ref,
 }: CityComboboxProps) {
   const translate = useTranslatable();
   const locale = useLocale();
   const listId = useId();
-  const [text, setText] = useState("");
+  const [text, setText] = useState(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<CityOption[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);

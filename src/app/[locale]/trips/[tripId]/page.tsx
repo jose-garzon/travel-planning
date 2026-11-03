@@ -1,8 +1,7 @@
-import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCurrentUser } from "@/modules/auth";
 import { getTrip } from "@/modules/trips";
-import { TripForm } from "@/modules/trips/ui";
+import { TripForm, TripNotFound } from "@/modules/trips/ui";
 import { Link, redirect } from "@/shared/i18n/navigation";
 import type { Locale } from "@/shared/i18n/routing";
 
@@ -21,7 +20,7 @@ export default async function EditTripPage({ params }: PageProps<"/[locale]/trip
     locale: locale as Locale,
   });
   if (!result.ok) {
-    notFound();
+    return <TripNotFound />;
   }
 
   const t = await getTranslations({ locale, namespace: "trips" });

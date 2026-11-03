@@ -15,5 +15,7 @@
   "discardTitle": "Discard changes?",
   "discardDescription": "You have unsaved changes. If you leave now they will be lost.",
   "discardConfirm": "Discard",
-  "discardKeep": "Keep editing"
+  "discardKeep": "Keep editing",
+  "notFound": "This trip doesn't exist or isn't yours.",
+  "goHome": "Go home"
 }
