@@ -359,14 +359,7 @@ Takeoff    CURRENT     23 Feb     3 Mar      Back home
   hidden once the route returns home.
 - AC-6. Given a new form, then currency defaults from the browser
   locale region, falling back to USD.
-- AC-7. Given trips, when home loads, then every trip shows as a
-  timeline row with its route as a line of station codes (origin,
-  each stop, home if round trip) and its next step.
-- AC-8. Given today's date, then on the next trip's row the current
-  stop follows the current stop rules, is larger and labeled "Current
-  stop".
-- AC-9. Given other trips, then upcoming ones follow the next trip by
-  start date and ended ones show under "Past trips".
+- AC-7 to AC-9: moved out of scope (2026-11-03, see below).
 - AC-10. Given the owner opens a trip, when they edit and save, then
   the trip updates; when the version is stale, then the conflict
   message shows and nothing is saved.
@@ -379,6 +372,10 @@ Takeoff    CURRENT     23 Feb     3 Mar      Back home
 ## Out of scope
 
 - Invite links, editor/viewer roles, removing members (#6).
+- Home trip line: route on home, current stop, past trips ordering
+  (former AC-7 to AC-9, EC-12, EC-13). Dropped 2026-11-03 after the
+  user rejected the design; home keeps T01's timeline rows. Later
+  issue.
 - Activities, itinerary, budget on the line (later features).
 - Transit duration, flight numbers, times of day.
 - Real flight/airport API; city list is bundled and static.

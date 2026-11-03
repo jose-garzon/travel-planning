@@ -13,5 +13,7 @@
   "discardDescription": "Los cambios en este viaje no se han guardado.",
   "discard": "Descartar",
   "keepEditing": "Seguir editando",
-  "close": "Cerrar"
+  "close": "Cerrar",
+  "notFound": "Este viaje no existe o no es tuyo.",
+  "goHome": "Ir al inicio"
 }

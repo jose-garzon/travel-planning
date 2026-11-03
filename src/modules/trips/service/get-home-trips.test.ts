@@ -81,28 +81,4 @@ describe("getHomeTrips", () => {
 
     expect(home.nextTrip?.name).toBe("Ends today");
   });
-
-  it("keeps a route that does not return as next until a day after its last leg", async () => {
-    const home = await homeTripsFor([trip("Open", ["2026-10-20", "2026-10-25"])]);
-
-    expect(home.nextTrip?.name).toBe("Open");
-  });
-
-  it("moves a route that does not return to other trips two days after its last leg", async () => {
-    const home = await homeTripsFor([trip("Open", ["2026-10-20", "2026-10-24"])]);
-
-    expect(home.nextTrip).toBeNull();
-    expect(home.otherTrips.map((t) => t.name)).toEqual(["Open"]);
-  });
-
-  it("lets the next upcoming trip take over when the earliest has ended", async () => {
-    const home = await homeTripsFor([
-      trip("Old", ["2020-01-01", "2020-01-10"]),
-      trip("Later", ["2027-06-01"]),
-      trip("Sooner", ["2027-03-01"]),
-    ]);
-
-    expect(home.nextTrip?.name).toBe("Sooner");
-    expect(home.otherTrips.map((t) => t.name)).toEqual(["Later", "Old"]);
-  });
 });

@@ -60,3 +60,8 @@ reviewer: 0 blocker, 4 major, 5 minor, 1 nit (carried to PR; targeted review)
 - major  api/v1/cities/route.ts:12  extra params exclude/region and short-q popular list not in plan contract
 - major  /trips/new JS budget (170 KB) and Lighthouse CLS not measured; implementer count ~200 KB
 - minor  Trip.role typed too wide (casts in update-trip/delete-trip); [tripId] route uses UTC today, not tz cookie; API error messages English only; 1-day grace rule not in feature.md; no offline message / focus-return test
+
+## 2026-11-03 T04 dropped
+user rejected the home trip line design. AC-7..AC-9, EC-12, EC-13 moved
+to out of scope; @T04 scenarios removed from tests.feature. Home keeps
+the T01 timeline rows.
