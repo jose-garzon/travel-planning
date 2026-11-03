@@ -66,3 +66,15 @@ verified: 101 trips unit, @T02|@T03|@T05 desktop 72 passed
 extra files: use-route-editor.ts (initial legs), ports.ts
 deviation: after delete shows "Trip deleted" + home link, not redirect
 (AC-11); home page not in Files
+
+## 2026-11-03 feature review
+reviewer: 2 blocker, 3 major, 3 minor, 1 nit
+- blocker city-combobox.tsx:56 edit page shows empty saved cities
+- blocker trips/[tripId]/page.tsx:23 notFound gives default English 404
+- major   form.json:26 "Add a leg" vs spec "Add stop"/"Add return home"
+- major   trip-form.tsx:246 delete does not go home (AC-11)
+- major   api trips/[tripId]/route.ts:26 error messages not localized
+- minor   drizzle repo:62 update hard-codes role owner
+- minor   trip-form.tsx:236 discard uses full reload
+- minor   api cities/route.ts:14 q has no length cap
+- nit     /trips/new JS budget unmeasured
