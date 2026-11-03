@@ -1,8 +1,10 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import cardsMessages from "@/modules/trips/messages/en/cards.json";
+import editMessages from "@/modules/trips/messages/en/edit.json";
 import homeMessages from "@/modules/trips/messages/en/home.json";
 import { HomeScreen } from "@/modules/trips/ui/components/home-screen";
+import sharedMessages from "@/shared/i18n/messages/en.json";
 import { renderWithIntl } from "../../../../../tests/setup/intl";
 
 vi.mock("@/shared/i18n/navigation", () => ({
@@ -11,7 +13,10 @@ vi.mock("@/shared/i18n/navigation", () => ({
   ),
 }));
 
-const messages = { trips: { home: homeMessages, cards: cardsMessages } };
+const messages = {
+  ...sharedMessages,
+  trips: { home: homeMessages, cards: cardsMessages, edit: editMessages },
+};
 const summary = { nextTrip: null, otherTrips: [] };
 
 function renderHome(props: { justDeleted?: boolean }) {
