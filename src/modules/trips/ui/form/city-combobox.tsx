@@ -128,7 +128,7 @@ export function CityCombobox({
   const optionId = (index: number) => `${listId}-${index}`;
 
   return (
-    <div className="relative">
+    <div>
       <Input
         ref={ref}
         appearance="station"
@@ -191,7 +191,10 @@ type ListboxProps = {
   onKeepFreeText: () => void;
 };
 
-/** Options never take focus: the input keeps it and points at the active one. */
+/**
+ * Options never take focus: the input keeps it and points at the active one.
+ * The list flows inline (not overlaid) so it never covers the Add stop buttons.
+ */
 function Listbox({
   id,
   label,
@@ -207,7 +210,7 @@ function Listbox({
       id={id}
       role="listbox"
       aria-label={label}
-      className="absolute inset-x-0 top-full z-10 mt-1 max-h-72 overflow-y-auto rounded-md border border-border-strong bg-surface-1 py-1 shadow-md"
+      className="mt-1 max-h-72 overflow-y-auto rounded-md border border-border-strong bg-surface-1 py-1 shadow-md"
       // Keeps focus in the input while an option is pressed.
       onMouseDown={(event) => event.preventDefault()}
     >
