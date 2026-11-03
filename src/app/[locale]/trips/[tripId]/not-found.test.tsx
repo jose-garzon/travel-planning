@@ -1,6 +1,5 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import editMessages from "@/modules/trips/messages/en/edit.json";
 import { renderWithIntl } from "../../../../../tests/setup/intl";
 import NotFound from "./not-found";
 
@@ -12,7 +11,13 @@ vi.mock("@/shared/i18n/navigation", () => ({
 
 describe("trip not-found", () => {
   it("says the trip is missing and links home", () => {
-    renderWithIntl(<NotFound />, { messages: { trips: { edit: editMessages } } });
+    renderWithIntl(<NotFound />, {
+      messages: {
+        trips: {
+          edit: { notFound: "This trip doesn't exist or isn't yours.", goHome: "Go home" },
+        },
+      },
+    });
 
     expect(screen.getByText("This trip doesn't exist or isn't yours.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Go home" })).toHaveAttribute("href", "/");

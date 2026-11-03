@@ -1,6 +1,4 @@
 import { describe, expect, it, vi } from "vitest";
-import enErrors from "@/modules/trips/messages/en/errors.json";
-import esErrors from "@/modules/trips/messages/es/errors.json";
 
 vi.mock("@/modules/auth", () => ({ getCurrentUser: async () => null }));
 vi.mock("@/modules/trips", () => ({
@@ -10,8 +8,7 @@ vi.mock("@/modules/trips", () => ({
 }));
 vi.mock("next-intl/server", () => ({
   getTranslations: async ({ locale }: { locale: string }) => {
-    const messages: Record<string, string> = locale === "es" ? esErrors : enErrors;
-    return (key: string) => messages[key] ?? key;
+    return (key: string) => `${locale}:${key}`;
   },
 }));
 
@@ -32,14 +29,13 @@ describe("/api/v1/trips errors", () => {
     expect(response.status).toBe(401);
     expect((await response.json()).error).toMatchObject({
       code: "UNAUTHENTICATED",
-      message: "Sign in to manage trips.",
+      message: "en:UNAUTHENTICATED",
     });
   });
 
   it("answers in Spanish for an es Accept-Language", async () => {
     const response = await GET(request("es-CO"));
 
-    expect((await response.json()).error.message).toBe(esErrors.UNAUTHENTICATED);
-    expect(esErrors.UNAUTHENTICATED).not.toBe(enErrors.UNAUTHENTICATED);
+    expect((await response.json()).error.message).toBe("es:UNAUTHENTICATED");
   });
 });
