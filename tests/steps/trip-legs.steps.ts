@@ -41,7 +41,7 @@ When(
 );
 
 When("I add a leg", async ({ page }) => {
-  await page.getByRole("button", { name: "Add a leg" }).click();
+  await page.getByRole("button", { name: "Add stop" }).click();
 });
 
 When("I remove leg {int}", async ({ page }, number: number) => {
@@ -49,11 +49,11 @@ When("I remove leg {int}", async ({ page }, number: number) => {
 });
 
 When("I add the return home leg", async ({ page }) => {
-  await page.getByRole("button", { name: "Add return home leg" }).click();
+  await page.getByRole("button", { name: "Add return home" }).click();
 });
 
 When("I add legs until there are {int}", async ({ page }, total: number) => {
-  const add = page.getByRole("button", { name: "Add a leg" });
+  const add = page.getByRole("button", { name: "Add stop" });
   for (let count = await page.getByRole("group", { name: /^Leg \d+$/ }).count(); count < total; ) {
     await add.click();
     count += 1;
@@ -74,11 +74,11 @@ Then(
 );
 
 Then("I cannot add the return home leg", async ({ page }) => {
-  await expect(page.getByRole("button", { name: "Add return home leg" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Add return home" })).toBeDisabled();
 });
 
 Then("I cannot add a leg", async ({ page }) => {
-  await expect(page.getByRole("button", { name: "Add a leg" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Add stop" })).toBeDisabled();
 });
 
 Then("I cannot remove leg {int}", async ({ page }, number: number) => {
