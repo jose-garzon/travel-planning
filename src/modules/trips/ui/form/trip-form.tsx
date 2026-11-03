@@ -8,10 +8,11 @@ import { LegFields } from "@/modules/trips/ui/form/leg-fields";
 import { currencyForLanguage } from "@/modules/trips/ui/form/region-currency";
 import type { EditorLeg, LegErrors } from "@/modules/trips/ui/form/use-route-editor";
 import { legErrors, MAX_LEGS, useRouteEditor } from "@/modules/trips/ui/form/use-route-editor";
-import { Link, useRouter } from "@/shared/i18n/navigation";
+import { useRouter } from "@/shared/i18n/navigation";
 import { Button } from "@/shared/ui/components/button";
 import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
 import { Input } from "@/shared/ui/components/input";
+import { Toast } from "@/shared/ui/components/toast";
 import { useTranslatable } from "@/shared/ui/translatable";
 
 const DEFAULT_CURRENCY = "USD";
@@ -25,12 +26,11 @@ function localToday(): string {
   return `${now.getFullYear()}-${month}-${day}`;
 }
 
-type SaveMessage = "saveFailed" | "conflict" | "deleteFailed";
+type SaveMessage = "saveFailed" | "conflict";
 
 const SAVE_MESSAGE_KEYS = {
   saveFailed: "trips.form.errors.saveFailed",
   conflict: "trips.edit.conflict",
-  deleteFailed: "trips.edit.deleteFailed",
 } as const;
 
 /** The legs as sent to the API; also the snapshot that tells whether the form changed. */
@@ -134,7 +134,7 @@ export function TripForm({ trip }: { trip?: TripDto }) {
   const [message, setMessage] = useState<SaveMessage | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
+  const [hasDeleteFailed, setHasDeleteFailed] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const isDirty =
@@ -213,17 +213,17 @@ export function TripForm({ trip }: { trip?: TripDto }) {
       return;
     }
     setIsDeleting(true);
-    setMessage(null);
+    setHasDeleteFailed(false);
     try {
       const response = await fetch(`/api/v1/trips/${trip.id}`, { method: "DELETE" });
       if (response.status === 204) {
         hasLeft.current = true;
-        setIsDeleted(true);
+        router.push({ pathname: "/", query: { deleted: "1" } });
       } else {
-        setMessage("deleteFailed");
+        setHasDeleteFailed(true);
       }
     } catch {
-      setMessage("deleteFailed");
+      setHasDeleteFailed(true);
     } finally {
       setIsDeleting(false);
       setIsDeleteOpen(false);
@@ -242,23 +242,6 @@ export function TripForm({ trip }: { trip?: TripDto }) {
           translateId: change.kind === "added" ? "trips.form.legAdded" : "trips.form.legRemoved",
           values: { number: change.legNumber },
         });
-
-  if (isDeleted) {
-    return (
-      <div role="status" className="flex flex-col items-start gap-4">
-        <p className="font-semibold text-success">
-          {translate({ translateId: "trips.edit.deleted" })}
-        </p>
-        <Link
-          href="/"
-          autoFocus
-          className="min-h-touch content-center font-semibold underline underline-offset-4"
-        >
-          {translate({ translateId: "trips.edit.backHome" })}
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <form ref={formRef} noValidate onSubmit={handleSubmit} className="flex flex-col gap-10">
@@ -361,6 +344,11 @@ export function TripForm({ trip }: { trip?: TripDto }) {
           )}
         </div>
       </div>
+      {hasDeleteFailed && (
+        <Toast tone="error" onDismiss={() => setHasDeleteFailed(false)}>
+          {translate({ translateId: "trips.edit.deleteFailed" })}
+        </Toast>
+      )}
       {/* Opened by a link click while dirty; the hidden trigger hands focus back to that link. */}
       <Dialog
         open={isDiscardOpen}

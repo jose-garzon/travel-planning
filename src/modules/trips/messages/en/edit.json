@@ -8,7 +8,6 @@
   "deleteKeep": "Keep trip",
   "deleted": "Trip deleted",
   "deleteFailed": "Couldn’t delete the trip. Check your connection and try again.",
-  "backHome": "Back to home",
   "conflict": "This trip changed. Reload to see the latest.",
   "reload": "Reload",
   "close": "Close",

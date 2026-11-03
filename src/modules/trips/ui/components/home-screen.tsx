@@ -5,6 +5,7 @@ import { EmptyTripsState } from "@/modules/trips/ui/components/empty-trips-state
 import { NewTripLink } from "@/modules/trips/ui/components/new-trip-link";
 import { Link } from "@/shared/i18n/navigation";
 import { Panel } from "@/shared/ui/components/panel";
+import { Toast } from "@/shared/ui/components/toast";
 import { cx } from "@/shared/ui/cx";
 import { useTranslatable } from "@/shared/ui/translatable";
 
@@ -15,6 +16,8 @@ type HomeScreenProps = {
   today: string;
   /** Shows the "Trip created" confirmation after a successful create. */
   justCreated?: boolean;
+  /** Shows the "Trip deleted" toast after a successful delete. */
+  justDeleted?: boolean;
 };
 
 const DAY_MS = 86_400_000;
@@ -232,7 +235,13 @@ function TripRow({ trip, today, locale, isNext = false, isNew = false }: TripRow
  * upcoming ones, then past trips; or the empty state when there are
  * none (plan "Contracts", `nextTrip: null`).
  */
-export function HomeScreen({ displayName, summary, today, justCreated = false }: HomeScreenProps) {
+export function HomeScreen({
+  displayName,
+  summary,
+  today,
+  justCreated = false,
+  justDeleted = false,
+}: HomeScreenProps) {
   const translate = useTranslatable();
   const locale = useLocale();
   const { nextTrip, otherTrips } = summary;
@@ -253,6 +262,10 @@ export function HomeScreen({ displayName, summary, today, justCreated = false }:
         <p role="status" className="mb-4 font-semibold text-success">
           {translate({ translateId: "trips.home.created" })}
         </p>
+      )}
+
+      {justDeleted && (
+        <Toast tone="success">{translate({ translateId: "trips.edit.deleted" })}</Toast>
       )}
 
       {hasNoTrips && <EmptyTripsState />}

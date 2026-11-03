@@ -8,7 +8,6 @@
   "deleteKeep": "Conservar viaje",
   "deleted": "Viaje eliminado",
   "deleteFailed": "No se pudo eliminar el viaje. Revisa tu conexión e inténtalo de nuevo.",
-  "backHome": "Volver al inicio",
   "conflict": "Este viaje cambió. Recarga para ver lo último.",
   "reload": "Recargar",
   "close": "Cerrar",
