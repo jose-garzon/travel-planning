@@ -1,7 +1,21 @@
 import { expect } from "@playwright/test";
-import { Then, When } from "./fixtures";
+import type { DataTable } from "playwright-bdd";
+import { Given, Then, When } from "./fixtures";
 import { signedInEmail } from "./support/session";
-import { bumpTripVersion, findTripId } from "./support/trips";
+import { bumpTripVersion, findTripId, seedTrip } from "./support/trips";
+
+Given("I have a trip {string} with route:", async ({ page }, name: string, table: DataTable) => {
+  await seedTrip({
+    ownerEmail: signedInEmail(page),
+    name,
+    currency: "USD",
+    legs: table.hashes().map((row) => ({
+      from: row.from as string,
+      to: row.to as string,
+      dayOffset: Number(row.day),
+    })),
+  });
+});
 
 When("I open the trip {string}", async ({ page }, name: string) => {
   const id = await findTripId(signedInEmail(page), name);

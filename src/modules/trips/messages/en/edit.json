@@ -13,5 +13,7 @@
   "discardDescription": "Your changes to this trip haven’t been saved.",
   "discard": "Discard",
   "keepEditing": "Keep editing",
-  "close": "Close"
+  "close": "Close",
+  "notFound": "This trip doesn't exist or isn't yours.",
+  "goHome": "Go home"
 }

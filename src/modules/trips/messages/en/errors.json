@@ -1,0 +1,8 @@
+{
+  "VALIDATION_FAILED": "The trip is invalid.",
+  "ROUTE_INVALID": "The route is invalid.",
+  "UNAUTHENTICATED": "Sign in to manage trips.",
+  "TRIP_FORBIDDEN": "Only the owner can change this trip.",
+  "TRIP_NOT_FOUND": "Trip not found.",
+  "TRIP_VERSION_CONFLICT": "This trip changed. Reload to see the latest."
+}

@@ -12,6 +12,7 @@ import { Link, useRouter } from "@/shared/i18n/navigation";
 import { Button, buttonClasses } from "@/shared/ui/components/button";
 import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
 import { Input } from "@/shared/ui/components/input";
+import { Toast } from "@/shared/ui/components/toast";
 import type { Translatable } from "@/shared/ui/translatable";
 import { useTranslatable } from "@/shared/ui/translatable";
 
@@ -129,6 +130,7 @@ export function TripForm({ trip }: TripFormProps) {
   const [currency, setCurrency] = useState(trip?.currency ?? DEFAULT_CURRENCY);
   const [hasConflict, setHasConflict] = useState(false);
   const [hasDeleteError, setHasDeleteError] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDiscardOpen, setIsDiscardOpen] = useState(false);
   const isDirty = snapshot(name, isEdit ? currency : null, legs) !== initialSnapshot;
@@ -197,6 +199,12 @@ export function TripForm({ trip }: TripFormProps) {
     }
   }
 
+  // Closes the dialog so the error toast on the form is not behind it.
+  function failDelete() {
+    setIsDeleteOpen(false);
+    setHasDeleteError(true);
+  }
+
   async function handleDelete() {
     if (!isEdit) {
       return;
@@ -206,12 +214,12 @@ export function TripForm({ trip }: TripFormProps) {
     try {
       const response = await fetch(`/api/v1/trips/${trip.id}`, { method: "DELETE" });
       if (response.status !== 204) {
-        setHasDeleteError(true);
+        failDelete();
         return;
       }
       router.push({ pathname: "/", query: { deleted: "1" } });
     } catch {
-      setHasDeleteError(true);
+      failDelete();
     } finally {
       setIsDeleting(false);
     }
@@ -340,6 +348,8 @@ export function TripForm({ trip }: TripFormProps) {
           />
           {isEdit && (
             <Dialog
+              open={isDeleteOpen}
+              onOpenChange={setIsDeleteOpen}
               title={{ translateId: "trips.edit.deleteTitle" }}
               description={{ translateId: "trips.edit.deleteDescription" }}
               closeLabel={{ translateId: "trips.edit.close" }}
@@ -357,16 +367,15 @@ export function TripForm({ trip }: TripFormProps) {
                   />
                 </>
               }
-            >
-              {hasDeleteError && (
-                <p role="alert" className="text-error">
-                  {translate({ translateId: "trips.edit.deleteFailed" })}
-                </p>
-              )}
-            </Dialog>
+            />
           )}
         </div>
       </div>
+      {hasDeleteError && (
+        <Toast tone="error" onDismiss={() => setHasDeleteError(false)}>
+          {translate({ translateId: "trips.edit.deleteFailed" })}
+        </Toast>
+      )}
     </form>
   );
 }

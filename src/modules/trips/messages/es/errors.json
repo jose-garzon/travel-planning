@@ -1,0 +1,8 @@
+{
+  "VALIDATION_FAILED": "El viaje no es válido.",
+  "ROUTE_INVALID": "La ruta no es válida.",
+  "UNAUTHENTICATED": "Inicia sesión para gestionar viajes.",
+  "TRIP_FORBIDDEN": "Solo el dueño puede cambiar este viaje.",
+  "TRIP_NOT_FOUND": "No se encontró el viaje.",
+  "TRIP_VERSION_CONFLICT": "Este viaje cambió. Recarga para ver lo último."
+}

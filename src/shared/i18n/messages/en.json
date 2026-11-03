@@ -1,7 +1,10 @@
 {
   "common": {
     "appName": "Parche",
-    "tagline": "Plan and budget trips together."
+    "tagline": "Plan and budget trips together.",
+    "toast": {
+      "dismiss": "Dismiss"
+    }
   },
   "header": {
     "themeToggle": {
