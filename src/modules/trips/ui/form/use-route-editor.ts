@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { RouteRule } from "@/modules/trips/domain/route";
 import { isSameCity, validateRoute } from "@/modules/trips/domain/route";
-import type { CityRef } from "@/modules/trips/domain/trip";
+import type { CityRef, Leg } from "@/modules/trips/domain/trip";
 import type { Translatable } from "@/shared/ui/translatable";
 
 export const MAX_LEGS = 10;
@@ -38,7 +38,7 @@ function rechain(legs: EditorLeg[]): EditorLeg[] {
 }
 
 /** Route editing state: add, remove (re-chaining), return home, limits. */
-export function useRouteEditor() {
+export function useRouteEditor(initial?: Leg[]) {
   const nextId = useRef(0);
   const nextSeq = useRef(0);
   const newLeg = (from: CityRef, to: CityRef, isReturn = false): EditorLeg => {
@@ -47,7 +47,22 @@ export function useRouteEditor() {
     return { id: `leg-${nextId.current}`, from, to, date: "", isReturn };
   };
 
-  const [legs, setLegs] = useState<EditorLeg[]>(() => [newLeg(EMPTY_CITY, EMPTY_CITY)]);
+  const [legs, setLegs] = useState<EditorLeg[]>(() => {
+    if (initial === undefined || initial.length === 0) {
+      return [newLeg(EMPTY_CITY, EMPTY_CITY)];
+    }
+    const origin = initial[0] as Leg;
+
+    // A saved last leg that ends where the route began is the return home leg.
+    return initial.map((leg, index) => ({
+      ...newLeg(
+        leg.from,
+        leg.to,
+        index > 0 && index === initial.length - 1 && isSameCity(leg.to, origin.from),
+      ),
+      date: leg.date ?? "",
+    }));
+  });
   const [change, setChange] = useState<RouteChange | null>(null);
 
   const first = legs[0] as EditorLeg;
@@ -138,10 +153,20 @@ function ruleError(rule: RouteRule, legs: EditorLeg[], index: number): LegErrors
 }
 
 /** Inline errors per leg: required cities plus the same route rules the server runs. */
-export function legErrors({ legs, today }: { legs: EditorLeg[]; today: string }): LegErrors[] {
+export function legErrors({
+  legs,
+  today,
+  previousLegs,
+}: {
+  legs: EditorLeg[];
+  today: string;
+  /** The saved route when editing: unchanged dates are not "past". */
+  previousLegs?: Leg[];
+}): LegErrors[] {
   const violations = validateRoute({
     legs: legs.map(({ from, to, date }) => ({ from, to, date: date === "" ? null : date })),
     today,
+    previousLegs,
   });
 
   return legs.map((leg, index) =>

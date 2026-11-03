@@ -1,1 +1,19 @@
-{}
+{
+  "title": "Edit trip",
+  "submit": "Save changes",
+  "delete": "Delete trip",
+  "deleteTitle": "Delete this trip?",
+  "deleteDescription": "The trip and its route will be removed for everyone. This can’t be undone.",
+  "deleteConfirm": "Delete",
+  "deleteKeep": "Keep trip",
+  "deleted": "Trip deleted",
+  "deleteFailed": "Couldn’t delete the trip. Check your connection and try again.",
+  "backHome": "Back to home",
+  "conflict": "This trip changed. Reload to see the latest.",
+  "reload": "Reload",
+  "close": "Close",
+  "discardTitle": "Discard changes?",
+  "discardDescription": "You have unsaved changes. If you leave now they will be lost.",
+  "discardConfirm": "Discard",
+  "discardKeep": "Keep editing"
+}

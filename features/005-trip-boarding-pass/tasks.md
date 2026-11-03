@@ -206,7 +206,7 @@ Done when:
 
 ## T05. Edit, delete, conflicts and leaving the form
 
-Status: doing
+Status: done
 Depends on: T03 (and T01)
 Model: sonnet
 Scenarios: @T05
@@ -227,10 +227,10 @@ Files:
 - `tests/steps/trip-edit.steps.ts` (new)
 
 Done when:
-- [ ] Scenarios tagged @T05 pass
-- [ ] Unit: owner-only, not-found for non-members, stale version →
+- [x] Scenarios tagged @T05 pass
+- [x] Unit: owner-only, not-found for non-members, stale version →
   `TRIP_VERSION_CONFLICT`, cascade delete
-- [ ] Focus returns to trigger after each dialog closes
+- [x] Focus returns to trigger after each dialog closes
 
 
 ## Coverage

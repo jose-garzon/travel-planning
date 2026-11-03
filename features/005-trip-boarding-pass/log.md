@@ -58,3 +58,11 @@ ready for review: T01 (still unanswered), T02 city combobox, T03
 multi-leg form. T04 blocked (plan gap).
 
 ## 2026-11-03 visual gate: approved
+
+## 2026-11-03 T05 round 1
+implementer (sonnet): red OK (14ac63e), 4 scenarios, 21 unit/integration
+test fix commit 67d2677 (nav mock Link; reason given)
+verified: 101 trips unit, @T02|@T03|@T05 desktop 72 passed
+extra files: use-route-editor.ts (initial legs), ports.ts
+deviation: after delete shows "Trip deleted" + home link, not redirect
+(AC-11); home page not in Files
