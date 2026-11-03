@@ -100,7 +100,7 @@ Notes:
 
 ## T02. City search with localized names
 
-Status: todo
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T02
@@ -140,7 +140,7 @@ Done when:
 
 ## T03. Multi-leg route editing and date rules
 
-Status: todo
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T03
@@ -170,7 +170,7 @@ Done when:
 
 ## T04. Home: the trip line and other trips
 
-Status: todo
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T04
