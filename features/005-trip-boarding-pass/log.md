@@ -100,3 +100,13 @@ rebased (TEST_SHA now 91c7e5f). verified: 374 unit, @F005 desktop 25/25
 step dedupe after TEST_SHA in wip commit: removed T04 copy of "I have a
 trip ... with route:" (T05 owns it); no assertion changes. accepted.
 open: Lighthouse home CLS not run (CI)
+
+## 2026-11-03 T04 reverted
+user: "I don't like the new home design, return to the previous one".
+reverted T04 merge; home back to T01 timeline rows (+ T05 delete toast).
+@T04 scenarios will fail until replanned.
+
+## 2026-11-03 T04 dropped
+user chose to ship without the home trip line. AC-7..AC-9, EC-12,
+EC-13 moved to out of scope; @T04 scenarios removed from tests.feature.
+home keeps T01 timeline rows.

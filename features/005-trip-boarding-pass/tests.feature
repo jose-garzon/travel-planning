@@ -121,54 +121,6 @@ Feature: Create a trip by drawing its route, and see it on home
     Then I cannot add a leg
     And I see "Up to 10 legs"
 
-  @T04 @AC-7 @a11y
-  Scenario: Home shows takeoff, stops and back home
-    Given I have a trip "Europe" with route:
-      | from   | to        | day |
-      | Bogotá | Madrid    | +10 |
-      | Madrid | Barcelona | +13 |
-      | Barcelona | Bogotá | +18 |
-    When I open the home page
-    Then the trip stops are "Takeoff BOG, MAD, BCN, Back home BOG"
-    And the stop "MAD" shows "Stop 1 of 2" and "3 nights"
-    And the page has no accessibility violations
-
-  @T04 @AC-8
-  Scenario Outline: Current stop follows today
-    Given I have a trip "Europe" with route:
-      | from      | to        | day      |
-      | Bogotá    | Madrid    | <first>  |
-      | Madrid    | Barcelona | <second> |
-    When I open the home page
-    Then the current stop is "<current>"
-
-    Examples:
-      | first | second | current |
-      | +10   | +13    | MAD     |
-      | -2    | +3     | MAD     |
-      | -5    | +1     | MAD     |
-
-  @T04 @AC-9 @EC-12
-  Scenario: Earliest trip takes the home line; others are compact
-    Given I have a trip "Peru" with route:
-      | from   | to   | day |
-      | Lima   | Cusco | +40 |
-    And I have a trip "Europe" with route:
-      | from   | to     | day |
-      | Bogotá | Madrid | +10 |
-    When I open the home page
-    Then I see "Europe" as my next trip
-    And I see "Peru" in my trip list with "LIM → CUZ"
-
-  @T04 @AC-9
-  Scenario: Past trips move to other trips
-    Given I have a trip "Old trip" with route:
-      | from   | to     | day |
-      | Bogotá | Lima   | -30 |
-    When I open the home page
-    Then I see "No upcoming trips"
-    And I see "Old trip" in my trip list
-
   @T05 @AC-10 @a11y
   Scenario: Edit a trip
     Given I have a trip "Europe" with route:
