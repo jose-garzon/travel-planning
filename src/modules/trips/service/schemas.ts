@@ -79,6 +79,7 @@ export type InviteDto = {
 };
 
 export type InvitePreviewDto = {
+  tripId: string;
   tripName: string;
   ownerName: string;
   startDate: string | null;

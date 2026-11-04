@@ -109,7 +109,7 @@ Done when:
 
 ## T03. Join a trip from the link (signed in)
 
-Status: doing
+Status: done
 Depends on: T01
 Model: haiku
 Scenarios: @T03
@@ -135,8 +135,8 @@ Files:
 - `src/modules/trips/service/schemas.ts` (`tripId`, D-8)
 - `src/modules/trips/data/drizzle-invites-repository.ts` (owner on expired, D-8)
 Done when:
-- [ ] Scenarios tagged @T03 pass
-- [ ] Unit tests: expired, reset, unknown, deleted trip → `INVITE_EXPIRED`
+- [x] Scenarios tagged @T03 pass
+- [x] Unit tests: expired, reset, unknown, deleted trip → `INVITE_EXPIRED`
 
 
 ## T04. Join from the link when signed out

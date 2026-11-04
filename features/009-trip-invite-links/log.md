@@ -52,3 +52,11 @@ tripId in preview; ownerName on expired; generic reset copy (3 lines in
 tests.feature); busy_timeout -> T03; ?left=<trip name>; T02 now depends
 on T03 (page.tsx), keeps its branch and rebases; T06 owns editor step
 resumed: T03 round 3, T06 round 2 (one extra round, approved re-plan)
+
+## 2026-11-03 T03 round 3 (re-plan)
+implementer (haiku): green OK; test commits with reasons (tripId fixture,
+expired ownerName, EC-4 copy). @T03 desktop 51/52, unit 386/386
+D-8 fix by orchestrator: reset row expects plain expired copy (reset
+and unknown tokens are indistinguishable without token history)
+pre-existing fail, not T03: F005 "Adding legs chains cities" times out
+on locator.fill; also fails in T06 worktree (without T03)
