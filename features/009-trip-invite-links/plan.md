@@ -105,7 +105,9 @@ New error codes (`{ error: { code, message } }`):
 
 `INVITE_EXPIRED` carries `error.details.ownerName` when the token is
 found but expired. Reset, unknown and deleted-trip tokens have no
-owner: reset shows "Ask the trip owner", the others show no ask line.
+owner, and reset tokens cannot be told from unknown ones (no token
+history): all three show no ask line. A 410 during join, after the
+preview loaded, shows "Ask the trip owner" (EC-4, T04 AC-6).
 | 409  | `TRIP_FULL`               | trip has 20 members                   |
 
 Non-members keep getting `404 TRIP_NOT_FOUND` from the API (no leak).

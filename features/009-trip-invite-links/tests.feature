@@ -90,7 +90,7 @@ Feature: Invite friends to a trip by link
     Examples:
       | state          | message                                                   |
       | 8 days old     | This invite link has expired. Ask Jose for a new one.    |
-      | reset          | This invite link has expired. Ask the trip owner for a new one. |
+      | reset          | This invite link has expired.                             |
       | for a deleted trip | This invite link has expired.                         |
       | unknown        | This invite link has expired.                             |
 
