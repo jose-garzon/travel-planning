@@ -83,7 +83,7 @@ Notes:
 
 ## T02. Share the invite link (create, copy, share, reset)
 
-Status: todo
+Status: blocked (plan: trip page must pass tripId to TravelersCard; page.tsx not in T02 Files, owned by T03)
 Depends on: T01
 Model: haiku
 Scenarios: @T02
@@ -108,7 +108,7 @@ Done when:
 
 ## T03. Join a trip from the link (signed in)
 
-Status: todo
+Status: blocked (plan: InvitePreviewDto lacks tripId; INVITE_EXPIRED lacks owner name; app db client lacks busy_timeout)
 Depends on: T01
 Model: haiku
 Scenarios: @T03
@@ -183,7 +183,7 @@ Done when:
 
 ## T06. Editors edit the trip
 
-Status: todo
+Status: blocked (plan: shared step "is an editor of" resolves trip via signed-in user; T06 signs in as editor first)
 Depends on: T01
 Model: haiku
 Scenarios: @T06
