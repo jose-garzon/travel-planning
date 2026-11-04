@@ -113,3 +113,28 @@ fix round 1 (sonnet): 5c50ad2 test(members) open mobile disclosure in steps
 rerun: 344/346; F005 "Adding legs chains cities", "Same city in
 different legs" fail in full runs, pass alone; main comparison
 inconclusive. lint 0 errors, typecheck, build pass. screenshots OK
+
+## 2026-11-04 feature review
+reviewer (haiku): 2 blocker, 10 major, 13 minor, 2 nit
+- blocker src/modules/auth/ui/safe-next-path.ts:11  open redirect via
+  tab/newline (`/\t/evil.example`); verified by orchestrator
+- blocker src/app/[locale]/trips/[tripId]/page.tsx:26  3 added queries,
+  budget is 2; no query-count test
+- major drizzle-trips-repository.ts:92  update() returns arbitrary
+  member's role
+- major invite-card.tsx:135  "Expires in N days" vs AC-1 expiry date
+- major invite-card.tsx:29  modal Dialog vs spec non-modal popover
+- major travelers-card.tsx:43  not floating top-left on desktop; mobile
+  bar after form, spec says above
+- major travelers-card.tsx:51,89  touch targets < 44px
+- major member-row.tsx:85  email not shown on hover/focus (UC-4)
+- major evidence screenshots mislabelled / duplicated; no join page
+- major perf budgets unmeasured (join JS, members entry, CLS)
+- major F005 two scenarios unproven pre-existing; create flow changed
+- minor: name title (EC-8), alone state not a button, focus after
+  remove, no Retry on load fail, Copy label, TRIP_FULL hardcodes 20,
+  copyFailed copy, join failed copy, ?full/?expired spoofable, join on
+  GET render (D-10), non-member redirect copy leaks existence, invite
+  origin from Host header, migration DEFAULT 0 drift, createdTripId
+  unencoded
+- nit: busy_timeout catch swallows, isFull unused
