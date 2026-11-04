@@ -4,6 +4,7 @@ import { expect } from "@playwright/test";
 import { Given, Then } from "./fixtures";
 import { ownerEmailFor, registerOwner } from "./support/owners";
 import { signedInEmail, signInAs } from "./support/session";
+import { openTravelers } from "./support/travelers";
 import { findTripId, seedMember, seedTrip } from "./support/trips";
 
 Given("I own the trip {string}", async ({ page }, name: string) => {
@@ -66,19 +67,23 @@ function travelerItems(page: import("@playwright/test").Page) {
 
 Then("the travelers list shows {string}", async ({ page }, names: string) => {
   const expected = names.split(", ").map((name) => new RegExp(name));
+  await openTravelers(page);
   await expect(travelerItems(page)).toHaveText(expected);
 });
 
 Then("the travelers list shows {string} in that order", async ({ page }, names: string) => {
   const expected = names.split(", ").map((name) => new RegExp(name));
+  await openTravelers(page);
   await expect(travelerItems(page)).toHaveText(expected);
 });
 
 Then("{string} is marked as the owner", async ({ page }, name: string) => {
+  await openTravelers(page);
   const row = travelerItems(page).filter({ hasText: name });
   await expect(row.getByText("Owner", { exact: true })).toBeVisible();
 });
 
 Then("the traveler {string} is listed by full name", async ({ page }, name: string) => {
+  await openTravelers(page);
   await expect(page.getByRole("region", { name: "Travelers" }).getByText(name)).toBeVisible();
 });

@@ -2,6 +2,7 @@ import { createClient } from "@libsql/client";
 import { expect, type Page } from "@playwright/test";
 import { Then, When } from "./fixtures";
 import { ownerEmailFor } from "./support/owners";
+import { openTravelers } from "./support/travelers";
 import { findTripId } from "./support/trips";
 
 // Plain SQL, like support/trips.ts: these steps run in Playwright's Node process.
@@ -110,6 +111,7 @@ Then("I can still copy the invite link", async ({ page }) => {
 
 Then("reset and remove are disabled with an offline note", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Reset link", exact: true })).toBeDisabled();
+  await openTravelers(page);
   // The open invite dialog is modal: Radix hides the travelers list from the
   // accessibility tree, so the Remove button is only reachable with includeHidden.
   const remove = page
