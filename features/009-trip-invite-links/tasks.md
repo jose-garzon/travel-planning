@@ -166,7 +166,7 @@ Done when:
 
 ## T05. Remove a member and leave a trip
 
-Status: doing
+Status: done
 Depends on: T03, T06
 Model: haiku
 Scenarios: @T05
@@ -185,8 +185,8 @@ Files:
 - `src/app/[locale]/trips/[tripId]/page.tsx` (D-4 redirect to `/?removed=1` via `getTripAccess`; viewer id, D-9)
 - `tests/steps/trip-editor.steps.ts`, `tests/steps/trip-edit.steps.ts` (resolve trip by owner, not session, D-9)
 Done when:
-- [ ] Scenarios tagged @T05 pass
-- [ ] Unit tests: owner cannot leave, editor cannot remove others
+- [x] Scenarios tagged @T05 pass
+- [x] Unit tests: owner cannot leave, editor cannot remove others
 
 
 ## T06. Editors edit the trip

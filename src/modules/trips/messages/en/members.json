@@ -6,5 +6,16 @@
   "invite": "Invite",
   "alone": "Invite friends to plan together",
   "showList": "Show travelers",
-  "hideList": "Hide travelers"
+  "hideList": "Hide travelers",
+  "remove": "Remove",
+  "removeTitle": "Remove {name} from this trip?",
+  "removeDescription": "They lose access to the trip and its route. They can rejoin with the invite link.",
+  "removeConfirm": "Remove",
+  "removed": "{name} removed",
+  "removeFailed": "Couldn’t remove {name}. Check your connection and try again.",
+  "leave": "Leave trip",
+  "leaveTitle": "Leave this trip?",
+  "leaveDescription": "You lose access to the trip. You can rejoin with the invite link.",
+  "leaveConfirm": "Leave",
+  "leaveFailed": "Couldn’t leave the trip. Check your connection and try again."
 }

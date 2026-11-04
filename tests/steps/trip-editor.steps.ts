@@ -1,6 +1,7 @@
 import { createClient } from "@libsql/client";
 import { expect } from "@playwright/test";
 import { Given, Then, When } from "./fixtures";
+import { ownerEmailFor } from "./support/owners";
 import { signedInEmail } from "./support/session";
 import { findTripId } from "./support/trips";
 
@@ -38,9 +39,11 @@ Given("I opened the trip {string}", async ({ page }, name: string) => {
   await expect(page.getByRole("button", { name: "Save changes" })).toBeVisible();
 });
 
-// The signed-in member is the one removed: "Laura" in the scenarios.
+// The signed-in member is the one removed: "Laura" in the scenarios. The trip
+// is found through its owner: a removed member is no longer on it, so the
+// session cannot find it (feature 009 D-9).
 Given("{string} was removed from {string}", async ({ page }, _name: string, tripName: string) => {
-  const tripId = await findTripId(signedInEmail(page), tripName);
+  const tripId = await findTripId(ownerEmailFor(page, tripName), tripName);
   await busyTimeoutReady;
   await client.execute({
     sql: "DELETE FROM trip_member WHERE trip_id = ? AND user_id = (SELECT id FROM user WHERE email = ?)",

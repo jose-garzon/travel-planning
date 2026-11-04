@@ -1,26 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { createClient } from "@libsql/client";
-import type { Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { Given, Then } from "./fixtures";
+import { ownerEmailFor, registerOwner } from "./support/owners";
 import { signedInEmail, signInAs } from "./support/session";
 import { findTripId, seedMember, seedTrip } from "./support/trips";
-
-// The owner's email per page and trip name. Seeding a member needs the
-// trip's owner, and a later sign-in (the editor) replaces the session
-// email, so the owner is remembered here rather than read from the session.
-const ownerEmailByPage = new WeakMap<Page, Map<string, string>>();
-
-function registerOwner(page: Page, tripName: string, ownerEmail: string): void {
-  const owners = ownerEmailByPage.get(page) ?? new Map<string, string>();
-  owners.set(tripName, ownerEmail);
-  ownerEmailByPage.set(page, owners);
-}
-
-/** The owner of `tripName` on this page; falls back to the signed-in member (T01 "I own the trip"). */
-function ownerEmailFor(page: Page, tripName: string): string {
-  return ownerEmailByPage.get(page)?.get(tripName) ?? signedInEmail(page);
-}
 
 Given("I own the trip {string}", async ({ page }, name: string) => {
   const ownerEmail = `jose-${randomUUID().slice(0, 8)}@example.com`;

@@ -1,11 +1,15 @@
 import { fireEvent, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { Role } from "@/modules/trips/domain/trip";
 import membersMessages from "@/modules/trips/messages/en/members.json";
 import type { MemberDto } from "@/modules/trips/service/schemas";
 import { TravelersCard } from "@/modules/trips/ui/members/travelers-card";
 import sharedMessages from "@/shared/i18n/messages/en.json";
 import { renderWithIntl } from "../../../../../tests/setup/intl";
+
+vi.mock("@/shared/i18n/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+}));
 
 const messages = { ...sharedMessages, trips: { members: membersMessages } };
 
@@ -36,7 +40,13 @@ function rowOf(name: string): HTMLElement {
 
 function renderCard(members: MemberDto[], role: Role = "owner") {
   renderWithIntl(
-    <TravelersCard tripId="trip-1" tripName="Europe" members={members} role={role} />,
+    <TravelersCard
+      tripId="trip-1"
+      tripName="Europe"
+      viewerId="jose"
+      members={members}
+      role={role}
+    />,
     { messages },
   );
 }

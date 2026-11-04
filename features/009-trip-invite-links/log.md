@@ -88,3 +88,11 @@ implementer (haiku): green OK; @T04+@F3 desktop 25/25, unit 419/419
 accept is a page (D-10); test commit 60000c7 replaces route test (reason)
 deviations: join page reads expired/full params; home keeps next on
 name-error redirect
+
+## 2026-11-03 T05 round 2
+implementer (haiku): green OK for all 5 F009 @T05; unit 422, typecheck OK
+test commits with reasons: owner registry -> tests/steps/support/owners.ts,
+step lookups by owner (D-9), viewerId prop, reuse "I hear" step
+@T05 desktop 17/18: F005 "Edit a trip" fails in full tag run only;
+alone 3/3 pass (8.4s, home compiles cold after save). timing flake,
+recheck at feature level

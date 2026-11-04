@@ -2,6 +2,7 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { createClient } from "@libsql/client";
 import { expect, type Page } from "@playwright/test";
 import { Given, Then, When } from "./fixtures";
+import { registerOwner } from "./support/owners";
 import { signedInEmail, signInAs } from "./support/session";
 import { seedInvite, seedMember, seedTrip } from "./support/trips";
 
@@ -46,6 +47,7 @@ async function ownTripWithLink(
 ): Promise<void> {
   const ownerEmail = `${owner.toLowerCase()}-${randomUUID().slice(0, 8)}@example.com`;
   await signInAs(page, { email: ownerEmail, displayName: owner });
+  registerOwner(page, name, ownerEmail);
   const tripId = await seedTrip({ ownerEmail, name, currency: "USD", legs });
   const token = newToken();
   await seedInvite({ tripId, token, expiresAt: new Date(Date.now() + 7 * DAY_MS) });

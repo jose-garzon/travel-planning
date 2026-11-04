@@ -22,6 +22,16 @@ export default async function TripPage({
     return null;
   }
 
+  // A removed member is sent home with the toast (feature 009 D-4); a missing trip is a 404.
+  const access = await tripMembers.getTripAccess({ userId: currentUser.id, tripId });
+  if (access === "not-member") {
+    redirect({ href: { pathname: "/", query: { removed: "1" } }, locale });
+    return null;
+  }
+  if (access === "missing") {
+    notFound();
+  }
+
   const result = await getTrip({ userId: currentUser.id, tripId, locale: locale as Locale });
   if (!result.ok) {
     notFound();
@@ -49,6 +59,7 @@ export default async function TripPage({
       <TravelersCard
         tripId={tripId}
         tripName={result.value.name}
+        viewerId={currentUser.id}
         members={members.value}
         role={result.value.role}
       />

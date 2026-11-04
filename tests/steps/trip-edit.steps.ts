@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import type { DataTable } from "playwright-bdd";
 import { Given, Then, When } from "./fixtures";
+import { ownerEmailFor } from "./support/owners";
 import { signedInEmail } from "./support/session";
 import { bumpTripVersion, findTripId, seedTrip } from "./support/trips";
 
@@ -17,8 +18,10 @@ Given("I have a trip {string} with route:", async ({ page }, name: string, table
   });
 });
 
+// Found through the owner, not the session: a removed member is no longer
+// on the trip (feature 009 D-9).
 When("I open the trip {string}", async ({ page }, name: string) => {
-  const id = await findTripId(signedInEmail(page), name);
+  const id = await findTripId(ownerEmailFor(page, name), name);
   await page.goto(`/trips/${id}`);
 });
 
