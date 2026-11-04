@@ -23,7 +23,7 @@ Each task has its own step file.
 
 ## T01. See who is traveling (walking skeleton)
 
-Status: todo
+Status: done
 Depends on: -
 Model: haiku
 Scenarios: @T01
@@ -69,10 +69,10 @@ Steps:
    bar, alone state, "Invite" button with no action yet).
 
 Done when:
-- [ ] Scenarios tagged @T01 pass
-- [ ] Repository integration tests cover cap race and ≤ 2 queries
-- [ ] `pnpm lint:deps` passes (no trips → user table query)
-- [ ] Existing #5 scenarios still pass
+- [x] Scenarios tagged @T01 pass
+- [x] Repository integration tests cover cap race and ≤ 2 queries
+- [x] `pnpm lint:deps` passes (no trips → user table query)
+- [x] Existing #5 scenarios still pass
 
 Notes:
 - T06 owns home toast params because EC-5 needs `removed`; T05

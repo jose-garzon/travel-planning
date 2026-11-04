@@ -15,6 +15,9 @@ vi.mock("@/modules/trips", () => ({
   getTrip: async () => ({ ok: false, error: { code: "TRIP_NOT_FOUND" } }),
 }));
 vi.mock("@/modules/trips/ui", () => ({ TripForm: () => null }));
+vi.mock("@/app/_composition/trip-members", () => ({
+  tripMembers: { listTripMembers: async () => ({ ok: true, value: [] }) },
+}));
 vi.mock("@/shared/i18n/navigation", () => ({ Link: () => null, redirect: vi.fn() }));
 
 const { default: EditTripPage } = await import("./page");

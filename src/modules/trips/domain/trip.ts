@@ -12,13 +12,16 @@ export type Leg = {
   date: string | null;
 };
 
-/** A trip as the signed-in member sees it. Only the owner role exists until #6. */
+/** Members manage the trip, editors edit it (feature 009 plan D-5); no viewer role. */
+export type Role = "owner" | "editor";
+
+/** A trip as the signed-in member sees it. */
 export type Trip = {
   id: string;
   name: string;
   currency: string;
   version: number;
-  role: "owner";
+  role: Role;
   memberCount: number;
   legs: Leg[];
 };

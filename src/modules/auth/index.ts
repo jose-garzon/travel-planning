@@ -1,6 +1,6 @@
 import "server-only";
 import { getSessionCookie } from "better-auth/cookies";
-import { and, eq, gt } from "drizzle-orm";
+import { and, eq, gt, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
 import { auth } from "@/modules/auth/data/better-auth";
 import type { DisplayNameWriter } from "@/modules/auth/service/set-display-name";
@@ -118,4 +118,20 @@ export async function setDisplayName(name: string): Promise<Result<void, "INVALI
   };
 
   return setDisplayNameUseCase(name, writer);
+}
+
+/**
+ * Names and emails of the given users, in one query (feature 009 plan
+ * "Contracts"). Trips reads them through its `UserProfiles` port, so the
+ * trips module never touches the `user` table (architecture.md, D-1).
+ */
+export async function getUserProfiles(userIds: string[]) {
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  return db
+    .select({ id: user.id, name: user.name, email: user.email })
+    .from(user)
+    .where(inArray(user.id, userIds));
 }

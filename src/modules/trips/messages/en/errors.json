@@ -4,5 +4,9 @@
   "UNAUTHENTICATED": "Sign in to manage trips.",
   "TRIP_FORBIDDEN": "Only the owner can change this trip.",
   "TRIP_NOT_FOUND": "Trip not found.",
-  "TRIP_VERSION_CONFLICT": "This trip changed. Reload to see the latest."
+  "TRIP_VERSION_CONFLICT": "This trip changed. Reload to see the latest.",
+  "OWNER_CANNOT_LEAVE": "The owner can’t leave the trip.",
+  "MEMBER_NOT_FOUND": "That traveler isn’t on this trip.",
+  "INVITE_EXPIRED": "This invite link has expired.",
+  "TRIP_FULL": "This trip already has 20 travelers."
 }

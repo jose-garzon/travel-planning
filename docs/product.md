@@ -19,14 +19,13 @@ join by invite link.
 | ------- | ------------------------------------------------------ |
 | owner   | everything; invite and remove members; one per trip    |
 | editor  | edit cities, activities, budget; use the agent         |
-| viewer  | read everything                                        |
 
 - First run is organizer-first: a new user should understand at once
   that they can create a trip, lay out its route, then invite their
   friends. Joining by invite is the secondary path.
 - Exactly one owner. Ownership cannot be transferred.
 - Invites: shareable link, expires in 7 days, no approval needed.
-  The owner picks the role (editor or viewer) for the link.
+  Every invite makes an editor.
 
 
 ## Core concepts

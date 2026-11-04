@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { tripMembers } from "@/app/_composition/trip-members";
 import { getCurrentUser } from "@/modules/auth";
 import { getTrip } from "@/modules/trips";
 import { TripForm } from "@/modules/trips/ui/entries/form";
+import { TravelersCard } from "@/modules/trips/ui/entries/members";
 import { redirect } from "@/shared/i18n/navigation";
 import type { Locale } from "@/shared/i18n/routing";
 
@@ -21,6 +23,11 @@ export default async function TripPage({ params }: PageProps<"/[locale]/trips/[t
     notFound();
   }
 
+  const members = await tripMembers.listTripMembers({ userId: currentUser.id, tripId });
+  if (!members.ok) {
+    notFound();
+  }
+
   const t = await getTranslations({ locale, namespace: "trips.edit" });
 
   return (
@@ -29,6 +36,7 @@ export default async function TripPage({ params }: PageProps<"/[locale]/trips/[t
       <h1 className="sr-only">{t("title")}</h1>
       {/* Keyed by version so "Reload" (a refresh) restarts the form on the latest trip. */}
       <TripForm key={result.value.version} trip={result.value} />
+      <TravelersCard members={members.value} role={result.value.role} />
     </main>
   );
 }

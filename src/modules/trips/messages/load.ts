@@ -5,6 +5,9 @@ import type editEn from "./en/edit.json";
 import type errorsEn from "./en/errors.json";
 import type formEn from "./en/form.json";
 import type homeEn from "./en/home.json";
+import type inviteEn from "./en/invite.json";
+import type joinEn from "./en/join.json";
+import type membersEn from "./en/members.json";
 
 /** One namespace per file (ADR 0008), shape from the en JSON files. */
 export type TripsMessages = {
@@ -14,9 +17,22 @@ export type TripsMessages = {
   cards: typeof cardsEn;
   edit: typeof editEn;
   errors: typeof errorsEn;
+  members: typeof membersEn;
+  invite: typeof inviteEn;
+  join: typeof joinEn;
 };
 
-const NAMESPACES = ["home", "form", "city", "cards", "edit", "errors"] as const;
+const NAMESPACES = [
+  "home",
+  "form",
+  "city",
+  "cards",
+  "edit",
+  "errors",
+  "members",
+  "invite",
+  "join",
+] as const;
 
 /** Loads every `trips.<namespace>` message file for `locale` (auth load.ts pattern). */
 export async function loadTripsMessages(locale: Locale): Promise<TripsMessages> {

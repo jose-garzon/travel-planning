@@ -21,14 +21,25 @@ export const tripMember = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    // `owner` only for now; `editor`/`viewer` arrive in #6.
-    role: text("role", { enum: ["owner"] }).notNull(),
+    role: text("role", { enum: ["owner", "editor"] }).notNull(),
+    // Set on join; the migration backfills it from `trip.created_at`.
+    joinedAt: integer("joined_at", { mode: "timestamp_ms" }).notNull(),
   },
   (table) => [
     primaryKey({ columns: [table.tripId, table.userId] }),
     index("trip_member_user_idx").on(table.userId),
   ],
 );
+
+/** The one active invite link of a trip (feature 009 plan "Data model"). */
+export const tripInvite = sqliteTable("trip_invite", {
+  tripId: text("trip_id")
+    .primaryKey()
+    .references(() => trip.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+});
 
 export const tripLeg = sqliteTable(
   "trip_leg",

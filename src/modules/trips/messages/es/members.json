@@ -1,0 +1,10 @@
+{
+  "title": "Viajeros",
+  "count": "{count, plural, one {# viajero} other {# viajeros}}",
+  "owner": "Organizador",
+  "editor": "Editor",
+  "invite": "Invitar",
+  "alone": "Invita a tus amigos a planear juntos",
+  "showList": "Ver viajeros",
+  "hideList": "Ocultar viajeros"
+}
