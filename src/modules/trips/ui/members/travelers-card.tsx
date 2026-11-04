@@ -4,9 +4,12 @@ import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import type { Role } from "@/modules/trips/domain/trip";
 import type { MemberDto } from "@/modules/trips/service/schemas";
+import { InviteCard } from "@/modules/trips/ui/members/invite-card";
 import { MemberRow } from "@/modules/trips/ui/members/member-row";
 
 export type TravelersCardProps = {
+  tripId: string;
+  tripName: string;
   members: MemberDto[];
   /** The signed-in member's role on the trip. */
   role: Role;
@@ -17,7 +20,7 @@ export type TravelersCardProps = {
  * desktop; on mobile, a disclosure button with `aria-expanded` that shows
  * or hides the list. The list is in the DOM either way.
  */
-export function TravelersCard({ members, role }: TravelersCardProps) {
+export function TravelersCard({ tripId, tripName, members, role }: TravelersCardProps) {
   const t = useTranslations("trips.members");
   const [expanded, setExpanded] = useState(false);
   const headingId = useId();
@@ -51,9 +54,17 @@ export function TravelersCard({ members, role }: TravelersCardProps) {
       </ul>
       {alone ? <p className="mt-3 text-sm text-text-muted">{t("alone")}</p> : null}
       {role === "owner" ? (
-        <button type="button" className="mt-3 font-semibold text-accent">
-          {t("invite")}
-        </button>
+        <div className="mt-3">
+          <InviteCard
+            tripId={tripId}
+            tripName={tripName}
+            trigger={
+              <button type="button" className="font-semibold text-accent">
+                {t("invite")}
+              </button>
+            }
+          />
+        </div>
       ) : null}
     </section>
   );

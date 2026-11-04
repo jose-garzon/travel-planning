@@ -35,7 +35,10 @@ function rowOf(name: string): HTMLElement {
 }
 
 function renderCard(members: MemberDto[], role: Role = "owner") {
-  renderWithIntl(<TravelersCard members={members} role={role} />, { messages });
+  renderWithIntl(
+    <TravelersCard tripId="trip-1" tripName="Europe" members={members} role={role} />,
+    { messages },
+  );
 }
 
 describe("TravelersCard", () => {

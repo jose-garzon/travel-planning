@@ -83,7 +83,7 @@ Notes:
 
 ## T02. Share the invite link (create, copy, share, reset)
 
-Status: todo
+Status: done
 Depends on: T03
 Model: haiku
 Scenarios: @T02
@@ -101,10 +101,10 @@ Files:
 
 - `src/app/[locale]/trips/[tripId]/page.tsx` (`tripId`, trip name to Travelers card, D-8)
 Done when:
-- [ ] Scenarios tagged @T02 pass
-- [ ] Component tests: Share hidden without Web Share API; copy
+- [x] Scenarios tagged @T02 pass
+- [x] Component tests: Share hidden without Web Share API; copy
       failure selects link and shows error copy
-- [ ] Editor gets 403 on both endpoints (route test)
+- [x] Editor gets 403 on both endpoints (route test)
 
 
 ## T03. Join a trip from the link (signed in)
@@ -141,7 +141,7 @@ Done when:
 
 ## T04. Join from the link when signed out
 
-Status: todo
+Status: doing
 Depends on: T03, T06
 Model: haiku
 Scenarios: @T04
@@ -165,7 +165,7 @@ Done when:
 
 ## T05. Remove a member and leave a trip
 
-Status: todo
+Status: doing
 Depends on: T03, T06
 Model: haiku
 Scenarios: @T05

@@ -67,3 +67,8 @@ test commits with reasons: editor step by owner (D-8), editor seeded as
 signed-in user, owner trip needs a route, locators (/en, route announcer)
 `{string} owns the trip` step moved to trip-members.steps.ts
 index.ts touched outside Files (doc comments only)
+
+## 2026-11-03 T02 round 2 (re-plan)
+implementer (haiku): green OK; @T02 desktop 20/20, unit 407/407
+page passes tripId + tripName; Share sends { title, url }
+deviation: InviteCard uses shared Dialog, not desktop popover

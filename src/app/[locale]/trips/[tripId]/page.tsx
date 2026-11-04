@@ -46,7 +46,12 @@ export default async function TripPage({
       {already === "1" ? <Toast tone="success">{tj("already")}</Toast> : null}
       {/* Keyed by version so "Reload" (a refresh) restarts the form on the latest trip. */}
       <TripForm key={result.value.version} trip={result.value} />
-      <TravelersCard members={members.value} role={result.value.role} />
+      <TravelersCard
+        tripId={tripId}
+        tripName={result.value.name}
+        members={members.value}
+        role={result.value.role}
+      />
     </main>
   );
 }
