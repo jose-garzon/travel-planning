@@ -180,6 +180,9 @@ Files:
 - `src/app/api/v1/trips/[tripId]/members/[userId]/route.ts`
 - `tests/steps/trip-members-remove.steps.ts` (new)
 
+- `src/modules/trips/ui/members/travelers-card.tsx` (viewer id, confirm + announce, D-9)
+- `src/app/[locale]/trips/[tripId]/page.tsx` (D-4 redirect to `/?removed=1` via `getTripAccess`; viewer id, D-9)
+- `tests/steps/trip-editor.steps.ts`, `tests/steps/trip-edit.steps.ts` (resolve trip by owner, not session, D-9)
 Done when:
 - [ ] Scenarios tagged @T05 pass
 - [ ] Unit tests: owner cannot leave, editor cannot remove others

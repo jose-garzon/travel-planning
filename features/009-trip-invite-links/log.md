@@ -72,3 +72,8 @@ index.ts touched outside Files (doc comments only)
 implementer (haiku): green OK; @T02 desktop 20/20, unit 407/407
 page passes tripId + tripName; Share sends { title, url }
 deviation: InviteCard uses shared Dialog, not desktop popover
+
+## 2026-11-03 T05 round 1
+implementer (haiku): red OK (69ae5a8), 8 unit pass; e2e 0/5 @T05
+missing: MemberRow controls, members.json, remove steps (in Files)
+plan: D-4 redirect, travelers-card wiring, step lookups -> D-9 widens Files

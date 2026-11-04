@@ -247,6 +247,13 @@ generic; app DB client sets `busy_timeout` (SQLITE_BUSY on join);
 Travelers card (T02); the editor seed step resolves the trip by owner,
 not by session (T06).
 
+### D-9. T05 files widened (2026-11-03)
+
+T03 left the D-4 removed-member redirect undone; T05 owns it on the
+trip page. T05 also wires viewer id into the Travelers card and
+fixes the step lookups that resolve trips by session. No contract
+change.
+
 ## Left to implementation
 
 - Card visuals per DESIGN.md metro line world, mobile breakpoints: T01, T02
