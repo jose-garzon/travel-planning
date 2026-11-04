@@ -218,7 +218,7 @@ Done when:
 
 ## T07. Invite from the "Trip created" toast, offline and i18n hardening
 
-Status: todo
+Status: doing
 Depends on: T02, T04, T05, T06
 Model: haiku
 Scenarios: @T07
@@ -235,6 +235,9 @@ Files:
 - `src/app/[locale]/trips/[tripId]/page.tsx` (`?invite=1`)
 - `tests/steps/trip-members-hardening.steps.ts` (new)
 
+- `src/app/[locale]/page.tsx` (`created=<trip id>` toast, D-11)
+- `src/modules/trips/messages/{en,es}/{members,invite,join}.json` (offline copy, D-11)
+- `src/modules/trips/ui/members/travelers-card.tsx` (`?invite=1` opens card; desktop traveler count, D-11)
 Done when:
 - [ ] Scenarios tagged @T07 pass
 - [ ] Full `@F009` run passes

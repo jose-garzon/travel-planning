@@ -96,3 +96,7 @@ step lookups by owner (D-9), viewerId prop, reuse "I hear" step
 @T05 desktop 17/18: F005 "Edit a trip" fails in full tag run only;
 alone 3/3 pass (8.4s, home compiles cold after save). timing flake,
 recheck at feature level
+
+## 2026-11-03 T07 round 1
+implementer (haiku): red OK (198090b); @F009 desktop 31/35, unit 440
+plan: toast param, offline copy, ?invite=1, desktop count -> D-11 widens Files

@@ -262,6 +262,12 @@ that calls `joinTrip` and `redirect()`s in render updates the URL.
 `joinTrip` is idempotent, so a repeat render is safe. Supersedes the
 handler in D-3.
 
+### D-11. T07 files widened (2026-11-03)
+
+T07 also owns the home page `created` param, the offline copy in the
+members, invite and join messages, and the Travelers card (`?invite=1`,
+desktop count). No contract change.
+
 ## Left to implementation
 
 - Card visuals per DESIGN.md metro line world, mobile breakpoints: T01, T02
