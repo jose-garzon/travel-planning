@@ -46,3 +46,9 @@ has no busy_timeout (outside Files). worktree kept: .worktrees/T03
 
 ## 2026-11-03 run stopped: no ready tasks
 blocked: T02, T03, T06. waiting: T04, T05, T07
+
+## 2026-11-03 plan amended (D-8), user approved
+tripId in preview; ownerName on expired; generic reset copy (3 lines in
+tests.feature); busy_timeout -> T03; ?left=<trip name>; T02 now depends
+on T03 (page.tsx), keeps its branch and rebases; T06 owns editor step
+resumed: T03 round 3, T06 round 2 (one extra round, approved re-plan)

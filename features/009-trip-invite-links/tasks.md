@@ -83,8 +83,8 @@ Notes:
 
 ## T02. Share the invite link (create, copy, share, reset)
 
-Status: blocked (plan: trip page must pass tripId to TravelersCard; page.tsx not in T02 Files, owned by T03)
-Depends on: T01
+Status: todo
+Depends on: T03
 Model: haiku
 Scenarios: @T02
 Covers: AC-1, AC-2, AC-3 (new link half)
@@ -99,6 +99,7 @@ Files:
 - `src/app/api/v1/trips/[tripId]/invite/reset/route.ts`
 - `tests/steps/trip-invite.steps.ts` (new)
 
+- `src/app/[locale]/trips/[tripId]/page.tsx` (`tripId`, trip name to Travelers card, D-8)
 Done when:
 - [ ] Scenarios tagged @T02 pass
 - [ ] Component tests: Share hidden without Web Share API; copy
@@ -108,7 +109,7 @@ Done when:
 
 ## T03. Join a trip from the link (signed in)
 
-Status: blocked (plan: InvitePreviewDto lacks tripId; INVITE_EXPIRED lacks owner name; app db client lacks busy_timeout)
+Status: doing
 Depends on: T01
 Model: haiku
 Scenarios: @T03
@@ -130,6 +131,9 @@ Files:
   toasts; D-4 removed redirect)
 - `tests/steps/trip-join.steps.ts` (new)
 
+- `src/shared/db/client.ts` (`busy_timeout`, D-8)
+- `src/modules/trips/service/schemas.ts` (`tripId`, D-8)
+- `src/modules/trips/data/drizzle-invites-repository.ts` (owner on expired, D-8)
 Done when:
 - [ ] Scenarios tagged @T03 pass
 - [ ] Unit tests: expired, reset, unknown, deleted trip → `INVITE_EXPIRED`
@@ -183,7 +187,7 @@ Done when:
 
 ## T06. Editors edit the trip
 
-Status: blocked (plan: shared step "is an editor of" resolves trip via signed-in user; T06 signs in as editor first)
+Status: doing
 Depends on: T01
 Model: haiku
 Scenarios: @T06
@@ -199,6 +203,9 @@ Files:
 - `src/modules/trips/ui/components/home-screen.tsx` (those toasts)
 - `tests/steps/trip-editor.steps.ts` (new)
 
+- `tests/steps/trip-members.steps.ts` (editor step resolves trip by owner, D-8)
+- `src/modules/trips/messages/{en,es}/home.json` (`left`, `removed`)
+- `src/modules/trips/service/delete-trip.ts`
 Done when:
 - [ ] Scenarios tagged @T06 pass
 - [ ] Home shows "You left {trip}" and "You're no longer in this

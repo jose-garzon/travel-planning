@@ -90,7 +90,7 @@ Feature: Invite friends to a trip by link
     Examples:
       | state          | message                                                   |
       | 8 days old     | This invite link has expired. Ask Jose for a new one.    |
-      | reset          | This invite link has expired. Ask Jose for a new one.    |
+      | reset          | This invite link has expired. Ask the trip owner for a new one. |
       | for a deleted trip | This invite link has expired.                         |
       | unknown        | This invite link has expired.                             |
 
@@ -101,7 +101,7 @@ Feature: Invite friends to a trip by link
     And I opened the invite link of "Europe"
     And the invite link of "Europe" is reset
     When I join the trip
-    Then I see "This invite link has expired. Ask Jose for a new one."
+    Then I see "This invite link has expired. Ask the trip owner for a new one."
 
   @T03 @AC-7
   Scenario: A full trip cannot be joined
@@ -148,7 +148,7 @@ Feature: Invite friends to a trip by link
     And I requested a sign-in link as "Laura"
     And the invite link of "Europe" is reset
     When I open my sign-in link
-    Then I see "This invite link has expired. Ask Jose for a new one."
+    Then I see "This invite link has expired. Ask the trip owner for a new one."
 
   @T05 @AC-9 @a11y
   Scenario: Owner removes a member

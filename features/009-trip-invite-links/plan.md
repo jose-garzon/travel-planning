@@ -79,8 +79,9 @@ Types in `trips/service/schemas.ts`:
 - `MemberDto`: `{ userId, name, email, role, joinedAt }` (ISO).
 - `InviteDto`: `{ url, expiresAt }` (url absolute, `/join/<token>`,
   no locale prefix so the visitor's locale applies, EC-9).
-- `InvitePreviewDto`: `{ tripName, ownerName, startDate | null,
-  endDate | null, memberCount }`.
+- `InvitePreviewDto`: `{ tripId, tripName, ownerName, startDate |
+  null, endDate | null, memberCount }`. `tripId` lets the join page
+  send a signed-in member to the trip (EC-1).
 - `JoinResultDto`: `{ tripId, alreadyMember: boolean }`.
 
 | Method + path                              | Who     | 2xx                      |
@@ -101,6 +102,10 @@ New error codes (`{ error: { code, message } }`):
 | 403  | `OWNER_CANNOT_LEAVE`      | owner DELETEs own membership          |
 | 404  | `MEMBER_NOT_FOUND`        | `:userId` not in trip                 |
 | 410  | `INVITE_EXPIRED`          | token expired, reset, unknown, or trip deleted |
+
+`INVITE_EXPIRED` carries `error.details.ownerName` when the token is
+found but expired. Reset, unknown and deleted-trip tokens have no
+owner: reset shows "Ask the trip owner", the others show no ask line.
 | 409  | `TRIP_FULL`               | trip has 20 members                   |
 
 Non-members keep getting `404 TRIP_NOT_FOUND` from the API (no leak).
@@ -146,7 +151,7 @@ Entry `trips/ui/entries/members.ts` for Travelers + Invite cards.
 | travelers card     | `TravelersCard`              | copy says "Travelers"     |
 | join page          | `/join/[token]`              | under `[locale]`          |
 | post-sign-in join  | `/join/[token]/accept`       | GET route handler         |
-| toast params       | `?joined=1`, `?already=1` (trip page); `?left=1`, `?removed=1` (home); `?invite=1` opens Invite card | |
+| toast params       | `?joined=1`, `?already=1` (trip page); `?left=<trip name>`, `?removed=1` (home); `?invite=1` opens Invite card | |
 
 i18n: `trips.members`, `trips.invite`, `trips.join` (new files under
 `trips/messages/<locale>/`, created in T01). New error messages go in
@@ -230,6 +235,15 @@ Clipboard API, Web Share API, `navigator.onLine` are platform.
 - Clipboard blocked in tests: e2e grants clipboard permissions in the
   copy scenario's step.
 
+
+### D-8. Apply amendments (2026-11-03)
+
+Gaps found by T02, T03, T06: preview DTO gains `tripId`;
+`INVITE_EXPIRED` gains `ownerName` for expired tokens; reset copy is
+generic; app DB client sets `busy_timeout` (SQLITE_BUSY on join);
+`?left` carries the trip name; trip page passes `tripId` to the
+Travelers card (T02); the editor seed step resolves the trip by owner,
+not by session (T06).
 
 ## Left to implementation
 
