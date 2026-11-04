@@ -12,6 +12,11 @@ export type RequestMagicLinkStatus = "idle" | "sending" | "sent";
 /** Distinguishes AC-10's cooldown copy from AC-12's generic one. */
 export type RequestMagicLinkErrorKind = "cooldown" | "generic";
 
+export type UseRequestMagicLinkOptions = {
+  /** Where the link lands after verify (a relative path, feature 009 D-3). */
+  callbackURL?: string;
+};
+
 export type UseRequestMagicLinkResult = {
   status: RequestMagicLinkStatus;
   errorKind: RequestMagicLinkErrorKind | null;
@@ -27,7 +32,9 @@ export type UseRequestMagicLinkResult = {
  * Client-side email-format validation is `LandingScreen`'s job (AC-9
  * rejects before any request is sent, so it never reaches here).
  */
-export function useRequestMagicLink(): UseRequestMagicLinkResult {
+export function useRequestMagicLink({
+  callbackURL,
+}: UseRequestMagicLinkOptions = {}): UseRequestMagicLinkResult {
   const [status, setStatus] = useState<RequestMagicLinkStatus>("idle");
   const [errorKind, setErrorKind] = useState<RequestMagicLinkErrorKind | null>(null);
 
@@ -35,7 +42,7 @@ export function useRequestMagicLink(): UseRequestMagicLinkResult {
     setStatus("sending");
     setErrorKind(null);
 
-    const errorCode = await postMagicLinkRequest(email);
+    const errorCode = await postMagicLinkRequest(email, callbackURL);
 
     if (errorCode !== null) {
       setStatus("idle");
@@ -55,12 +62,15 @@ export function useRequestMagicLink(): UseRequestMagicLinkResult {
 }
 
 /** Returns `null` on success, else Better Auth's error `code` (or `""`). */
-async function postMagicLinkRequest(email: string): Promise<string | null> {
+async function postMagicLinkRequest(
+  email: string,
+  callbackURL: string | undefined,
+): Promise<string | null> {
   try {
     const response = await fetch(MAGIC_LINK_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, callbackURL }),
     });
     if (response.ok) {
       return null;

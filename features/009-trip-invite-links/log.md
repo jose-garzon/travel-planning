@@ -82,3 +82,9 @@ plan: D-4 redirect, travelers-card wiring, step lookups -> D-9 widens Files
 implementer (haiku): red OK (cc3dbce); @T04 desktop 3/4, unit 402, @F3 21/21
 plan: name-capture action -> accept route handler keeps /accept URL
 D-10: accept becomes a page; safe-next-path.ts added to Files
+
+## 2026-11-03 T04 round 2
+implementer (haiku): green OK; @T04+@F3 desktop 25/25, unit 419/419
+accept is a page (D-10); test commit 60000c7 replaces route test (reason)
+deviations: join page reads expired/full params; home keeps next on
+name-error redirect

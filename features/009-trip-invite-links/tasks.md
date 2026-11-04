@@ -141,7 +141,7 @@ Done when:
 
 ## T04. Join from the link when signed out
 
-Status: doing
+Status: done
 Depends on: T03, T06
 Model: haiku
 Scenarios: @T04
@@ -159,9 +159,9 @@ Files:
 - `tests/steps/trip-join-signed-out.steps.ts` (new)
 
 Done when:
-- [ ] Scenarios tagged @T04 pass
-- [ ] Unit test: `next` rejects absolute and `//` URLs
-- [ ] #3 sign-in scenarios still pass
+- [x] Scenarios tagged @T04 pass
+- [x] Unit test: `next` rejects absolute and `//` URLs
+- [x] #3 sign-in scenarios still pass
 
 
 ## T05. Remove a member and leave a trip
