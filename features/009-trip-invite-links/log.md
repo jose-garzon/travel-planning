@@ -106,3 +106,10 @@ implementer (haiku): green OK; @F009 desktop 35/35 (its run), unit 444
 orchestrator run: 34/35, "Two editors save at once" (T06 EC-6) flaky
 under load; alone 3/3 pass
 note: old ?created=1 links make the Invite action point to /trips/1
+
+## 2026-11-04 feature verification
+pnpm test: 337/346, 6 F009 mobile fails (collapsed Travelers bar)
+fix round 1 (sonnet): 5c50ad2 test(members) open mobile disclosure in steps
+rerun: 344/346; F005 "Adding legs chains cities", "Same city in
+different legs" fail in full runs, pass alone; main comparison
+inconclusive. lint 0 errors, typecheck, build pass. screenshots OK
