@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement, useEffect, useRef, useState } from "react";
 import type { InviteDto } from "@/modules/trips/service/schemas";
+import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
 import { Button } from "@/shared/ui/components/button";
 import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
 import { Input } from "@/shared/ui/components/input";
@@ -13,6 +14,8 @@ export type InviteCardProps = {
   tripName: string;
   /** The "Invite" button that opens the card. */
   trigger: ReactElement;
+  /** Opens the card on first render (the trip page's `?invite=1`). */
+  defaultOpen?: boolean;
 };
 
 /**
@@ -20,9 +23,12 @@ export type InviteCardProps = {
  * reset it. The link is created on open when the trip has none (plan
  * "UI components"). Opens as a dialog, a bottom sheet on mobile.
  */
-export function InviteCard({ tripId, tripName, trigger }: InviteCardProps) {
+export function InviteCard({ tripId, tripName, trigger, defaultOpen = false }: InviteCardProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
     <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
       trigger={trigger}
       title={{ translateId: "trips.invite.title" }}
       description={{ translateId: "trips.invite.description" }}
@@ -58,6 +64,7 @@ function InviteBody({ tripId, tripName }: { tripId: string; tripName: string }) 
   const [load, setLoad] = useState<Load>({ status: "loading" });
   const [notice, setNotice] = useState<Notice>(null);
   const fieldRef = useRef<HTMLInputElement>(null);
+  const isOnline = useIsOnline();
   // Checked on render: this body only mounts in the browser, after the owner opens the card.
   const canShare = typeof navigator.share === "function";
 
@@ -144,7 +151,14 @@ function InviteBody({ tripId, tripName }: { tripId: string; tripName: string }) 
             ) : null}
           </div>
           <Dialog
-            trigger={<Button type="button" variant="outline" translateId="trips.invite.reset" />}
+            trigger={
+              <Button
+                type="button"
+                variant="outline"
+                disabled={!isOnline}
+                translateId="trips.invite.reset"
+              />
+            }
             title={{ translateId: "trips.invite.resetTitle" }}
             description={{ translateId: "trips.invite.resetDescription" }}
             closeLabel={{ translateId: "trips.invite.close" }}
@@ -166,6 +180,7 @@ function InviteBody({ tripId, tripName }: { tripId: string; tripName: string }) 
           />
         </>
       ) : null}
+      {isOnline ? null : <p className="text-sm text-text-muted">{t("offline")}</p>}
       <p role="status" aria-live="polite" className="text-sm">
         {notice === "copied" ? t("copied") : null}
         {notice === "reset" ? t("resetDone") : null}

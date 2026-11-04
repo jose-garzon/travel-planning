@@ -115,3 +115,31 @@ describe("JoinScreen", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("JoinScreen while offline", () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, "onLine");
+  });
+
+  it("disables Join trip when the browser is offline", () => {
+    Object.defineProperty(navigator, "onLine", { configurable: true, get: () => false });
+
+    renderJoin();
+
+    expect(joinButton()).toBeDisabled();
+  });
+});
+
+describe("JoinScreen offline note", () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, "onLine");
+  });
+
+  it("says why Join trip is unavailable while offline", () => {
+    Object.defineProperty(navigator, "onLine", { configurable: true, get: () => false });
+
+    renderJoin();
+
+    expect(screen.getByText(/offline/i)).toBeInTheDocument();
+  });
+});

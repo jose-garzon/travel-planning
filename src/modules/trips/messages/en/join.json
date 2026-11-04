@@ -10,5 +10,6 @@
   "expiredAskOwner": "This invite link has expired. Ask the trip owner for a new one.",
   "full": "This trip is full ({count} travelers)",
   "failed": "Couldn't join the trip. Check your connection and try again.",
-  "goHome": "Go home"
+  "goHome": "Go home",
+  "offline": "You’re offline. Joining needs a connection."
 }

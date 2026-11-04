@@ -15,5 +15,6 @@
   "resetDone": "Link reset",
   "cancel": "Cancel",
   "loading": "Loading the link…",
-  "loadFailed": "Couldn’t load the invite link. Try again."
+  "loadFailed": "Couldn’t load the invite link. Try again.",
+  "offline": "You’re offline. Resetting the link needs a connection."
 }

@@ -100,3 +100,9 @@ recheck at feature level
 ## 2026-11-03 T07 round 1
 implementer (haiku): red OK (198090b); @F009 desktop 31/35, unit 440
 plan: toast param, offline copy, ?invite=1, desktop count -> D-11 widens Files
+
+## 2026-11-04 T07 round 2
+implementer (haiku): green OK; @F009 desktop 35/35 (its run), unit 444
+orchestrator run: 34/35, "Two editors save at once" (T06 EC-6) flaky
+under load; alone 3/3 pass
+note: old ?created=1 links make the Invite action point to /trips/1

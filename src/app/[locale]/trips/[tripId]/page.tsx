@@ -42,7 +42,7 @@ export default async function TripPage({
     notFound();
   }
 
-  const { joined, already } = await searchParams;
+  const { joined, already, invite } = await searchParams;
   const t = await getTranslations({ locale, namespace: "trips.edit" });
   const tj = await getTranslations({ locale, namespace: "trips.join" });
 
@@ -62,6 +62,7 @@ export default async function TripPage({
         viewerId={currentUser.id}
         members={members.value}
         role={result.value.role}
+        openInvite={invite === "1"}
       />
     </main>
   );

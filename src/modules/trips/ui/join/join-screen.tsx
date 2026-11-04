@@ -5,6 +5,7 @@ import { type ReactNode, useState } from "react";
 import type { InvitePreviewDto, JoinResultDto } from "@/modules/trips/service/schemas";
 import { InviteExpiredScreen } from "@/modules/trips/ui/join/invite-expired-screen";
 import { TripFullScreen } from "@/modules/trips/ui/join/trip-full-screen";
+import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
 import { useRouter } from "@/shared/i18n/navigation";
 import { Button } from "@/shared/ui/components/button";
 
@@ -36,6 +37,7 @@ export function JoinScreen({ token, preview, signedIn, children }: JoinScreenPro
   const locale = useLocale();
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("idle");
+  const isOnline = useIsOnline();
 
   // A link that stops working while the visitor is here (EC-4) shows the expired page.
   if (phase === "expired") {
@@ -71,12 +73,13 @@ export function JoinScreen({ token, preview, signedIn, children }: JoinScreenPro
       {dates === null ? null : <p>{dates}</p>}
       <p>{t("travelers", { count: preview.memberCount })}</p>
       {signedIn ? (
-        <Button type="button" disabled={joining} isLoading={joining} onClick={join}>
+        <Button type="button" disabled={joining || !isOnline} isLoading={joining} onClick={join}>
           {joining ? t("joining") : t("join")}
         </Button>
       ) : (
         children
       )}
+      {signedIn && !isOnline ? <p className="text-sm text-text-muted">{t("offline")}</p> : null}
       {phase === "failed" ? <p role="alert">{t("failed")}</p> : null}
     </div>
   );

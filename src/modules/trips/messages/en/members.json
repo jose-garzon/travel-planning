@@ -17,5 +17,6 @@
   "leaveTitle": "Leave this trip?",
   "leaveDescription": "You lose access to the trip. You can rejoin with the invite link.",
   "leaveConfirm": "Leave",
-  "leaveFailed": "Couldn’t leave the trip. Check your connection and try again."
+  "leaveFailed": "Couldn’t leave the trip. Check your connection and try again.",
+  "offline": "You’re offline. Removing and leaving need a connection."
 }

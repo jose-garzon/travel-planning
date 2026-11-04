@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { Role } from "@/modules/trips/domain/trip";
 import type { MemberDto } from "@/modules/trips/service/schemas";
+import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
 import { useRouter } from "@/shared/i18n/navigation";
 import { Button } from "@/shared/ui/components/button";
 import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
@@ -40,6 +41,7 @@ export function MemberRow({
   const [isLeaveOpen, setIsLeaveOpen] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
+  const isOnline = useIsOnline();
 
   const isSelf = member.userId === viewerId;
   const canRemove = viewerRole === "owner" && !isSelf && member.role === "editor";
@@ -92,7 +94,14 @@ export function MemberRow({
           title={{ translateId: "trips.members.removeTitle", values: { name: member.name } }}
           description={{ translateId: "trips.members.removeDescription" }}
           closeLabel={{ translateId: "trips.edit.close" }}
-          trigger={<Button type="button" variant="secondary" translateId="trips.members.remove" />}
+          trigger={
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={!isOnline}
+              translateId="trips.members.remove"
+            />
+          }
           footer={
             <>
               <DialogClose>
@@ -115,7 +124,14 @@ export function MemberRow({
           title={{ translateId: "trips.members.leaveTitle" }}
           description={{ translateId: "trips.members.leaveDescription" }}
           closeLabel={{ translateId: "trips.edit.close" }}
-          trigger={<Button type="button" variant="secondary" translateId="trips.members.leave" />}
+          trigger={
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={!isOnline}
+              translateId="trips.members.leave"
+            />
+          }
           footer={
             <>
               <DialogClose>
@@ -130,6 +146,9 @@ export function MemberRow({
             </>
           }
         />
+      ) : null}
+      {!isOnline && (canRemove || canLeave) ? (
+        <p className="text-sm text-text-muted">{t("offline")}</p>
       ) : null}
       {failure !== null ? (
         <p role="alert" className="text-sm text-error">

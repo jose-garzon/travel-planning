@@ -100,3 +100,23 @@ describe("HomeScreen", () => {
     expect(screen.getByRole("link", { name: /Old/ })).toBeInTheDocument();
   });
 });
+
+describe("HomeScreen Trip created toast", () => {
+  it("offers Invite friends, which opens the new trip's invite card", () => {
+    renderWithIntl(
+      <HomeScreen
+        displayName="Jose"
+        summary={empty}
+        today="2026-11-03"
+        justCreated
+        createdTripId="trip-1"
+      />,
+      { messages },
+    );
+
+    expect(screen.getByRole("link", { name: "Invite friends" })).toHaveAttribute(
+      "href",
+      "/trips/trip-1?invite=1",
+    );
+  });
+});

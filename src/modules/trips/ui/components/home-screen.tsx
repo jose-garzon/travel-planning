@@ -16,6 +16,8 @@ type HomeScreenProps = {
   today: string;
   /** Shows the "Trip created" confirmation after a successful create. */
   justCreated?: boolean;
+  /** The trip just created; its toast offers "Invite friends" for it. */
+  createdTripId?: string;
   /** Shows the "Trip deleted" toast after a delete. */
   justDeleted?: boolean;
   /** Names the trip in "You left {trip}" after the member leaves it. */
@@ -244,6 +246,7 @@ export function HomeScreen({
   summary,
   today,
   justCreated = false,
+  createdTripId,
   justDeleted = false,
   leftTrip,
   justRemoved = false,
@@ -265,9 +268,19 @@ export function HomeScreen({
       </div>
 
       {justCreated && (
-        <p role="status" className="mb-4 font-semibold text-success">
-          {translate({ translateId: "trips.home.created" })}
-        </p>
+        <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <p role="status" className="font-semibold text-success">
+            {translate({ translateId: "trips.home.created" })}
+          </p>
+          {createdTripId !== undefined && (
+            <Link
+              href={`/trips/${createdTripId}?invite=1`}
+              className="font-semibold text-accent underline"
+            >
+              {translate({ translateId: "trips.home.inviteFriends" })}
+            </Link>
+          )}
+        </div>
       )}
 
       {justDeleted && (

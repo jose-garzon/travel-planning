@@ -15,5 +15,6 @@
   "resetDone": "Enlace restablecido",
   "cancel": "Cancelar",
   "loading": "Cargando el enlace…",
-  "loadFailed": "No se pudo cargar el enlace. Inténtalo de nuevo."
+  "loadFailed": "No se pudo cargar el enlace. Inténtalo de nuevo.",
+  "offline": "Sin conexión. Restablecer el enlace requiere conexión."
 }

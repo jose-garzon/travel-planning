@@ -17,5 +17,6 @@
   "leaveTitle": "¿Salir de este viaje?",
   "leaveDescription": "Perderás el acceso al viaje. Puedes volver a unirte con el enlace de invitación.",
   "leaveConfirm": "Salir",
-  "leaveFailed": "No pudimos salir del viaje. Revisa tu conexión e inténtalo de nuevo."
+  "leaveFailed": "No pudimos salir del viaje. Revisa tu conexión e inténtalo de nuevo.",
+  "offline": "Sin conexión. Quitar y salir requieren conexión."
 }

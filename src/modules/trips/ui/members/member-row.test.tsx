@@ -1,5 +1,5 @@
 import { screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Role } from "@/modules/trips/domain/trip";
 import membersMessages from "@/modules/trips/messages/en/members.json";
 import type { MemberDto } from "@/modules/trips/service/schemas";
@@ -81,5 +81,19 @@ describe("MemberRow", () => {
     expect(
       within(screen.getByRole("listitem")).queryByRole("button", { name: "Leave trip" }),
     ).toBeNull();
+  });
+});
+
+describe("MemberRow while offline", () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, "onLine");
+  });
+
+  it("disables Remove when the browser is offline", () => {
+    Object.defineProperty(navigator, "onLine", { configurable: true, get: () => false });
+
+    renderRow(laura, jose);
+
+    expect(screen.getByRole("button", { name: "Remove" })).toBeDisabled();
   });
 });

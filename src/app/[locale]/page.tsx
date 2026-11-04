@@ -79,6 +79,7 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
     return <NameCaptureScreen action={submitDisplayName} error={nameError === "1"} />;
   }
 
+  const createdTripId = typeof created === "string" ? created : undefined;
   const today = todayIn((await cookies()).get(TIME_ZONE_COOKIE)?.value);
   const summary = await getHomeTrips({
     userId: currentUser.id,
@@ -93,7 +94,8 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
         displayName={currentUser.displayName}
         summary={summary}
         today={today}
-        justCreated={created === "1"}
+        justCreated={createdTripId !== undefined}
+        createdTripId={createdTripId}
         justDeleted={deleted === "1"}
         leftTrip={typeof left === "string" ? left : undefined}
         justRemoved={removed === "1"}

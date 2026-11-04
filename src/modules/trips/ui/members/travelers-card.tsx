@@ -15,6 +15,8 @@ export type TravelersCardProps = {
   members: MemberDto[];
   /** The signed-in member's role on the trip. */
   role: Role;
+  /** Opens the Invite card on load (the trip page's `?invite=1`, owners only). */
+  openInvite?: boolean;
 };
 
 /**
@@ -22,7 +24,14 @@ export type TravelersCardProps = {
  * desktop; on mobile, a disclosure button with `aria-expanded` that shows
  * or hides the list. The list is in the DOM either way.
  */
-export function TravelersCard({ tripId, tripName, viewerId, members, role }: TravelersCardProps) {
+export function TravelersCard({
+  tripId,
+  tripName,
+  viewerId,
+  members,
+  role,
+  openInvite = false,
+}: TravelersCardProps) {
   const t = useTranslations("trips.members");
   const [expanded, setExpanded] = useState(false);
   const [announcement, setAnnouncement] = useState("");
@@ -35,21 +44,23 @@ export function TravelersCard({ tripId, tripName, viewerId, members, role }: Tra
       aria-labelledby={headingId}
       className="mt-6 rounded-lg border border-border bg-surface-1 p-4"
     >
-      <h2 id={headingId} className="hidden font-semibold lg:block">
-        {t("title")}
-      </h2>
-      <button
-        type="button"
-        aria-expanded={expanded}
-        aria-controls={listId}
-        onClick={() => setExpanded((open) => !open)}
-        className="flex w-full items-center justify-between font-semibold lg:hidden"
-      >
-        <span>{t("title")}</span>
-        <span className="text-sm font-normal text-text-muted">
+      <div className="flex items-center justify-between gap-3">
+        <h2 id={headingId} className="hidden font-semibold lg:block">
+          {t("title")}
+        </h2>
+        <button
+          type="button"
+          aria-expanded={expanded}
+          aria-controls={listId}
+          onClick={() => setExpanded((open) => !open)}
+          className="min-w-0 flex-1 text-left font-semibold lg:hidden"
+        >
+          {t("title")}
+        </button>
+        <span className="shrink-0 text-sm font-normal text-text-muted">
           {t("count", { count: members.length })}
         </span>
-      </button>
+      </div>
       <ul id={listId} className={expanded ? "mt-2" : "hidden mt-2 lg:block"}>
         {members.map((member) => (
           <MemberRow
@@ -73,6 +84,7 @@ export function TravelersCard({ tripId, tripName, viewerId, members, role }: Tra
           <InviteCard
             tripId={tripId}
             tripName={tripName}
+            defaultOpen={openInvite}
             trigger={
               <button type="button" className="font-semibold text-accent">
                 {t("invite")}

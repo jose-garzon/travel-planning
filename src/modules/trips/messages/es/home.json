@@ -21,5 +21,6 @@
   "ended": "Terminó el {date}",
   "routeName": "Ruta: {route}",
   "left": "Saliste de {trip}",
-  "removed": "Ya no estás en este viaje"
+  "removed": "Ya no estás en este viaje",
+  "inviteFriends": "Invitar amigos"
 }

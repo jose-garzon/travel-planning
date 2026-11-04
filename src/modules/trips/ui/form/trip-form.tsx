@@ -89,7 +89,7 @@ function snapshot(name: string, currency: string | null, legs: EditorLeg[]): str
 async function saveTrip(
   input: TripInput,
   trip: TripDto | undefined,
-): Promise<"saved" | "conflict" | "removed" | "failed"> {
+): Promise<"conflict" | "removed" | "failed" | { tripId: string }> {
   try {
     const response = await fetch(trip ? `/api/v1/trips/${trip.id}` : "/api/v1/trips", {
       method: trip ? "PATCH" : "POST",
@@ -103,7 +103,14 @@ async function saveTrip(
     if (response.status === 404 && trip) {
       return "removed";
     }
-    return response.status === (trip ? 200 : 201) ? "saved" : "failed";
+    if (trip) {
+      return response.status === 200 ? { tripId: trip.id } : "failed";
+    }
+    if (response.status !== 201) {
+      return "failed";
+    }
+    const created = (await response.json()) as { id: string };
+    return { tripId: created.id };
   } catch {
     return "failed";
   }
@@ -201,7 +208,7 @@ export function TripForm({ trip }: TripFormProps) {
     } else if (outcome === "failed") {
       setHasSaveError(true);
     } else {
-      router.push(isEdit ? "/" : { pathname: "/", query: { created: "1" } });
+      router.push(isEdit ? "/" : { pathname: "/", query: { created: outcome.tripId } });
     }
   }
 

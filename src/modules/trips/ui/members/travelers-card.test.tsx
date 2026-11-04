@@ -1,6 +1,7 @@
 import { fireEvent, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Role } from "@/modules/trips/domain/trip";
+import inviteMessages from "@/modules/trips/messages/en/invite.json";
 import membersMessages from "@/modules/trips/messages/en/members.json";
 import type { MemberDto } from "@/modules/trips/service/schemas";
 import { TravelersCard } from "@/modules/trips/ui/members/travelers-card";
@@ -108,5 +109,37 @@ describe("TravelersCard", () => {
     fireEvent.click(toggle);
 
     expect(toggle).toHaveAttribute("aria-expanded", "true");
+  });
+});
+
+describe("TravelersCard opened from ?invite=1", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("opens the invite card for the owner when the trip page asks for it", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        Response.json({
+          url: "https://travel.test/join/token-1",
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        }),
+      ),
+    );
+    // Spread, so the `role` prop is not read as an ARIA attribute by biome.
+    const props = {
+      tripId: "trip-1",
+      tripName: "Europe",
+      viewerId: "jose",
+      members: [jose, laura],
+      role: "owner" as const,
+      openInvite: true,
+    };
+    renderWithIntl(<TravelersCard {...props} />, {
+      messages: { ...messages, trips: { ...messages.trips, invite: inviteMessages } },
+    });
+
+    expect(await screen.findByRole("textbox", { name: "Invite link" })).toBeInTheDocument();
   });
 });

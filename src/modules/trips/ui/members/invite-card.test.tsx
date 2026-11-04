@@ -145,3 +145,45 @@ describe("InviteCard", () => {
     expect(within(alert).queryByText("Copied")).toBeNull();
   });
 });
+
+describe("InviteCard while offline", () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, "onLine");
+  });
+
+  it("disables Reset link and keeps Copy link when the browser goes offline", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json(LINK)),
+    );
+    setClipboard(async () => {});
+    renderCard();
+    await openCard();
+
+    Object.defineProperty(navigator, "onLine", { configurable: true, get: () => false });
+    fireEvent(window, new Event("offline"));
+
+    expect(screen.getByRole("button", { name: "Reset link" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Copy link" })).toBeEnabled();
+  });
+});
+
+describe("InviteCard offline note", () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, "onLine");
+  });
+
+  it("says why Reset link is unavailable once the browser goes offline", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json(LINK)),
+    );
+    renderCard();
+    await openCard();
+
+    Object.defineProperty(navigator, "onLine", { configurable: true, get: () => false });
+    fireEvent(window, new Event("offline"));
+
+    expect(screen.getByText(/offline/i)).toBeInTheDocument();
+  });
+});
