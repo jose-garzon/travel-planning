@@ -153,7 +153,8 @@ Files:
 - `src/modules/auth/ui/hooks/use-request-magic-link.ts` (`callbackURL`)
 - `src/modules/auth/ui/index.ts`
 - `src/app/[locale]/join/[token]/page.tsx` (sign-in slot)
-- `src/app/[locale]/join/[token]/accept/route.ts` + `.test.ts`
+- `src/app/[locale]/join/[token]/accept/page.tsx` + `.test.tsx` (D-10; replaces route.ts)
+- `src/modules/auth/ui/safe-next-path.ts` + `.test.ts`
 - `src/app/[locale]/page.tsx` (name capture honors `next`)
 - `tests/steps/trip-join-signed-out.steps.ts` (new)
 

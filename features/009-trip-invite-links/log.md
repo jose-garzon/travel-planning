@@ -77,3 +77,8 @@ deviation: InviteCard uses shared Dialog, not desktop popover
 implementer (haiku): red OK (69ae5a8), 8 unit pass; e2e 0/5 @T05
 missing: MemberRow controls, members.json, remove steps (in Files)
 plan: D-4 redirect, travelers-card wiring, step lookups -> D-9 widens Files
+
+## 2026-11-03 T04 round 1
+implementer (haiku): red OK (cc3dbce); @T04 desktop 3/4, unit 402, @F3 21/21
+plan: name-capture action -> accept route handler keeps /accept URL
+D-10: accept becomes a page; safe-next-path.ts added to Files

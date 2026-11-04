@@ -48,7 +48,7 @@ flowchart LR
 | `app/_composition/trip-members.ts`      | app     | new         | wires auth profiles into trips   |
 | `app/_composition/api-errors.ts`        | app     | new         | shared error → status mapping    |
 | `app/[locale]/join/[token]/page.tsx`    | app     | new         | join page                        |
-| `app/[locale]/join/[token]/accept/route.ts` | app | new         | post-sign-in join + redirect     |
+| `app/[locale]/join/[token]/accept/page.tsx`  | app | new         | post-sign-in join + redirect (D-10) |
 | `app/api/v1/trips/[tripId]/{members,invite}/**` | app | new     | thin handlers                    |
 | `app/api/v1/invites/[token]/**`         | app     | new         | preview, join                    |
 
@@ -152,7 +152,7 @@ Entry `trips/ui/entries/members.ts` for Travelers + Invite cards.
 | roles              | `owner`, `editor`            | no viewer                 |
 | travelers card     | `TravelersCard`              | copy says "Travelers"     |
 | join page          | `/join/[token]`              | under `[locale]`          |
-| post-sign-in join  | `/join/[token]/accept`       | GET route handler         |
+| post-sign-in join  | `/join/[token]/accept`       | page, redirects in render (D-10) |
 | toast params       | `?joined=1`, `?already=1` (trip page); `?left=<trip name>`, `?removed=1` (home); `?invite=1` opens Invite card | |
 
 i18n: `trips.members`, `trips.invite`, `trips.join` (new files under
@@ -253,6 +253,14 @@ T03 left the D-4 removed-member redirect undone; T05 owns it on the
 trip page. T05 also wires viewer id into the Travelers card and
 fixes the step lookups that resolve trips by session. No contract
 change.
+
+### D-10. `accept` is a page, not a route handler (2026-11-03)
+
+A server action redirect (name capture, `next`) to a route handler
+that redirects again leaves the browser on the `/accept` URL. A page
+that calls `joinTrip` and `redirect()`s in render updates the URL.
+`joinTrip` is idempotent, so a repeat render is safe. Supersedes the
+handler in D-3.
 
 ## Left to implementation
 
