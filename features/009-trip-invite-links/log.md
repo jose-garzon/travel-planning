@@ -60,3 +60,10 @@ D-8 fix by orchestrator: reset row expects plain expired copy (reset
 and unknown tokens are indistinguishable without token history)
 pre-existing fail, not T03: F005 "Adding legs chains cities" times out
 on locator.fill; also fails in T06 worktree (without T03)
+
+## 2026-11-03 T06 round 2 (re-plan)
+implementer (haiku): green OK; @T06 desktop 8/8 after rebase on T03
+test commits with reasons: editor step by owner (D-8), editor seeded as
+signed-in user, owner trip needs a route, locators (/en, route announcer)
+`{string} owns the trip` step moved to trip-members.steps.ts
+index.ts touched outside Files (doc comments only)

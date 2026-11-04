@@ -187,7 +187,7 @@ Done when:
 
 ## T06. Editors edit the trip
 
-Status: doing
+Status: done
 Depends on: T01
 Model: haiku
 Scenarios: @T06
@@ -207,8 +207,8 @@ Files:
 - `src/modules/trips/messages/{en,es}/home.json` (`left`, `removed`)
 - `src/modules/trips/service/delete-trip.ts`
 Done when:
-- [ ] Scenarios tagged @T06 pass
-- [ ] Home shows "You left {trip}" and "You're no longer in this
+- [x] Scenarios tagged @T06 pass
+- [x] Home shows "You left {trip}" and "You're no longer in this
       trip" for `?left=1` / `?removed=1` (component test)
 
 

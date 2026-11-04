@@ -18,6 +18,10 @@ type HomeScreenProps = {
   justCreated?: boolean;
   /** Shows the "Trip deleted" toast after a delete. */
   justDeleted?: boolean;
+  /** Names the trip in "You left {trip}" after the member leaves it. */
+  leftTrip?: string;
+  /** Shows "You're no longer in this trip" after a removal (EC-5). */
+  justRemoved?: boolean;
 };
 
 const DAY_MS = 86_400_000;
@@ -241,6 +245,8 @@ export function HomeScreen({
   today,
   justCreated = false,
   justDeleted = false,
+  leftTrip,
+  justRemoved = false,
 }: HomeScreenProps) {
   const translate = useTranslatable();
   const locale = useLocale();
@@ -266,6 +272,16 @@ export function HomeScreen({
 
       {justDeleted && (
         <Toast tone="success">{translate({ translateId: "trips.edit.deleted" })}</Toast>
+      )}
+
+      {leftTrip && (
+        <Toast tone="success">
+          {translate({ translateId: "trips.home.left", values: { trip: leftTrip } })}
+        </Toast>
+      )}
+
+      {justRemoved && (
+        <Toast tone="error">{translate({ translateId: "trips.home.removed" })}</Toast>
       )}
 
       {hasNoTrips && <EmptyTripsState />}

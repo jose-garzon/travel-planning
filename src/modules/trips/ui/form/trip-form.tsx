@@ -89,7 +89,7 @@ function snapshot(name: string, currency: string | null, legs: EditorLeg[]): str
 async function saveTrip(
   input: TripInput,
   trip: TripDto | undefined,
-): Promise<"saved" | "conflict" | "failed"> {
+): Promise<"saved" | "conflict" | "removed" | "failed"> {
   try {
     const response = await fetch(trip ? `/api/v1/trips/${trip.id}` : "/api/v1/trips", {
       method: trip ? "PATCH" : "POST",
@@ -98,6 +98,10 @@ async function saveTrip(
     });
     if (response.status === 409) {
       return "conflict";
+    }
+    // The member was removed while editing (EC-5): the API answers 404.
+    if (response.status === 404 && trip) {
+      return "removed";
     }
     return response.status === (trip ? 200 : 201) ? "saved" : "failed";
   } catch {
@@ -192,6 +196,8 @@ export function TripForm({ trip }: TripFormProps) {
     setIsSaving(false);
     if (outcome === "conflict") {
       setHasConflict(true);
+    } else if (outcome === "removed") {
+      router.push({ pathname: "/", query: { removed: "1" } });
     } else if (outcome === "failed") {
       setHasSaveError(true);
     } else {
@@ -346,7 +352,7 @@ export function TripForm({ trip }: TripFormProps) {
               </>
             }
           />
-          {isEdit && (
+          {isEdit && trip.role === "owner" && (
             <Dialog
               open={isDeleteOpen}
               onOpenChange={setIsDeleteOpen}

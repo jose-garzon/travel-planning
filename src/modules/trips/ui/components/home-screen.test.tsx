@@ -37,13 +37,20 @@ function trip(id: string, name: string, from: string, to: string, date: string):
 
 const empty = { nextTrip: null, otherTrips: [] };
 
-function renderHome(props: { justDeleted?: boolean; summary?: typeof empty | object }) {
+function renderHome(props: {
+  justDeleted?: boolean;
+  leftTrip?: string;
+  justRemoved?: boolean;
+  summary?: typeof empty | object;
+}) {
   renderWithIntl(
     <HomeScreen
       displayName="Ana"
       summary={(props.summary ?? empty) as never}
       today="2027-01-01"
       justDeleted={props.justDeleted}
+      leftTrip={props.leftTrip}
+      justRemoved={props.justRemoved}
     />,
     { messages },
   );
@@ -56,6 +63,18 @@ describe("HomeScreen", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Trip deleted");
     fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
     expect(screen.queryByText("Trip deleted")).not.toBeInTheDocument();
+  });
+
+  it("names the trip the member left", () => {
+    renderHome({ leftTrip: "Europe" });
+
+    expect(screen.getByRole("status")).toHaveTextContent("You left Europe");
+  });
+
+  it("tells a member removed from the trip that they are no longer in it", () => {
+    renderHome({ justRemoved: true });
+
+    expect(screen.getByRole("alert")).toHaveTextContent("You're no longer in this trip");
   });
 
   it("shows no confirmation otherwise", () => {

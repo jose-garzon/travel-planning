@@ -1,23 +1,77 @@
 import { randomUUID } from "node:crypto";
+import { createClient } from "@libsql/client";
+import type { Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { Given, Then } from "./fixtures";
 import { signedInEmail, signInAs } from "./support/session";
 import { findTripId, seedMember, seedTrip } from "./support/trips";
 
+// The owner's email per page and trip name. Seeding a member needs the
+// trip's owner, and a later sign-in (the editor) replaces the session
+// email, so the owner is remembered here rather than read from the session.
+const ownerEmailByPage = new WeakMap<Page, Map<string, string>>();
+
+function registerOwner(page: Page, tripName: string, ownerEmail: string): void {
+  const owners = ownerEmailByPage.get(page) ?? new Map<string, string>();
+  owners.set(tripName, ownerEmail);
+  ownerEmailByPage.set(page, owners);
+}
+
+/** The owner of `tripName` on this page; falls back to the signed-in member (T01 "I own the trip"). */
+function ownerEmailFor(page: Page, tripName: string): string {
+  return ownerEmailByPage.get(page)?.get(tripName) ?? signedInEmail(page);
+}
+
 Given("I own the trip {string}", async ({ page }, name: string) => {
   const ownerEmail = `jose-${randomUUID().slice(0, 8)}@example.com`;
   await signInAs(page, { email: ownerEmail, displayName: "Jose" });
+  registerOwner(page, name, ownerEmail);
   await seedTrip({ ownerEmail, name, currency: "USD", legs: [] });
 });
 
+Given("{string} owns the trip {string}", async ({ page }, ownerName: string, name: string) => {
+  const ownerEmail = `${ownerName.toLowerCase()}-${randomUUID().slice(0, 8)}@example.com`;
+  await signInAs(page, { email: ownerEmail, displayName: ownerName });
+  registerOwner(page, name, ownerEmail);
+  // A route is needed to save: the form blocks a trip with no origin.
+  await seedTrip({
+    ownerEmail,
+    name,
+    currency: "USD",
+    legs: [{ from: "Bogota", to: "Madrid" }],
+  });
+});
+
 Given("{string} and {string} are editors of {string}", async ({ page }, first, second, name) => {
-  const tripId = await findTripId(signedInEmail(page), name);
+  const tripId = await findTripId(ownerEmailFor(page, name), name);
   await seedMember({ tripId, name: first, role: "editor" });
   await seedMember({ tripId, name: second, role: "editor" });
 });
 
+// Plain SQL, like support/trips.ts: these steps run in Playwright's Node process.
+const client = createClient({
+  url: process.env.DATABASE_URL ?? "file:local.db",
+  authToken: process.env.DATABASE_AUTH_TOKEN,
+});
+const busyTimeoutReady = client.execute("PRAGMA busy_timeout = 5000;");
+
 Given("{string} is an editor of {string}", async ({ page }, name: string, tripName: string) => {
-  const tripId = await findTripId(signedInEmail(page), tripName);
+  const tripId = await findTripId(ownerEmailFor(page, tripName), tripName);
+  // When the editor is the member signed in on this page, join that user: a
+  // second user row with the same name would not be the signed-in member.
+  const signedIn = await client.execute({
+    sql: "SELECT id, name FROM user WHERE email = ?",
+    args: [signedInEmail(page)],
+  });
+  const self = signedIn.rows[0];
+  if (self?.name === name && typeof self.id === "string") {
+    await busyTimeoutReady;
+    await client.execute({
+      sql: "INSERT INTO trip_member (trip_id, user_id, role, joined_at) VALUES (?, ?, 'editor', ?)",
+      args: [tripId, self.id, Date.now()],
+    });
+    return;
+  }
   await seedMember({ tripId, name, role: "editor" });
 });
 

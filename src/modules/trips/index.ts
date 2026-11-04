@@ -57,12 +57,12 @@ export function getTrip(query: GetTripQuery) {
   return getTripUseCase(query, deps);
 }
 
-/** Owner-only edit with a version check (`TRIP_VERSION_CONFLICT` when stale). */
+/** Owner or editor edit with a version check (`TRIP_VERSION_CONFLICT` when stale). */
 export function updateTrip(command: UpdateTripCommand) {
   return updateTripUseCase(command, deps);
 }
 
-/** Owner-only delete; members and legs go with the trip. */
+/** Owner-only delete (D-5); members and legs go with the trip. */
 export function deleteTrip(command: DeleteTripCommand) {
   return deleteTripUseCase(command, deps);
 }
