@@ -8,7 +8,18 @@ export function safeNextPath(next: string | undefined): string | null {
   if (next === undefined || !next.startsWith("/")) {
     return null;
   }
-  if (next.startsWith("//") || next.startsWith("/\\")) {
+  // Browsers strip tab/newline and read "\\" as "/", so "/\t/evil" is
+  // protocol-relative too. Reject control chars and backslashes outright,
+  // then confirm the path resolves to our own origin.
+  const hasUnsafeChar = [...next].some((ch) => {
+    const code = ch.charCodeAt(0);
+    return code < 0x20 || code === 0x7f || ch === "\\";
+  });
+  if (hasUnsafeChar) {
+    return null;
+  }
+  const base = "http://app.invalid";
+  if (new URL(next, base).origin !== base) {
     return null;
   }
   return next;

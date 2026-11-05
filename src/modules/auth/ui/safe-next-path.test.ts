@@ -44,4 +44,10 @@ describe("safeNextPath", () => {
   it("keeps the query and fragment of a relative path", () => {
     expect(safeNextPath("/en/trips?a=1#top")).toBe("/en/trips?a=1#top");
   });
+
+  it("rejects raw tab, newline and backslash tricks", () => {
+    expect(safeNextPath("/\t/evil.example")).toBeNull();
+    expect(safeNextPath("/\n/evil.example")).toBeNull();
+    expect(safeNextPath("/\\evil.example")).toBeNull();
+  });
 });

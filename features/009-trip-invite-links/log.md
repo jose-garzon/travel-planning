@@ -138,3 +138,9 @@ reviewer (haiku): 2 blocker, 10 major, 13 minor, 2 nit
   origin from Host header, migration DEFAULT 0 drift, createdTripId
   unencoded
 - nit: busy_timeout catch swallows, isFull unused
+
+## 2026-11-04 blocker fix round 1
+- safe-next-path: reject control chars/backslash, check origin via URL
+- trip page: access check only when getTrip fails (happy path +members
+  only); query-count integration test still missing, carried to PR
+F009 e2e 70/70, unit, lint, typecheck pass

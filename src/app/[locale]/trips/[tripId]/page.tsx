@@ -22,18 +22,16 @@ export default async function TripPage({
     return null;
   }
 
-  // A removed member is sent home with the toast (feature 009 D-4); a missing trip is a 404.
-  const access = await tripMembers.getTripAccess({ userId: currentUser.id, tripId });
-  if (access === "not-member") {
-    redirect({ href: { pathname: "/", query: { removed: "1" } }, locale });
-    return null;
-  }
-  if (access === "missing") {
-    notFound();
-  }
-
+  // Happy path reads the trip directly; only on failure do we pay for the
+  // access check that tells a removed member (home + toast, feature 009 D-4)
+  // from a missing trip (404). Keeps added queries within budget.
   const result = await getTrip({ userId: currentUser.id, tripId, locale: locale as Locale });
   if (!result.ok) {
+    const access = await tripMembers.getTripAccess({ userId: currentUser.id, tripId });
+    if (access === "not-member") {
+      redirect({ href: { pathname: "/", query: { removed: "1" } }, locale });
+      return null;
+    }
     notFound();
   }
 
