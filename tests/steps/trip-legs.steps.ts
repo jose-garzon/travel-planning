@@ -34,7 +34,17 @@ When(
 );
 
 When("I add a leg", async ({ page }) => {
-  await page.getByRole("button", { name: "Add stop" }).click();
+  // Clicking blurs the open "To" field, which collapses into a heading and
+  // shifts the button mid-click. Wait for the layout to settle, then check
+  // a leg was really added.
+  const legs = page.getByRole("group", { name: /^Leg \d+$/ });
+  const before = await legs.count();
+  await expect(async () => {
+    if ((await legs.count()) === before) {
+      await page.getByRole("button", { name: "Add stop" }).click();
+    }
+    await expect(legs).toHaveCount(before + 1, { timeout: 1000 });
+  }).toPass({ timeout: 10_000 });
 });
 
 When("I add the return home leg", async ({ page }) => {
