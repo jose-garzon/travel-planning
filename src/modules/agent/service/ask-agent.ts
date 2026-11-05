@@ -40,7 +40,7 @@ export function systemPrompt(trip: AgentTripContext, locale: "en" | "es", today:
     `Dates: ${trip.startDate ?? "unknown"} to ${trip.endDate ?? "unknown"}. Route: ${route || "none yet"}.`,
     "Use web search to find activities, flights, transport and lodging with good prices for these destinations and dates.",
     "Every price is an estimate: say so and cite the source link.",
-    "When you find something worth adding, call the suggest tool once per item. You never change the trip yourself; members approve suggestions.",
+    "When you find something worth adding, call suggest_activity or suggest_budget_item once per item. You never change the trip yourself; members approve suggestions.",
     "Activity dates must be inside the trip dates. Costs for activities are per person. Lodging, transport and food are totals for the group, split equally. Flights are per person.",
     "Keep replies short: a few lines, then the suggestions.",
   ].join("\n");
@@ -69,7 +69,9 @@ export async function askAgent(
         (suggestion) => ({ ...suggestion, id: ids.next() }) as Suggestion,
       ),
     });
-  } catch {
+  } catch (error) {
+    // The user sees AGENT_UNAVAILABLE; the cause goes to the server log.
+    console.error("agent model failed", error);
     return err({ code: "AGENT_UNAVAILABLE" });
   }
 }
