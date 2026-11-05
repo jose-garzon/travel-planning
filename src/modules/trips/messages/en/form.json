@@ -28,5 +28,8 @@
   "removeLeg": "Remove leg {number}",
   "legLimit": "Up to 10 legs",
   "legAdded": "Leg {number} added",
-  "legRemoved": "Leg {number} removed"
+  "legRemoved": "Leg {number} removed",
+  "insertLeg": "Add a stop before {city}",
+  "insertLegShort": "Stop here",
+  "pickDate": "Open calendar"
 }

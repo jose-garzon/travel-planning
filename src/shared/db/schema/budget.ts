@@ -22,6 +22,8 @@ export const budgetItem = sqliteTable(
     /** Set for a per-person item (a flight): it counts for this member only. */
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     link: text("link"),
+    /** Leg position of the stop it belongs to; null is the whole trip. */
+    stop: integer("stop"),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   },
   (table) => [index("budget_item_trip_idx").on(table.tripId)],

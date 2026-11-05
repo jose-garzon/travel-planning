@@ -3,6 +3,7 @@ import { expect } from "@playwright/test";
 import { Given, Then, When } from "./fixtures";
 import { ownerEmailFor } from "./support/owners";
 import { signedInEmail } from "./support/session";
+import { openTripEditor } from "./support/trip-editor";
 import { findTripId } from "./support/trips";
 
 // Plain SQL, like support/trips.ts: these steps run in Playwright's Node process.
@@ -17,14 +18,22 @@ const CONFLICT_MESSAGE = "This trip changed. Reload to see the latest.";
 Then(
   "I see no {string}, {string} or {string} controls",
   async ({ page }, first: string, second: string, third: string) => {
+    // Invite and Remove live on the trip page; Delete on its edit page.
+    const none = async () => {
+      for (const name of [first, second, third]) {
+        await expect(page.getByRole("button", { name, exact: true })).toHaveCount(0);
+      }
+    };
+    await expect(page.getByRole("link", { name: "Edit trip" })).toBeVisible();
+    await none();
+    await openTripEditor(page);
     await expect(page.getByRole("button", { name: "Save changes" })).toBeVisible();
-    for (const name of [first, second, third]) {
-      await expect(page.getByRole("button", { name, exact: true })).toHaveCount(0);
-    }
+    await none();
   },
 );
 
 When("I rename the trip to {string} and save", async ({ page }, name: string) => {
+  await openTripEditor(page);
   await page.getByLabel("Trip name").fill(name);
   await page.getByRole("button", { name: "Save changes" }).click();
 });
@@ -36,6 +45,7 @@ Then("the trip is named {string}", async ({ page }, name: string) => {
 Given("I opened the trip {string}", async ({ page }, name: string) => {
   const id = await findTripId(signedInEmail(page), name);
   await page.goto(`/trips/${id}`);
+  await openTripEditor(page);
   await expect(page.getByRole("button", { name: "Save changes" })).toBeVisible();
 });
 

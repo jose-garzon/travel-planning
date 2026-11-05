@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect as nextRedirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { itinerary } from "@/app/_composition/trip-context";
 import { getCurrentUser, setDisplayName } from "@/modules/auth";
 import {
   LandingScreen,
@@ -9,7 +10,7 @@ import {
   safeNextPath,
 } from "@/modules/auth/ui";
 import { getHomeTrips } from "@/modules/trips";
-import { HomeScreen } from "@/modules/trips/ui";
+import { buildNextStop, HomeScreen } from "@/modules/trips/ui";
 import { redirect } from "@/shared/i18n/navigation";
 import type { Locale } from "@/shared/i18n/routing";
 import { FocusHeading } from "@/shared/ui/components/focus-heading";
@@ -87,12 +88,39 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
     today,
   });
 
+  // The spotlight needs the next trip's activities; itinerary is wired
+  // here so trips never imports it (architecture.md "Crossing modules").
+  const nextTrip = summary.nextTrip;
+  const activities =
+    nextTrip === null || nextTrip.startDate === null
+      ? null
+      : await itinerary.listActivities({ userId: currentUser.id, tripId: nextTrip.id });
+  const nextStop =
+    nextTrip === null
+      ? null
+      : buildNextStop(
+          nextTrip,
+          activities?.ok
+            ? activities.value.activities.map((activity) => ({
+                id: activity.id,
+                date: activity.date,
+                title: activity.title,
+                startTime: activity.startTime,
+                durationMinutes: activity.durationMinutes,
+                subscribed: activity.subscribed,
+                goingCount: activity.participantIds.length,
+              }))
+            : [],
+          today,
+        );
+
   return (
     <>
       <FocusHeading />
       <HomeScreen
         displayName={currentUser.displayName}
         summary={summary}
+        nextStop={nextStop}
         today={today}
         justCreated={createdTripId !== undefined}
         createdTripId={createdTripId}

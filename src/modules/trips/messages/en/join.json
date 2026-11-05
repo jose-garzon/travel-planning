@@ -5,11 +5,12 @@
   "joining": "Joining…",
   "joined": "You joined {trip}",
   "already": "You're already in this trip",
-  "expired": "This invite link has expired.",
   "expiredAsk": "This invite link has expired. Ask {owner} for a new one.",
   "expiredAskOwner": "This invite link has expired. Ask the trip owner for a new one.",
   "full": "This trip is full ({count} travelers)",
   "failed": "Couldn't join the trip. Check your connection and try again.",
   "goHome": "Go home",
-  "offline": "You’re offline. Joining needs a connection."
+  "offline": "You’re offline. Joining needs a connection.",
+  "invalid": "This invite link doesn’t work anymore.",
+  "invalidHint": "It may have been reset or mistyped. Ask whoever sent it for a new link."
 }

@@ -19,6 +19,7 @@
   "free": "Gratis",
   "perPerson": "{amount} por persona",
   "minutes": "{count, plural, one {# minuto} other {# minutos}}",
+  "hours": "{count, plural, one {# hora} other {# horas}}",
   "overlap": "Se cruza con otra actividad este día",
   "openLink": "Abrir enlace",
   "nobody": "Nadie se ha unido todavía",
@@ -27,5 +28,11 @@
   "leave": "No voy",
   "edit": "Editar",
   "delete": "Eliminar",
-  "deleteConfirm": "¿Eliminar “{title}” para todos?"
+  "deleteConfirm": "¿Eliminar “{title}” para todos?",
+  "more": "Más acciones para “{title}”",
+  "moreDetails": "Más detalles",
+  "editTitle": "Editar actividad",
+  "close": "Cerrar",
+  "subheading": "Actividades",
+  "deleteWarning": "Se elimina para todos en el viaje. No se puede deshacer."
 }

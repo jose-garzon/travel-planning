@@ -126,7 +126,7 @@ Feature: Create a trip by drawing its route, and see it on home
     Given I have a trip "Europe" with route:
       | from   | to     | day |
       | Bogotá | Madrid | +10 |
-    When I open the trip "Europe"
+    When I edit the trip "Europe"
     And I name the trip "Europe 2027"
     And I save the changes
     Then I see "Europe 2027" as my next trip
@@ -137,7 +137,7 @@ Feature: Create a trip by drawing its route, and see it on home
     Given I have a trip "Europe" with route:
       | from   | to     | day |
       | Bogotá | Madrid | +10 |
-    When I open the trip "Europe"
+    When I edit the trip "Europe"
     And someone else changes the trip "Europe"
     And I name the trip "Mine"
     And I save the changes
@@ -148,7 +148,7 @@ Feature: Create a trip by drawing its route, and see it on home
     Given I have a trip "Europe" with route:
       | from   | to     | day |
       | Bogotá | Madrid | +10 |
-    When I open the trip "Europe"
+    When I edit the trip "Europe"
     And I delete the trip and confirm
     Then I see "Trip deleted"
     And I do not see "Europe" on the home page

@@ -45,5 +45,15 @@
     "transport": "Split equally among all travelers.",
     "food": "Total food estimate, split equally among all travelers.",
     "other": "Split equally among all travelers."
-  }
+  },
+  "capToggle": "Set a budget cap",
+  "capUsed": "Budget cap used",
+  "noSplitYet": "Add a cost to see where the money goes.",
+  "totalLabel": "Trip total",
+  "capLabel": "Cap",
+  "noCap": "No cap set",
+  "details": "Budget details",
+  "moreDetails": "More details",
+  "close": "Close",
+  "deleteWarning": "It's removed for everyone on the trip. This can't be undone."
 }

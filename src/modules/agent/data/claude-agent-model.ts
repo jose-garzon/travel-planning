@@ -30,6 +30,7 @@ const budgetSchema = z.object({
   currency: z.string().regex(/^[A-Z]{3}$/),
   perPerson: z.boolean(),
   sourceUrl: z.url().nullable(),
+  stop: z.number().int().min(0).max(100).nullable(),
 });
 
 /** Claude through the Vercel AI SDK, with Anthropic web search (ADR 0011). */
@@ -56,7 +57,7 @@ export function createClaudeAgentModel(modelId: string): AgentModel {
           }),
           suggest_budget_item: tool({
             description:
-              "Propose one cost (flight, lodging, transport, food, other) for the members to approve. Call once per item.",
+              "Propose one cost (flight, lodging, transport, food, other) for the members to approve. Call once per item. Set stop to the route stop number the cost belongs to (lodging, food, local transport in a city); null only for costs of the whole trip.",
             inputSchema: budgetSchema,
             execute: async (input) => {
               suggestions.push({ kind: "budget", ...input });

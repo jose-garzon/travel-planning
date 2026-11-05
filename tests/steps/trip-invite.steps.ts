@@ -11,7 +11,9 @@ function inviteLink(page: Page) {
 }
 
 async function openInviteCard(page: Page) {
-  await page.getByRole("button", { name: "Invite", exact: true }).click();
+  // After hydration the page picks the rail box or the ticket button by width.
+  await page.waitForLoadState("networkidle");
+  await page.getByRole("button", { name: "Share", exact: true }).click();
   await expect(inviteLink(page)).toBeVisible();
 }
 

@@ -45,6 +45,16 @@ function stateFrom(legs: InitialLeg[]): State {
   };
 }
 
+/** The day after `iso`, or "" when there is no date to follow. */
+function nextDay(iso: string | undefined): string {
+  if (!iso) {
+    return "";
+  }
+  const date = new Date(`${iso}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
 function sameName(a: CityRef, b: CityRef): boolean {
   return a.name.trim().toLowerCase() === b.name.trim().toLowerCase();
 }
@@ -71,17 +81,23 @@ export function useRouteEditor(initialLegs: InitialLeg[] = []) {
     last.to.name !== "" &&
     !sameName(last.to, origin);
 
-  function append(to: CityRef) {
+  /** Adds a stop at `index` (the end when omitted), dated the day after the stop before it. */
+  function insert(to: CityRef, index?: number) {
     setState((current) => {
       if (current.stops.length >= MAX_LEGS) {
         return current;
       }
-      const stop: EditorStop = { key: current.nextKey, to, date: "" };
+      const at = Math.min(Math.max(index ?? current.stops.length, 0), current.stops.length);
+      const stop: EditorStop = {
+        key: current.nextKey,
+        to,
+        date: nextDay(current.stops[at - 1]?.date),
+      };
       return {
         ...current,
-        stops: [...current.stops, stop],
+        stops: [...current.stops.slice(0, at), stop, ...current.stops.slice(at)],
         nextKey: current.nextKey + 1,
-        change: { id: current.nextKey, kind: "added", number: current.stops.length + 1 },
+        change: { id: current.nextKey, kind: "added", number: at + 1 },
       };
     });
   }
@@ -103,8 +119,10 @@ export function useRouteEditor(initialLegs: InitialLeg[] = []) {
     setOrigin: (city: CityRef) => setState((current) => ({ ...current, origin: city })),
     setTo: (index: number, to: CityRef) => updateStop(index, { to }),
     setDate: (index: number, date: string) => updateStop(index, { date }),
-    addLeg: () => append(EMPTY_CITY),
-    addReturnHome: () => append(origin),
+    addLeg: () => insert(EMPTY_CITY),
+    /** A new stop before leg `index`: between two existing destinations. */
+    insertLeg: (index: number) => insert(EMPTY_CITY, index),
+    addReturnHome: () => insert(origin),
     removeLeg: (index: number) =>
       setState((current) => {
         if (current.stops.length <= 1) {

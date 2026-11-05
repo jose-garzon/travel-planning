@@ -17,6 +17,8 @@ export type BudgetItem = {
   /** A per-person item counts only for this member; null splits equally. */
   userId: string | null;
   link: string | null;
+  /** Leg position (0-based) of the stop it belongs to; null: whole trip. */
+  stop: number | null;
 };
 
 export type ActivityCost = { title: string; cost: number; participantIds: string[] };

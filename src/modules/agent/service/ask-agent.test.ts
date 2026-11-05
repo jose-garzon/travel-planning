@@ -92,4 +92,10 @@ describe("systemPrompt", () => {
     expect(prompt).toContain("Bogotá → Madrid");
     expect(prompt).toContain("EUR");
   });
+
+  it("keeps the agent to the trip", () => {
+    const prompt = systemPrompt(trip, "en", "2027-01-01");
+    expect(prompt).toContain("Scope: only this trip");
+    expect(prompt).toContain("out of scope");
+  });
 });

@@ -15,6 +15,7 @@ const columns = {
   rate: budgetItem.rate,
   userId: budgetItem.userId,
   link: budgetItem.link,
+  stop: budgetItem.stop,
 };
 
 export class DrizzleBudgetRepository implements BudgetRepository {

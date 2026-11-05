@@ -18,5 +18,9 @@
   "leaveDescription": "Perderás el acceso al viaje. Puedes volver a unirte con el enlace de invitación.",
   "leaveConfirm": "Salir",
   "leaveFailed": "No pudimos salir del viaje. Revisa tu conexión e inténtalo de nuevo.",
-  "offline": "Sin conexión. Quitar y salir requieren conexión."
+  "offline": "Sin conexión. Quitar y salir requieren conexión.",
+  "inviteMore": "Suma más amigos",
+  "inviteHint": "Comparte un enlace. Quien lo abra entra como editor. Sirve por 7 días.",
+  "share": "Compartir",
+  "shareHint": "Quien abra el enlace se une como editor."
 }

@@ -19,6 +19,7 @@
   "free": "Free",
   "perPerson": "{amount} per person",
   "minutes": "{count, plural, one {# minute} other {# minutes}}",
+  "hours": "{count, plural, one {# hour} other {# hours}}",
   "overlap": "Overlaps another activity this day",
   "openLink": "Open link",
   "nobody": "Nobody has joined yet",
@@ -27,5 +28,11 @@
   "leave": "I'm out",
   "edit": "Edit",
   "delete": "Delete",
-  "deleteConfirm": "Delete “{title}” for everyone?"
+  "deleteConfirm": "Delete “{title}” for everyone?",
+  "more": "More actions for “{title}”",
+  "moreDetails": "More details",
+  "editTitle": "Edit activity",
+  "close": "Close",
+  "subheading": "Activities",
+  "deleteWarning": "It's removed for everyone on the trip. This can't be undone."
 }

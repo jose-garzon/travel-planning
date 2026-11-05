@@ -15,20 +15,20 @@ function leg(page: import("@playwright/test").Page, legNumber: number) {
 When(
   "I set leg {int} from {string} to {string} on day {word}",
   async ({ page }, legNumber: number, from: string, to: string, offset: string) => {
-    await leg(page, legNumber).getByLabel("From").fill(from);
-    await leg(page, legNumber).getByLabel("To").fill(to);
+    await leg(page, legNumber).getByLabel("From", { exact: true }).fill(from);
+    await leg(page, legNumber).getByLabel("To", { exact: true }).fill(to);
     await leg(page, legNumber).getByLabel("Departure date").fill(dayFromOffset(offset));
   },
 );
 
 When("I set leg {int} to {string}", async ({ page }, legNumber: number, to: string) => {
-  await leg(page, legNumber).getByLabel("To").fill(to);
+  await leg(page, legNumber).getByLabel("To", { exact: true }).fill(to);
 });
 
 When(
   "I set leg {int} to {string} on day {word}",
   async ({ page }, legNumber: number, to: string, offset: string) => {
-    await leg(page, legNumber).getByLabel("To").fill(to);
+    await leg(page, legNumber).getByLabel("To", { exact: true }).fill(to);
     await leg(page, legNumber).getByLabel("Departure date").fill(dayFromOffset(offset));
   },
 );
@@ -64,14 +64,14 @@ When("I add legs until there are {int}", async ({ page }, count: number) => {
 });
 
 Then("leg {int} starts from {string}", async ({ page }, legNumber: number, from: string) => {
-  await expect(leg(page, legNumber).getByLabel("From")).toHaveValue(from);
+  await expect(leg(page, legNumber).getByLabel("From", { exact: true })).toHaveValue(from);
 });
 
 Then(
   "leg {int} goes from {string} to {string}",
   async ({ page }, legNumber: number, from: string, to: string) => {
-    await expect(leg(page, legNumber).getByLabel("From")).toHaveValue(from);
-    await expect(leg(page, legNumber).getByLabel("To")).toHaveValue(to);
+    await expect(leg(page, legNumber).getByLabel("From", { exact: true })).toHaveValue(from);
+    await expect(leg(page, legNumber).getByLabel("To", { exact: true })).toHaveValue(to);
   },
 );
 

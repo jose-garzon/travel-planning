@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft, Check, House, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { previousDate, validateRoute } from "@/modules/trips/domain/route";
 import type { TripDto, TripInput } from "@/modules/trips/service/schemas";
@@ -10,7 +11,9 @@ import type { EditorLeg } from "@/modules/trips/ui/form/use-route-editor";
 import { useRouteEditor } from "@/modules/trips/ui/form/use-route-editor";
 import { Link, useRouter } from "@/shared/i18n/navigation";
 import { Button, buttonClasses } from "@/shared/ui/components/button";
+import { ConfirmDialog } from "@/shared/ui/components/confirm-dialog";
 import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
+import { Icon } from "@/shared/ui/components/icon";
 import { Input } from "@/shared/ui/components/input";
 import { Toast } from "@/shared/ui/components/toast";
 import type { Translatable } from "@/shared/ui/translatable";
@@ -162,7 +165,6 @@ export function TripForm({ trip }: TripFormProps) {
   }, [isEdit]);
 
   // Submit blocked: the first invalid field (DOM order is visual order) takes focus.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: runs once per failed attempt only.
   useEffect(() => {
     if (attempts > 0) {
       formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
@@ -238,8 +240,76 @@ export function TripForm({ trip }: TripFormProps) {
     }
   }
 
+  function insertButton(at: number, city: string) {
+    return (
+      <div className="mt-4">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          icon={Plus}
+          title={translate({
+            translateId: "trips.form.insertLeg",
+            values: { city: city || "…" },
+          })}
+          aria-label={translate({
+            translateId: "trips.form.insertLeg",
+            values: { city: city || "…" },
+          })}
+          onClick={() => route.insertLeg(at)}
+          translateId="trips.form.insertLegShort"
+        />
+      </div>
+    );
+  }
+
   return (
     <form ref={formRef} noValidate onSubmit={handleSubmit} className="flex flex-col gap-10">
+      {/* One bar for the form's two exits: back (with the unsaved-changes
+          guard) and save. Sticky, so saving is always in reach. */}
+      <div className="sticky top-0 z-20 -mx-6 -mb-4 flex items-center justify-between gap-3 border-border border-b-2 bg-bg/95 px-6 py-3 backdrop-blur-sm">
+        <Dialog
+          open={isDiscardOpen}
+          onOpenChange={(next) => setIsDiscardOpen(next && isDirty)}
+          title={{ translateId: "trips.edit.discardTitle" }}
+          description={{ translateId: "trips.edit.discardDescription" }}
+          closeLabel={{ translateId: "trips.edit.close" }}
+          trigger={
+            <Link
+              href={isEdit ? `/trips/${trip.id}` : "/"}
+              aria-label={translate({ translateId: "trips.form.cancel" })}
+              title={translate({ translateId: "trips.form.cancel" })}
+              className={buttonClasses({ variant: "outline", labelHidden: true })}
+              onClick={(event) => {
+                // Radix skips its own toggle once the default is prevented, so open here.
+                if (isDirty) {
+                  event.preventDefault();
+                  setIsDiscardOpen(true);
+                }
+              }}
+            >
+              <Icon icon={ArrowLeft} />
+            </Link>
+          }
+          footer={
+            <>
+              <DialogClose>
+                <Button type="button" variant="secondary" translateId="trips.edit.keepEditing" />
+              </DialogClose>
+              <Button
+                type="button"
+                onClick={() => router.push(isEdit ? `/trips/${trip.id}` : "/")}
+                translateId="trips.edit.discard"
+              />
+            </>
+          }
+        />
+        {/* Editing saves from the bar; a new trip saves at the foot, once
+            the fields above it are filled in. */}
+        {isEdit ? (
+          <Button type="submit" icon={Check} isLoading={isSaving} translateId="trips.edit.submit" />
+        ) : null}
+      </div>
       <Input
         appearance="title"
         placeholder={translate({ translateId: "trips.form.namePlaceholder" })}
@@ -248,37 +318,53 @@ export function TripForm({ trip }: TripFormProps) {
         onChange={(event) => setName(event.target.value)}
         error={errors.name}
       />
-      {legs.map((leg, index) => (
-        <LegFields
-          key={leg.key}
-          legNumber={index + 1}
-          fromName={index === 0 ? null : leg.from.name}
-          initialFromName={isEdit && index === 0 ? leg.from.name : undefined}
-          isInitiallyPlaced={isEdit}
-          fromCityId={leg.from.cityId}
-          initialToName={leg.to.name}
-          toRef={(element) => {
-            toRefs.current.set(leg.key, element);
-          }}
-          removeRef={(element) => {
-            removeRefs.current.set(leg.key, element);
-          }}
-          fromError={errors.legs[index]?.from}
-          toError={errors.legs[index]?.to}
-          dateError={errors.legs[index]?.date}
-          onFromChange={route.setOrigin}
-          onToChange={(city) => route.setTo(index, city)}
-          toName={leg.to.name}
-          date={leg.date}
-          onDateChange={(date) => route.setDate(index, date)}
-          onRemove={route.canRemoveLeg ? () => route.removeLeg(index) : undefined}
-        />
-      ))}
-      <div className="flex flex-wrap items-center gap-3">
+      <CurrencySelect value={currency} onChange={setCurrency} />
+      <div>
+        {legs.map((leg, index) => {
+          const next = legs[index + 1];
+          return (
+            <LegFields
+              key={leg.key}
+              legNumber={index + 1}
+              isContinuation={index > 0}
+              hasNext={next !== undefined}
+              suggestedMonth={legs[index - 1]?.date || today}
+              after={
+                next !== undefined && route.canAddLeg
+                  ? insertButton(index + 1, next.to.name)
+                  : undefined
+              }
+              afterFrom={index === 0 && route.canAddLeg ? insertButton(0, leg.to.name) : undefined}
+              fromName={index === 0 ? null : leg.from.name}
+              initialFromName={index === 0 ? leg.from.name : undefined}
+              isInitiallyPlaced={isEdit}
+              fromCityId={leg.from.cityId}
+              initialToName={leg.to.name}
+              toRef={(element) => {
+                toRefs.current.set(leg.key, element);
+              }}
+              removeRef={(element) => {
+                removeRefs.current.set(leg.key, element);
+              }}
+              fromError={errors.legs[index]?.from}
+              toError={errors.legs[index]?.to}
+              dateError={errors.legs[index]?.date}
+              onFromChange={route.setOrigin}
+              onToChange={(city) => route.setTo(index, city)}
+              toName={leg.to.name}
+              date={leg.date}
+              onDateChange={(date) => route.setDate(index, date)}
+              onRemove={route.canRemoveLeg ? () => route.removeLeg(index) : undefined}
+            />
+          );
+        })}
+      </div>
+      <div className="-mt-6 flex flex-wrap items-center gap-3">
         <Button
           ref={addRef}
           type="button"
           variant="secondary"
+          icon={Plus}
           disabled={!route.canAddLeg}
           onClick={route.addLeg}
           translateId="trips.form.addLeg"
@@ -286,7 +372,9 @@ export function TripForm({ trip }: TripFormProps) {
         {route.canAddReturnHome && (
           <Button
             type="button"
-            variant="secondary"
+            variant="outline"
+            size="sm"
+            icon={House}
             onClick={route.addReturnHome}
             translateId="trips.form.addReturnHome"
           />
@@ -300,7 +388,6 @@ export function TripForm({ trip }: TripFormProps) {
             values: { number: change.number },
           })}
       </p>
-      <CurrencySelect value={currency} onChange={setCurrency} />
       {hasConflict && (
         <div role="alert" className="flex flex-wrap items-center gap-3 text-error">
           <p>{translate({ translateId: "trips.edit.conflict" })}</p>
@@ -317,73 +404,38 @@ export function TripForm({ trip }: TripFormProps) {
           {translate({ translateId: "trips.form.errors.saveFailed" })}
         </p>
       )}
-      {/* Pinned on mobile so the one action is always in reach. */}
-      <div className="sticky bottom-0 -mx-6 bg-bg px-6 pt-3 pb-6 sm:static sm:mx-0 sm:p-0">
-        <div className="flex flex-wrap items-center gap-3">
-          <Button
-            type="submit"
-            isLoading={isSaving}
-            translateId={isEdit ? "trips.edit.submit" : "trips.form.submit"}
-          />
-          <Dialog
-            open={isDiscardOpen}
-            onOpenChange={(next) => setIsDiscardOpen(next && isDirty)}
-            title={{ translateId: "trips.edit.discardTitle" }}
-            description={{ translateId: "trips.edit.discardDescription" }}
-            closeLabel={{ translateId: "trips.edit.close" }}
-            trigger={
-              <Link
-                href="/"
-                className={buttonClasses({ variant: "secondary" })}
-                onClick={(event) => {
-                  // Radix skips its own toggle once the default is prevented, so open here.
-                  if (isDirty) {
-                    event.preventDefault();
-                    setIsDiscardOpen(true);
-                  }
-                }}
-              >
-                {translate({ translateId: "trips.form.cancel" })}
-              </Link>
-            }
-            footer={
-              <>
-                <DialogClose>
-                  <Button type="button" variant="secondary" translateId="trips.edit.keepEditing" />
-                </DialogClose>
-                <Button
-                  type="button"
-                  onClick={() => router.push("/")}
-                  translateId="trips.edit.discard"
-                />
-              </>
-            }
-          />
-          {isEdit && trip.role === "owner" && (
-            <Dialog
-              open={isDeleteOpen}
-              onOpenChange={setIsDeleteOpen}
-              title={{ translateId: "trips.edit.deleteTitle" }}
-              description={{ translateId: "trips.edit.deleteDescription" }}
-              closeLabel={{ translateId: "trips.edit.close" }}
-              trigger={<Button type="button" variant="secondary" translateId="trips.edit.delete" />}
-              footer={
-                <>
-                  <DialogClose>
-                    <Button type="button" variant="secondary" translateId="trips.form.cancel" />
-                  </DialogClose>
-                  <Button
-                    type="button"
-                    isLoading={isDeleting}
-                    onClick={handleDelete}
-                    translateId="trips.edit.deleteConfirm"
-                  />
-                </>
-              }
-            />
-          )}
+      {isEdit ? null : (
+        <div>
+          <Button type="submit" icon={Check} isLoading={isSaving} translateId="trips.form.submit" />
         </div>
-      </div>
+      )}
+      {isEdit && trip.role === "owner" && (
+        <div className="mt-6 flex flex-col gap-4 rounded-md border-2 border-error border-dashed p-4">
+          <p className="max-w-prose text-sm text-text-muted">
+            {translate({ translateId: "trips.edit.deleteDescription" })}
+          </p>
+          <ConfirmDialog
+            open={isDeleteOpen}
+            onOpenChange={setIsDeleteOpen}
+            isLoading={isDeleting}
+            onConfirm={handleDelete}
+            title={{ translateId: "trips.edit.deleteTitle" }}
+            warning={{ translateId: "trips.edit.deleteDescription" }}
+            confirmLabel={{ translateId: "trips.edit.deleteConfirm" }}
+            closeLabel={{ translateId: "trips.edit.close" }}
+            cancelLabel={{ translateId: "trips.form.cancel" }}
+            trigger={
+              <Button
+                type="button"
+                variant="outline"
+                icon={Trash2}
+                fullWidth
+                translateId="trips.edit.delete"
+              />
+            }
+          />
+        </div>
+      )}
       {hasDeleteError && (
         <Toast tone="error" onDismiss={() => setHasDeleteError(false)}>
           {translate({ translateId: "trips.edit.deleteFailed" })}

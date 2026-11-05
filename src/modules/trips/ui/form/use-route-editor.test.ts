@@ -111,4 +111,27 @@ describe("useRouteEditor", () => {
     act(() => result.current.removeLeg(1));
     expect(result.current.change).toMatchObject({ kind: "removed", number: 2 });
   });
+
+  it("inserts a stop between two destinations and rechains the legs", () => {
+    const { result } = setup();
+    act(() => result.current.setOrigin(city("Bogotá")));
+    act(() => result.current.setTo(0, city("Madrid")));
+    act(() => result.current.addLeg());
+    act(() => result.current.setTo(1, city("Rome")));
+    act(() => result.current.insertLeg(1));
+    act(() => result.current.setTo(1, city("Paris")));
+    expect(result.current.legs.map((l) => [l.from.name, l.to.name])).toEqual([
+      ["Bogotá", "Madrid"],
+      ["Madrid", "Paris"],
+      ["Paris", "Rome"],
+    ]);
+    expect(result.current.change).toMatchObject({ kind: "added", number: 2 });
+  });
+
+  it("suggests the day after the previous stop for a new stop", () => {
+    const { result } = setup();
+    act(() => result.current.setDate(0, "2027-02-28"));
+    act(() => result.current.addLeg());
+    expect(result.current.legs[1]?.date).toBe("2027-03-01");
+  });
 });

@@ -29,4 +29,9 @@ const envSchema = z.object({
   ERROR_WEBHOOK_URL: z.url().optional(),
 });
 
-export const env = envSchema.parse(process.env);
+// `KEY=` (copied from .env.example) means unset, not an empty value.
+const definedEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([, value]) => value !== ""),
+);
+
+export const env = envSchema.parse(definedEnv);

@@ -5,11 +5,12 @@
   "joining": "Uniéndome…",
   "joined": "Te uniste a {trip}",
   "already": "Ya estás en este viaje",
-  "expired": "Este enlace de invitación ha caducado.",
   "expiredAsk": "Este enlace de invitación ha caducado. Pide a {owner} uno nuevo.",
   "expiredAskOwner": "Este enlace de invitación ha caducado. Pide al organizador del viaje uno nuevo.",
   "full": "Este viaje está completo ({count} viajeros)",
   "failed": "No se pudo unir al viaje. Revisa tu conexión e inténtalo de nuevo.",
   "goHome": "Volver al inicio",
-  "offline": "Sin conexión. Unirte al viaje requiere conexión."
+  "offline": "Sin conexión. Unirte al viaje requiere conexión.",
+  "invalid": "Este enlace de invitación ya no funciona.",
+  "invalidHint": "Puede que lo hayan cambiado o esté mal escrito. Pide uno nuevo a quien te lo envió."
 }

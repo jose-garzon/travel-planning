@@ -38,6 +38,7 @@ function toRecord(
     rate: input.currency === context.currency ? "1" : (input.rate ?? "1"),
     userId: input.userId,
     link: input.link,
+    stop: input.stop,
   };
 }
 

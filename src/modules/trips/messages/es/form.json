@@ -28,5 +28,8 @@
   "removeLeg": "Quitar tramo {number}",
   "legLimit": "Hasta 10 tramos",
   "legAdded": "Tramo {number} añadido",
-  "legRemoved": "Tramo {number} quitado"
+  "legRemoved": "Tramo {number} quitado",
+  "insertLeg": "Añadir parada antes de {city}",
+  "insertLegShort": "Parada aquí",
+  "pickDate": "Abrir calendario"
 }

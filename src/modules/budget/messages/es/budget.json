@@ -45,5 +45,15 @@
     "transport": "Dividido por igual entre todos.",
     "food": "Estimado total de comida, dividido por igual entre todos.",
     "other": "Dividido por igual entre todos."
-  }
+  },
+  "capToggle": "Fijar un tope de presupuesto",
+  "capUsed": "Tope usado",
+  "noSplitYet": "Agrega un gasto para ver a dónde va la plata.",
+  "totalLabel": "Total del viaje",
+  "capLabel": "Tope",
+  "noCap": "Sin tope",
+  "details": "Detalle del presupuesto",
+  "moreDetails": "Más detalles",
+  "close": "Cerrar",
+  "deleteWarning": "Se elimina para todos en el viaje. No se puede deshacer."
 }

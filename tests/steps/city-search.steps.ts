@@ -55,5 +55,5 @@ Then("I do not see the city option {string}", async ({ page }, option: string) =
 
 Then("I see a list of city options", async ({ page }) => {
   await expect(page.getByRole("listbox")).toBeVisible();
-  await expect(page.getByRole("option").first()).toBeVisible();
+  await expect(page.getByRole("listbox").getByRole("option").first()).toBeVisible();
 });

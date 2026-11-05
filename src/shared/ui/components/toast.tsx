@@ -18,10 +18,10 @@ type ToastProps = {
 
 const DEFAULT_DURATION_MS = 6000;
 
-// Tone shows in the rule, the icon and the words, never colour alone.
+// Tone shows in the outline, the icon and the words, never colour alone.
 const TONE_CLASSES: Record<ToastTone, string> = {
-  success: "border-l-success",
-  error: "border-l-error",
+  success: "border-success",
+  error: "border-error",
 };
 
 /**
@@ -53,7 +53,7 @@ export function Toast({ tone, children, durationMs = DEFAULT_DURATION_MS, onDism
       aria-live={tone === "error" ? "assertive" : "polite"}
       className={cx(
         "fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-dialog items-center gap-3 rounded-md",
-        "border-2 border-l-8 border-text bg-surface-1 py-2 pr-2 pl-4 text-text",
+        "border-2 bg-surface-1 py-2 pr-2 pl-4 text-text shadow-md",
         "motion-safe:animate-fade-in",
         TONE_CLASSES[tone],
       )}

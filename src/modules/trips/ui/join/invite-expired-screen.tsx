@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/shared/i18n/navigation";
 import { buttonClasses } from "@/shared/ui/components/button";
+import { LineClosed } from "@/shared/ui/components/line-closed";
 
 type InviteExpiredScreenProps = {
   /** The owner to name, when the page knows them (an expired, not reset, link). */
@@ -19,12 +20,16 @@ export function InviteExpiredScreen({ ownerName, askTripOwner = false }: InviteE
     if (ownerName !== undefined && ownerName !== "") {
       return t("expiredAsk", { owner: ownerName });
     }
-    return askTripOwner ? t("expiredAskOwner") : t("expired");
+    return askTripOwner ? t("expiredAskOwner") : t("invalid");
   }
+  // No owner and not mid-join: the link was reset, mistyped or its trip is gone.
+  const unknown = !askTripOwner && (ownerName === undefined || ownerName === "");
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col items-start gap-4">
+      <LineClosed className="mb-2" />
       <h1 className="font-display text-3xl font-bold">{message()}</h1>
+      {unknown ? <p className="text-text-muted">{t("invalidHint")}</p> : null}
       <Link href="/" className={buttonClasses()}>
         {t("goHome")}
       </Link>

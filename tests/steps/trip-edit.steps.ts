@@ -3,6 +3,7 @@ import type { DataTable } from "playwright-bdd";
 import { Given, Then, When } from "./fixtures";
 import { ownerEmailFor } from "./support/owners";
 import { signedInEmail } from "./support/session";
+import { openTripEditor } from "./support/trip-editor";
 import { bumpTripVersion, findTripId, seedTrip } from "./support/trips";
 
 Given("I have a trip {string} with route:", async ({ page }, name: string, table: DataTable) => {
@@ -23,6 +24,12 @@ Given("I have a trip {string} with route:", async ({ page }, name: string, table
 When("I open the trip {string}", async ({ page }, name: string) => {
   const id = await findTripId(ownerEmailFor(page, name), name);
   await page.goto(`/trips/${id}`);
+});
+
+When("I edit the trip {string}", async ({ page }, name: string) => {
+  const id = await findTripId(ownerEmailFor(page, name), name);
+  await page.goto(`/trips/${id}`);
+  await openTripEditor(page);
 });
 
 When("someone else changes the trip {string}", async ({ page }, name: string) => {

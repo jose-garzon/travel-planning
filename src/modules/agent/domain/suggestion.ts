@@ -24,6 +24,8 @@ export type BudgetSuggestion = {
   /** True for a per-person item (a flight for the asking member). */
   perPerson: boolean;
   sourceUrl: string | null;
+  /** Route stop it belongs to (leg position, 0 = first destination); null: whole trip. */
+  stop: number | null;
 };
 
 export type Suggestion = (ActivitySuggestion | BudgetSuggestion) & { id: string };

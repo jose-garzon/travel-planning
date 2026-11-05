@@ -12,6 +12,7 @@ function item(overrides: Partial<BudgetItem>): BudgetItem {
     rate: "1",
     userId: null,
     link: null,
+    stop: null,
     ...overrides,
   };
 }

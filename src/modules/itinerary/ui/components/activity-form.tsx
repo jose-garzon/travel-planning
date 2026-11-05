@@ -1,9 +1,11 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { ChevronRight } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useState } from "react";
 import type { ActivityDto, ActivityInput } from "@/modules/itinerary/service/schemas";
 import { Button } from "@/shared/ui/components/button";
+import { Icon } from "@/shared/ui/components/icon";
 import { Input } from "@/shared/ui/components/input";
 
 export type ActivityFormProps = {
@@ -13,7 +15,6 @@ export type ActivityFormProps = {
   initial?: ActivityDto;
   /** Resolves to an error message, or null when saved. */
   onSubmit: (input: ActivityInput) => Promise<string | null>;
-  onCancel: () => void;
 };
 
 function text(form: FormData, name: string): string {
@@ -31,9 +32,9 @@ export function ActivityForm({
   endDate,
   initial,
   onSubmit,
-  onCancel,
 }: ActivityFormProps) {
   const t = useTranslations("itinerary.activities");
+  const locale = useLocale();
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [currency, setCurrency] = useState(initial?.currency ?? tripCurrency);
@@ -61,8 +62,11 @@ export function ActivityForm({
     setIsSaving(false);
   }
 
+  const days = tripDays(startDate, endDate);
+  const hasDetails = hasOptionalDetails(initial);
+
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3" noValidate>
+    <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
       <Input
         name="title"
         label={t("title")}
@@ -70,87 +74,159 @@ export function ActivityForm({
         required
         maxLength={80}
       />
-      <Input
-        name="date"
-        type="date"
-        label={t("day")}
-        defaultValue={initial?.date ?? startDate ?? undefined}
-        min={startDate ?? undefined}
-        max={endDate ?? undefined}
-        required
-      />
-      <div className="grid grid-cols-2 gap-3">
+      {days === null ? (
         <Input
-          name="startTime"
-          type="time"
-          label={t("startTime")}
-          hint={t("optional")}
-          defaultValue={initial?.startTime ?? undefined}
+          name="date"
+          type="date"
+          label={t("day")}
+          defaultValue={initial?.date ?? startDate ?? undefined}
+          min={startDate ?? undefined}
+          max={endDate ?? undefined}
+          required
         />
-        <Input
-          name="duration"
-          type="number"
-          min={1}
-          inputMode="numeric"
-          label={t("duration")}
-          hint={t("optional")}
-          defaultValue={initial?.durationMinutes ?? undefined}
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <Input
-          name="cost"
-          type="number"
-          min={0}
-          step="0.01"
-          inputMode="decimal"
-          label={t("cost")}
-          hint={t("optional")}
-          defaultValue={
-            initial?.costPerPerson === null || initial === undefined
-              ? undefined
-              : initial.costPerPerson / 100
-          }
-        />
-        <Input
-          name="currency"
-          label={t("currency")}
-          maxLength={3}
-          value={currency}
-          onChange={(event) => setCurrency(event.target.value.toUpperCase())}
-        />
-      </div>
-      {currency !== tripCurrency ? (
-        <Input
-          name="rate"
-          type="number"
-          min={0}
-          step="any"
-          inputMode="decimal"
-          label={t("rate", { from: currency || "?", to: tripCurrency })}
-          defaultValue={initial?.rate ?? undefined}
-        />
-      ) : null}
-      <Input
-        name="link"
-        type="url"
-        label={t("link")}
-        hint={t("optional")}
-        defaultValue={initial?.link ?? undefined}
-      />
+      ) : (
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-2 font-semibold text-sm">{t("day")}</legend>
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+            {days.map((day, index) => (
+              <label key={day} className="day-chip">
+                <input
+                  type="radio"
+                  name="date"
+                  value={day}
+                  defaultChecked={(initial?.date ?? days[0]) === day}
+                  className="sr-only"
+                />
+                <span className="text-xs uppercase">{weekday(day)}</span>
+                <span className="font-bold font-display text-2xl leading-none tabular-nums">
+                  {dayNumber(day)}
+                </span>
+                {index === 0 || dayNumber(day) === "1" ? (
+                  <span className="text-xs">{month(day)}</span>
+                ) : (
+                  <span aria-hidden="true" className="text-xs">
+                    &nbsp;
+                  </span>
+                )}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
+      <details open={hasDetails} className="group flex flex-col">
+        <summary className="flex min-h-touch cursor-pointer list-none items-center gap-2 font-semibold">
+          <span className="inline-flex transition group-open:rotate-90">
+            <Icon icon={ChevronRight} size="sm" />
+          </span>
+          {t("moreDetails")}
+        </summary>
+        <div className="mt-3 flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              name="startTime"
+              type="time"
+              label={t("startTime")}
+              defaultValue={initial?.startTime ?? undefined}
+            />
+            <Input
+              name="duration"
+              type="number"
+              min={1}
+              inputMode="numeric"
+              label={t("duration")}
+              defaultValue={initial?.durationMinutes ?? undefined}
+            />
+          </div>
+          <div className="grid grid-cols-amount gap-3">
+            <Input
+              name="cost"
+              type="number"
+              min={0}
+              step="0.01"
+              inputMode="decimal"
+              label={t("cost")}
+              defaultValue={
+                initial?.costPerPerson === null || initial === undefined
+                  ? undefined
+                  : initial.costPerPerson / 100
+              }
+            />
+            <Input
+              name="currency"
+              label={t("currency")}
+              maxLength={3}
+              value={currency}
+              onChange={(event) => setCurrency(event.target.value.toUpperCase())}
+            />
+          </div>
+          {currency !== tripCurrency ? (
+            <Input
+              name="rate"
+              type="number"
+              min={0}
+              step="any"
+              inputMode="decimal"
+              label={t("rate", { from: currency || "?", to: tripCurrency })}
+              defaultValue={initial?.rate ?? undefined}
+            />
+          ) : null}
+          <Input
+            name="link"
+            type="url"
+            label={t("link")}
+            defaultValue={initial?.link ?? undefined}
+          />
+        </div>
+      </details>
       {error === null ? null : (
         <p role="alert" className="text-error">
           {error}
         </p>
       )}
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" isLoading={isSaving}>
-          {t("save")}
-        </Button>
-        <Button type="button" variant="secondary" onClick={onCancel}>
-          {t("cancel")}
-        </Button>
-      </div>
+      <Button type="submit" isLoading={isSaving}>
+        {t("save")}
+      </Button>
     </form>
   );
+
+  function weekday(day: string) {
+    return format(day, { weekday: "short" });
+  }
+  function dayNumber(day: string) {
+    return format(day, { day: "numeric" });
+  }
+  function month(day: string) {
+    return format(day, { month: "short" });
+  }
+  function format(day: string, options: Intl.DateTimeFormatOptions) {
+    return new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC" }).format(
+      new Date(`${day}T00:00:00Z`),
+    );
+  }
+}
+
+/** An edited activity with any optional field set opens "More details". */
+function hasOptionalDetails(initial: ActivityDto | undefined): boolean {
+  return (
+    initial !== undefined &&
+    (initial.startTime !== null ||
+      initial.durationMinutes !== null ||
+      initial.costPerPerson !== null ||
+      initial.link !== null)
+  );
+}
+
+/** Every day of the trip, when it has both ends and fits a chip row. */
+function tripDays(startDate: string | null, endDate: string | null): string[] | null {
+  if (startDate === null || endDate === null) {
+    return null;
+  }
+  const days: string[] = [];
+  const cursor = new Date(`${startDate}T00:00:00Z`);
+  const last = new Date(`${endDate}T00:00:00Z`);
+  while (cursor <= last && days.length <= 31) {
+    days.push(cursor.toISOString().slice(0, 10));
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return days.length === 0 || days.length > 31 ? null : days;
 }

@@ -15,6 +15,8 @@ export const budgetItemInputSchema = z.object({
     .nullable(),
   userId: z.string().min(1).nullable(),
   link: z.url().max(500).nullable(),
+  /** Leg position of the stop it belongs to; null or absent: whole trip. */
+  stop: z.number().int().min(0).max(100).nullable().default(null),
 });
 
 export type BudgetItemInput = z.infer<typeof budgetItemInputSchema>;
