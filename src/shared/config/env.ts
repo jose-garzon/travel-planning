@@ -22,6 +22,11 @@ const envSchema = z.object({
   // "off" disables Better Auth's IP rate limit (on by default in
   // production). CI only: its e2e sends every request from one IP.
   AUTH_RATE_LIMIT: z.enum(["on", "off"]).optional(),
+  // Agent (feature agent, ADR 0011). Unset key hides the agent panel.
+  ANTHROPIC_API_KEY: z.string().min(1).optional(),
+  AGENT_MODEL: z.string().min(1).default("claude-sonnet-5-5"),
+  // Observability (feature observability). All optional.
+  ERROR_WEBHOOK_URL: z.url().optional(),
 });
 
 export const env = envSchema.parse(process.env);

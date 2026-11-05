@@ -4,10 +4,10 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { Role } from "@/modules/trips/domain/trip";
 import type { MemberDto } from "@/modules/trips/service/schemas";
-import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
 import { useRouter } from "@/shared/i18n/navigation";
 import { Button } from "@/shared/ui/components/button";
 import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
+import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 
 export type MemberRowProps = {
   member: MemberDto;

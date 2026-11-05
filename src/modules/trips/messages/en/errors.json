@@ -8,5 +8,11 @@
   "OWNER_CANNOT_LEAVE": "The owner can’t leave the trip.",
   "MEMBER_NOT_FOUND": "That traveler isn’t on this trip.",
   "INVITE_EXPIRED": "This invite link has expired.",
-  "TRIP_FULL": "This trip already has 20 travelers."
+  "TRIP_FULL": "This trip already has 20 travelers.",
+  "ACTIVITY_NOT_FOUND": "That activity no longer exists.",
+  "ACTIVITY_OUTSIDE_TRIP": "Pick a day inside the trip dates.",
+  "TOO_MANY_ACTIVITIES": "This trip has too many activities.",
+  "BUDGET_ITEM_NOT_FOUND": "That budget item no longer exists.",
+  "AGENT_RATE_LIMITED": "You reached today's limit for the assistant. Try again tomorrow.",
+  "AGENT_UNAVAILABLE": "The assistant is not available right now. Try again in a moment."
 }

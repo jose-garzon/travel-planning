@@ -1,0 +1,22 @@
+{
+  "heading": "Asistente del viaje",
+  "intro": "Pide actividades, vuelos, transporte o alojamiento. Sugiere; nada cambia hasta que lo apruebes. Tu chat es privado.",
+  "label": "Pregunta al asistente",
+  "placeholder": "Planes baratos en Madrid el primer día",
+  "send": "Preguntar",
+  "thinking": "Buscando…",
+  "failed": "El asistente no pudo responder. Inténtalo de nuevo.",
+  "you": "Tú",
+  "assistant": "Asistente",
+  "suggestions": "Sugerencias",
+  "activityDetail": "Actividad el {date} · {cost} por persona",
+  "budgetDetail": "Gasto · {amount}",
+  "free": "gratis",
+  "estimate": "Precio estimado. Revisa la fuente antes de reservar.",
+  "source": "Fuente",
+  "approve": "Agregar al viaje",
+  "dismiss": "Descartar",
+  "approved": "Agregado al viaje.",
+  "approveFailed": "No se pudo agregar. Revisa los datos e inténtalo de nuevo.",
+  "offline": "Sin conexión. El asistente necesita conexión."
+}

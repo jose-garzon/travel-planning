@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
+import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 
 function setOnline(value: boolean) {
   Object.defineProperty(navigator, "onLine", { configurable: true, get: () => value });

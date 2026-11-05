@@ -21,7 +21,9 @@
     "lhci": "lhci autorun"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.97",
     "@libsql/client": "^0.18.0",
+    "ai": "^7.0.163",
     "better-auth": "^1.7.6",
     "drizzle-orm": "^0.45.3",
     "lucide-react": "^1.48.0",

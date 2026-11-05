@@ -1,0 +1,22 @@
+{
+  "heading": "Trip assistant",
+  "intro": "Ask for activities, flights, transport or lodging. It suggests; nothing changes until you approve. Your chat is private.",
+  "label": "Ask the assistant",
+  "placeholder": "Cheap things to do in Madrid on the first day",
+  "send": "Ask",
+  "thinking": "Searching…",
+  "failed": "The assistant could not answer. Try again.",
+  "you": "You",
+  "assistant": "Assistant",
+  "suggestions": "Suggestions",
+  "activityDetail": "Activity on {date} · {cost} per person",
+  "budgetDetail": "Cost · {amount}",
+  "free": "free",
+  "estimate": "Estimated price. Check the source before you book.",
+  "source": "Source",
+  "approve": "Add to trip",
+  "dismiss": "Dismiss",
+  "approved": "Added to the trip.",
+  "approveFailed": "Could not add it. Check the details and try again.",
+  "offline": "You are offline. The assistant needs a connection."
+}

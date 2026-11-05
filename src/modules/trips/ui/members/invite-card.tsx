@@ -3,10 +3,10 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement, useEffect, useRef, useState } from "react";
 import type { InviteDto } from "@/modules/trips/service/schemas";
-import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
 import { Button } from "@/shared/ui/components/button";
 import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
 import { Input } from "@/shared/ui/components/input";
+import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 
 export type InviteCardProps = {
   tripId: string;

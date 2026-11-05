@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/shared/i18n/routing";
+import { Analytics } from "@/shared/ui/components/analytics";
+import { ServiceWorker } from "@/shared/ui/components/service-worker";
 import { SiteHeader } from "@/shared/ui/components/site-header";
 import { TimeZoneCookie } from "@/shared/ui/components/time-zone-cookie";
 import { cx } from "@/shared/ui/cx";
@@ -41,7 +43,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           <TimeZoneCookie />
           <SiteHeader />
           {children}
+          <ServiceWorker />
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );

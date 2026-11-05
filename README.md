@@ -24,7 +24,7 @@ slice with strict TDD and automated review, then open a pull request.
 ## Stack
 
 Next.js 16, React 19, TypeScript, SQLite (Turso) + Drizzle, next-intl,
-Tailwind v4 + Radix, Vercel AI SDK + OpenRouter. Tested with Vitest,
+Tailwind v4 + Radix, Vercel AI SDK + Anthropic. Tested with Vitest,
 playwright-bdd and axe-core. Deployed on Vercel.
 
 

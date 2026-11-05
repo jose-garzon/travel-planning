@@ -1,6 +1,9 @@
 import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
+import { loadAgentMessages } from "@/modules/agent";
 import { loadAuthMessages } from "@/modules/auth";
+import { loadBudgetMessages } from "@/modules/budget";
+import { loadItineraryMessages } from "@/modules/itinerary";
 import { loadStyleguideMessages } from "@/modules/styleguide";
 import { loadTripsMessages } from "@/modules/trips";
 import type { Locale } from "@/shared/i18n/routing";
@@ -15,6 +18,9 @@ async function loadMessages(locale: Locale) {
     styleguide: await loadStyleguideMessages(locale),
     auth: await loadAuthMessages(locale),
     trips: await loadTripsMessages(locale),
+    itinerary: await loadItineraryMessages(locale),
+    budget: await loadBudgetMessages(locale),
+    agent: await loadAgentMessages(locale),
   };
 }
 

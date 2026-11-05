@@ -106,3 +106,36 @@ export function createMembersApi({ profiles }: { profiles: UserProfiles }) {
     leaveTrip: (command: LeaveTripCommand) => leaveTripUseCase(command, { members }),
   };
 }
+
+/**
+ * What other modules need about a trip (itinerary, budget, agent): currency,
+ * dates, stops and member ids. Null when missing or `userId` is not a member.
+ * Two queries.
+ */
+export async function getTripContext({
+  userId,
+  tripId,
+  locale = "en",
+}: {
+  userId: string;
+  tripId: string;
+  locale?: Locale;
+}) {
+  const [trip, roster] = await Promise.all([
+    deps.trips.findForMember(tripId, userId),
+    new DrizzleMembersRepository().listForTrip(tripId),
+  ]);
+  if (trip === null) {
+    return null;
+  }
+  const dto = toTripDto(trip, (city) => deps.cities.localizeName(city, locale));
+
+  return {
+    name: dto.name,
+    currency: dto.currency,
+    startDate: dto.startDate,
+    endDate: dto.endDate,
+    memberIds: roster.map((member) => member.userId),
+    stops: dto.legs.map((leg) => ({ city: leg.to.name, from: leg.from.name, date: leg.date })),
+  };
+}

@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { agent, budget, itinerary } from "@/app/_composition/trip-context";
 import { tripMembers } from "@/app/_composition/trip-members";
+import { AgentPanel } from "@/modules/agent/ui/entries/agent";
 import { getCurrentUser } from "@/modules/auth";
+import { BudgetCard } from "@/modules/budget/ui/entries/budget";
+import { ItineraryCard } from "@/modules/itinerary/ui/entries/itinerary";
 import { getTrip } from "@/modules/trips";
 import { TripForm } from "@/modules/trips/ui/entries/form";
 import { TravelersCard } from "@/modules/trips/ui/entries/members";
@@ -35,10 +39,17 @@ export default async function TripPage({
     notFound();
   }
 
-  const members = await tripMembers.listTripMembers({ userId: currentUser.id, tripId });
-  if (!members.ok) {
+  const [members, activities, costs] = await Promise.all([
+    tripMembers.listTripMembers({ userId: currentUser.id, tripId }),
+    itinerary.listActivities({ userId: currentUser.id, tripId }),
+    budget.getBudget({ userId: currentUser.id, tripId }),
+  ]);
+  if (!members.ok || !activities.ok || !costs.ok) {
     notFound();
   }
+  const memberNames = Object.fromEntries(
+    members.value.map((member) => [member.userId, member.name]),
+  );
 
   const { joined, already, invite } = await searchParams;
   const t = await getTranslations({ locale, namespace: "trips.edit" });
@@ -62,6 +73,28 @@ export default async function TripPage({
         role={result.value.role}
         openInvite={invite === "1"}
       />
+      <div className="mt-12 flex flex-col gap-12">
+        <ItineraryCard
+          tripId={tripId}
+          itinerary={activities.value}
+          startDate={result.value.startDate}
+          endDate={result.value.endDate}
+          memberNames={memberNames}
+        />
+        <BudgetCard
+          tripId={tripId}
+          budget={costs.value}
+          viewerId={currentUser.id}
+          memberNames={memberNames}
+        />
+        {agent.isEnabled() ? (
+          <AgentPanel
+            tripId={tripId}
+            viewerId={currentUser.id}
+            tripCurrency={result.value.currency}
+          />
+        ) : null}
+      </div>
     </main>
   );
 }

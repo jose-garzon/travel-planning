@@ -46,8 +46,8 @@ join by invite link.
 ## Budget rules
 
 - Activities: cost counted only for subscribed members.
-- Food: daily per-person estimate per destination, times days,
-  split equally among all members.
+- Food: entered as a total estimate, split equally among all members.
+  (v1; a daily per-person rate per destination is a later step.)
 - Transport and lodging: split equally among all members.
 - Flights: per person (each member may have their own flight).
 - Totals: trip total and per-person total, in the trip currency.
@@ -62,7 +62,7 @@ A key part of the product, not an add-on.
 
 - Searches for activities, flights and transport with the best prices
   for the trip's destinations and dates.
-- v1 data source: web search through OpenRouter. Results are labeled
+- v1 data source: Anthropic web search tool (ADR 0010). Results are labeled
   as estimates with a source link.
 - Suggests. Nothing changes until a member approves a suggestion.
   On approval it creates the activity or budget item.
@@ -114,7 +114,7 @@ Feature order. Each becomes a GitHub issue and goes through
    motion, voice. Styleguide page.
 2. Auth: magic link sign in (Better Auth + Resend).
 3. Trips and members: create trip, invite link, roles, remove member.
-4. Destinations: add cities with date ranges, calendar order.
+4. Destinations: covered by the trip route (ADR 0009).
 5. Itinerary: schedule activities per day, overlap warning,
    subscribe to activities.
 6. Budget: items, categories, currency, equal splits, per-person and

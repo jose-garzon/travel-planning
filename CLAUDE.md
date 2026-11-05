@@ -39,7 +39,7 @@ Every feature follows `docs/workflow.md`:
 - next-intl (en, es)
 - Tailwind v4 + Radix (customized) — defined in the design feature
 - Better Auth (magic link) — added in the auth feature
-- Vercel AI SDK + OpenRouter — added in the agent feature
+- Vercel AI SDK + Anthropic (ADR 0010) — agent feature
 - Biome, dependency-cruiser, lefthook
 - Vitest, playwright-bdd, axe-core, Lighthouse CI
 - Hosting: Vercel (production only, no previews)
