@@ -113,7 +113,7 @@ export class DrizzleTripsRepository implements TripRepository, TripEditRepositor
         createdAt: now,
         updatedAt: now,
       }),
-      db.insert(tripMember).values({ tripId: id, userId: ownerId, role: "owner" }),
+      db.insert(tripMember).values({ tripId: id, userId: ownerId, role: "owner", joinedAt: now }),
       ...input.legs.map((leg, position) =>
         db.insert(tripLeg).values({
           id: randomUUID(),

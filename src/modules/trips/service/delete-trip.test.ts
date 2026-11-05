@@ -40,8 +40,8 @@ describe("deleteTrip", () => {
     expect(trips.remove).not.toHaveBeenCalled();
   });
 
-  it("answers TRIP_FORBIDDEN for a member who is not the owner", async () => {
-    const trips = repository({ ...stored, role: "viewer" } as unknown as Trip);
+  it("answers TRIP_FORBIDDEN for an editor, who cannot delete (D-5)", async () => {
+    const trips = repository({ ...stored, role: "editor" });
 
     const result = await deleteTrip({ userId: "user-1", tripId: "trip-1" }, { trips });
 

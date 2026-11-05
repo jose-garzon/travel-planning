@@ -72,14 +72,14 @@ describe("updateTrip", () => {
     expect(trips.update).not.toHaveBeenCalled();
   });
 
-  it("answers TRIP_FORBIDDEN for a member who is not the owner", async () => {
-    const viewer = { ...stored, role: "viewer" } as unknown as Trip;
-    const trips = repository(viewer);
+  it("saves the changes for an editor, who edits but does not manage (D-5)", async () => {
+    const editor: Trip = { ...stored, role: "editor" };
+    const trips = repository(editor);
 
     const result = await updateTrip(command, { trips, cities });
 
-    expect(result).toEqual({ ok: false, error: { code: "TRIP_FORBIDDEN" } });
-    expect(trips.update).not.toHaveBeenCalled();
+    expect(result).toMatchObject({ ok: true, value: { name: "Europe 2027", version: 3 } });
+    expect(trips.update).toHaveBeenCalledTimes(1);
   });
 
   it("answers TRIP_VERSION_CONFLICT when the version is stale", async () => {

@@ -19,13 +19,12 @@ export type UpdateTripCommand = {
 
 export type UpdateTripError =
   | { code: "TRIP_NOT_FOUND" }
-  | { code: "TRIP_FORBIDDEN" }
   | { code: "TRIP_VERSION_CONFLICT" }
   | { code: "ROUTE_INVALID"; violations: RouteViolation[] };
 
 export type UpdateTripDeps = { trips: TripEditRepository; cities: CityNames };
 
-/** Saves changes to a trip for its owner, unless the route is invalid or the version is stale. */
+/** Saves changes to a trip for its owner or an editor (plan D-5), unless the route is invalid or the version is stale. */
 export async function updateTrip(
   { userId, tripId, locale, today, version, input }: UpdateTripCommand,
   { trips, cities }: UpdateTripDeps,
@@ -33,9 +32,6 @@ export async function updateTrip(
   const current = await trips.findForMember(tripId, userId);
   if (current === null) {
     return err({ code: "TRIP_NOT_FOUND" });
-  }
-  if ((current.role as string) !== "owner") {
-    return err({ code: "TRIP_FORBIDDEN" });
   }
 
   const violations = validateRoute({ legs: input.legs, today, previousLegs: current.legs });

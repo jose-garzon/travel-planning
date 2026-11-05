@@ -1,12 +1,7 @@
 "use client";
 
-import type { FormEvent } from "react";
-import { useRef, useState } from "react";
 import type landingMessages from "@/modules/auth/messages/en/landing.json";
-import { isValidEmailFormat } from "@/modules/auth/ui/email-format";
-import { useRequestMagicLink } from "@/modules/auth/ui/hooks/use-request-magic-link";
-import { Button } from "@/shared/ui/components/button";
-import { Input } from "@/shared/ui/components/input";
+import { MagicLinkForm } from "@/modules/auth/ui/components/magic-link-form";
 import { Panel } from "@/shared/ui/components/panel";
 import { RouteLine } from "@/shared/ui/components/route-line";
 import { useTranslatable } from "@/shared/ui/translatable";
@@ -71,59 +66,14 @@ function HowItWorks() {
 
 /**
  * `/[locale]` for a signed-out visitor (plan "States": landing). The
- * header (root layout) carries the wordmark.
- *
- * T01 behavior: client-side email-format validation (AC-9, inline
- * error, no request sent, focus stays on the field), submit through
- * `use-request-magic-link.ts` (AC-2), and the cooldown message (AC-10)
- * instead of the generic retriable one (AC-12). "Check your email"
- * replaces the form and is announced through the always-rendered
- * `aria-live="polite"` region (EC-3: a reload starts over at idle).
+ * header (root layout) carries the wordmark. The email form is
+ * `MagicLinkForm` (T04 extracted it for the join page's sign-in slot).
  *
  * Layout: copy, form and how-it-works first; the example trip follows
  * on mobile and takes the right half on `lg`.
  */
 export function LandingScreen() {
   const translate = useTranslatable();
-  const [email, setEmail] = useState("");
-  const [hasFormatError, setHasFormatError] = useState(false);
-  const emailInputRef = useRef<HTMLInputElement>(null);
-  const { status, errorKind, requestMagicLink, reset } = useRequestMagicLink();
-  const [isResending, setIsResending] = useState(false);
-  const hasSent = status === "sent" || isResending;
-
-  async function handleResend() {
-    setIsResending(true);
-    await requestMagicLink(email);
-    setIsResending(false);
-  }
-
-  function handleChangeEmail() {
-    reset();
-    setEmail("");
-    requestAnimationFrame(() => emailInputRef.current?.focus());
-  }
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!isValidEmailFormat(email)) {
-      setHasFormatError(true);
-      emailInputRef.current?.focus();
-      return;
-    }
-
-    setHasFormatError(false);
-    await requestMagicLink(email);
-  }
-
-  const fieldError = hasFormatError
-    ? { translateId: "auth.landing.invalidEmailError" as const }
-    : errorKind === "cooldown"
-      ? { translateId: "auth.landing.cooldownError" as const }
-      : errorKind === "generic"
-        ? { translateId: "auth.landing.genericError" as const }
-        : undefined;
 
   return (
     <main className="mx-auto flex w-full max-w-page flex-col gap-12 px-6 pt-8 pb-16 lg:flex-row lg:items-stretch lg:gap-16 lg:py-12">
@@ -134,53 +84,7 @@ export function LandingScreen() {
         <p className="mb-10 max-w-prose text-lg text-text-muted">
           {translate({ translateId: "auth.landing.tagline" })}
         </p>
-        {hasSent ? null : (
-          <form
-            onSubmit={handleSubmit}
-            className="flex w-full max-w-dialog flex-col gap-4"
-            noValidate
-          >
-            <Input
-              ref={emailInputRef}
-              type="email"
-              name="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              label={{ translateId: "auth.landing.emailLabel" }}
-              error={fieldError}
-            />
-            <Button
-              type="submit"
-              isLoading={status === "sending"}
-              translateId="auth.landing.submit"
-            />
-            <p className="text-sm text-text-muted">
-              {translate({ translateId: "auth.landing.description" })}
-            </p>
-          </form>
-        )}
-        <div aria-live="polite" className="w-full max-w-dialog">
-          {hasSent && (
-            <Panel tone="time" className="animate-fade-in p-6">
-              <p className="mb-4 font-semibold">
-                {translate({ translateId: "auth.landing.checkEmail", values: { email } })}
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  variant="secondary"
-                  isLoading={isResending}
-                  onClick={handleResend}
-                  translateId="auth.landing.resend"
-                />
-                <Button
-                  variant="secondary"
-                  onClick={handleChangeEmail}
-                  translateId="auth.landing.changeEmail"
-                />
-              </div>
-            </Panel>
-          )}
-        </div>
+        <MagicLinkForm />
         <HowItWorks />
       </div>
       <div className="lg:basis-1/2">

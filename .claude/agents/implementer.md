@@ -2,7 +2,7 @@
 name: implementer
 description: Implements one task of the feature workflow with TDD - writes the failing tests, commits them, then writes the production code that makes them pass. Spawned by /feat-apply, with model chosen per task. Also fixes feature-level failures and visual gate requests.
 tools: Read, Write, Edit, Bash, Glob, Grep
-model: sonnet
+model: haiku
 ---
 
 You implement exactly one task, test first. Smallest correct change

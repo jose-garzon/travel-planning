@@ -137,3 +137,60 @@ export async function bumpTripVersion(tripId: string): Promise<void> {
     args: [tripId],
   });
 }
+
+/** Last join time handed out, so members seeded in one scenario keep their order. */
+let lastJoinedAt = 0;
+
+/** Adds a member (a new `user` row) to the trip; returns the user id (feature 009, T01). */
+export async function seedMember({
+  tripId,
+  name,
+  role,
+}: {
+  tripId: string;
+  name: string;
+  role: "owner" | "editor";
+}): Promise<string> {
+  await busyTimeoutReady;
+
+  const userId = randomUUID();
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const email = `${slug}-${userId.slice(0, 8)}@example.com`;
+  const now = Date.now();
+  lastJoinedAt = Math.max(now, lastJoinedAt + 1);
+
+  await client.batch(
+    [
+      {
+        sql:
+          "INSERT INTO user (id, name, email, email_verified, name_confirmed_at, created_at, updated_at) " +
+          "VALUES (?, ?, ?, 1, ?, ?, ?)",
+        args: [userId, name, email, now, now, now],
+      },
+      {
+        sql: "INSERT INTO trip_member (trip_id, user_id, role, joined_at) VALUES (?, ?, ?, ?)",
+        args: [tripId, userId, role, lastJoinedAt],
+      },
+    ],
+    "write",
+  );
+
+  return userId;
+}
+
+/** Gives the trip an invite link with a known token (feature 009, T01). */
+export async function seedInvite({
+  tripId,
+  token,
+  expiresAt,
+}: {
+  tripId: string;
+  token: string;
+  expiresAt: Date;
+}): Promise<void> {
+  await busyTimeoutReady;
+  await client.execute({
+    sql: "INSERT INTO trip_invite (trip_id, token, created_at, expires_at) VALUES (?, ?, ?, ?)",
+    args: [tripId, token, Date.now(), expiresAt.getTime()],
+  });
+}

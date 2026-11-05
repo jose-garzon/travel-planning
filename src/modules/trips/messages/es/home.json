@@ -19,5 +19,8 @@
   "nextStepDates": "Siguiente: agrega fechas",
   "solo": "Por ahora solo tú",
   "ended": "Terminó el {date}",
-  "routeName": "Ruta: {route}"
+  "routeName": "Ruta: {route}",
+  "left": "Saliste de {trip}",
+  "removed": "Ya no estás en este viaje",
+  "inviteFriends": "Invitar amigos"
 }

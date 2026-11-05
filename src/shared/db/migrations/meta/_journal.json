@@ -15,6 +15,13 @@
       "when": 1793063773905,
       "tag": "0001_pale_newton_destine",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793754625503,
+      "tag": "0002_overjoyed_marvel_zombies",
+      "breakpoints": true
     }
   ]
 }

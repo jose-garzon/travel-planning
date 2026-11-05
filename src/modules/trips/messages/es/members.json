@@ -1,0 +1,22 @@
+{
+  "title": "Viajeros",
+  "count": "{count, plural, one {# viajero} other {# viajeros}}",
+  "owner": "Organizador",
+  "editor": "Editor",
+  "invite": "Invitar",
+  "alone": "Invita a tus amigos a planear juntos",
+  "showList": "Ver viajeros",
+  "hideList": "Ocultar viajeros",
+  "remove": "Quitar",
+  "removeTitle": "¿Quitar a {name} de este viaje?",
+  "removeDescription": "Perderá el acceso al viaje y a su ruta. Puede volver a unirse con el enlace de invitación.",
+  "removeConfirm": "Quitar",
+  "removed": "{name} fue quitado del viaje",
+  "removeFailed": "No pudimos quitar a {name}. Revisa tu conexión e inténtalo de nuevo.",
+  "leave": "Salir del viaje",
+  "leaveTitle": "¿Salir de este viaje?",
+  "leaveDescription": "Perderás el acceso al viaje. Puedes volver a unirte con el enlace de invitación.",
+  "leaveConfirm": "Salir",
+  "leaveFailed": "No pudimos salir del viaje. Revisa tu conexión e inténtalo de nuevo.",
+  "offline": "Sin conexión. Quitar y salir requieren conexión."
+}

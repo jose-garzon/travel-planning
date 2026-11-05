@@ -1,0 +1,20 @@
+{
+  "title": "Invite friends",
+  "description": "Anyone with the link joins as an editor.",
+  "close": "Close",
+  "link": "Invite link",
+  "copy": "Copy link",
+  "copied": "Copied",
+  "copyFailed": "Couldn’t copy the link. It’s selected, so press Ctrl+C to copy it.",
+  "share": "Share",
+  "expires": "Expires in {count, plural, one {# day} other {# days}}",
+  "reset": "Reset link",
+  "resetTitle": "Reset link?",
+  "resetDescription": "The current link stops working.",
+  "resetConfirm": "Reset",
+  "resetDone": "Link reset",
+  "cancel": "Cancel",
+  "loading": "Loading the link…",
+  "loadFailed": "Couldn’t load the invite link. Try again.",
+  "offline": "You’re offline. Resetting the link needs a connection."
+}

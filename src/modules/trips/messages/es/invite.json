@@ -1,0 +1,20 @@
+{
+  "title": "Invitar amigos",
+  "description": "Quien tenga el enlace se une como editor.",
+  "close": "Cerrar",
+  "link": "Enlace de invitación",
+  "copy": "Copiar enlace",
+  "copied": "Copiado",
+  "copyFailed": "No se pudo copiar el enlace. Está seleccionado: pulsa Ctrl+C para copiarlo.",
+  "share": "Compartir",
+  "expires": "Caduca en {count, plural, one {# día} other {# días}}",
+  "reset": "Restablecer enlace",
+  "resetTitle": "¿Restablecer el enlace?",
+  "resetDescription": "El enlace actual dejará de funcionar.",
+  "resetConfirm": "Restablecer",
+  "resetDone": "Enlace restablecido",
+  "cancel": "Cancelar",
+  "loading": "Cargando el enlace…",
+  "loadFailed": "No se pudo cargar el enlace. Inténtalo de nuevo.",
+  "offline": "Sin conexión. Restablecer el enlace requiere conexión."
+}

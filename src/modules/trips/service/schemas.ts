@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { CityRef, Trip } from "@/modules/trips/domain/trip";
+import type { CityRef, Role, Trip } from "@/modules/trips/domain/trip";
 import { tripDateRange } from "@/modules/trips/domain/trip";
 
 export const cityRefSchema = z.object({
@@ -36,7 +36,7 @@ export type TripDto = {
   name: string;
   currency: string;
   version: number;
-  role: "owner";
+  role: Role;
   memberCount: number;
   startDate: string | null;
   endDate: string | null;
@@ -62,3 +62,32 @@ export function toTripDto(trip: Trip, localizeName: (city: CityRef) => string): 
     })),
   };
 }
+
+/** A member of a trip with the name and email of their user (feature 009 "Contracts"). */
+export type MemberDto = {
+  userId: string;
+  name: string;
+  email: string;
+  role: Role;
+  joinedAt: string;
+};
+
+/** The invite link as the owner sees it; `url` is absolute, with no locale prefix (EC-9). */
+export type InviteDto = {
+  url: string;
+  expiresAt: string;
+};
+
+export type InvitePreviewDto = {
+  tripId: string;
+  tripName: string;
+  ownerName: string;
+  startDate: string | null;
+  endDate: string | null;
+  memberCount: number;
+};
+
+export type JoinResultDto = {
+  tripId: string;
+  alreadyMember: boolean;
+};

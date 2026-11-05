@@ -4,5 +4,9 @@
   "UNAUTHENTICATED": "Inicia sesión para gestionar viajes.",
   "TRIP_FORBIDDEN": "Solo el dueño puede cambiar este viaje.",
   "TRIP_NOT_FOUND": "No se encontró el viaje.",
-  "TRIP_VERSION_CONFLICT": "Este viaje cambió. Recarga para ver lo último."
+  "TRIP_VERSION_CONFLICT": "Este viaje cambió. Recarga para ver lo último.",
+  "OWNER_CANNOT_LEAVE": "El organizador no puede salir del viaje.",
+  "MEMBER_NOT_FOUND": "Esa persona no está en este viaje.",
+  "INVITE_EXPIRED": "Este enlace de invitación ha caducado.",
+  "TRIP_FULL": "Este viaje ya tiene 20 viajeros."
 }

@@ -16,8 +16,14 @@ type HomeScreenProps = {
   today: string;
   /** Shows the "Trip created" confirmation after a successful create. */
   justCreated?: boolean;
+  /** The trip just created; its toast offers "Invite friends" for it. */
+  createdTripId?: string;
   /** Shows the "Trip deleted" toast after a delete. */
   justDeleted?: boolean;
+  /** Names the trip in "You left {trip}" after the member leaves it. */
+  leftTrip?: string;
+  /** Shows "You're no longer in this trip" after a removal (EC-5). */
+  justRemoved?: boolean;
 };
 
 const DAY_MS = 86_400_000;
@@ -240,7 +246,10 @@ export function HomeScreen({
   summary,
   today,
   justCreated = false,
+  createdTripId,
   justDeleted = false,
+  leftTrip,
+  justRemoved = false,
 }: HomeScreenProps) {
   const translate = useTranslatable();
   const locale = useLocale();
@@ -259,13 +268,33 @@ export function HomeScreen({
       </div>
 
       {justCreated && (
-        <p role="status" className="mb-4 font-semibold text-success">
-          {translate({ translateId: "trips.home.created" })}
-        </p>
+        <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <p role="status" className="font-semibold text-success">
+            {translate({ translateId: "trips.home.created" })}
+          </p>
+          {createdTripId !== undefined && (
+            <Link
+              href={`/trips/${createdTripId}?invite=1`}
+              className="font-semibold text-accent underline"
+            >
+              {translate({ translateId: "trips.home.inviteFriends" })}
+            </Link>
+          )}
+        </div>
       )}
 
       {justDeleted && (
         <Toast tone="success">{translate({ translateId: "trips.edit.deleted" })}</Toast>
+      )}
+
+      {leftTrip && (
+        <Toast tone="success">
+          {translate({ translateId: "trips.home.left", values: { trip: leftTrip } })}
+        </Toast>
+      )}
+
+      {justRemoved && (
+        <Toast tone="error">{translate({ translateId: "trips.home.removed" })}</Toast>
       )}
 
       {hasNoTrips && <EmptyTripsState />}

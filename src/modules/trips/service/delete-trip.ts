@@ -1,3 +1,4 @@
+import { canManageMembers } from "@/modules/trips/domain/membership";
 import type { TripEditRepository } from "@/modules/trips/service/ports";
 import type { Result } from "@/shared/kernel/result";
 import { err, ok } from "@/shared/kernel/result";
@@ -15,7 +16,7 @@ export async function deleteTrip(
   if (current === null) {
     return err({ code: "TRIP_NOT_FOUND" });
   }
-  if ((current.role as string) !== "owner") {
+  if (!canManageMembers(current.role)) {
     return err({ code: "TRIP_FORBIDDEN" });
   }
 

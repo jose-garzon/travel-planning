@@ -1,7 +1,13 @@
 import { cookies } from "next/headers";
+import { redirect as nextRedirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { getCurrentUser, setDisplayName } from "@/modules/auth";
-import { LandingScreen, LinkExpiredScreen, NameCaptureScreen } from "@/modules/auth/ui";
+import {
+  LandingScreen,
+  LinkExpiredScreen,
+  NameCaptureScreen,
+  safeNextPath,
+} from "@/modules/auth/ui";
 import { getHomeTrips } from "@/modules/trips";
 import { HomeScreen } from "@/modules/trips/ui";
 import { redirect } from "@/shared/i18n/navigation";
@@ -31,8 +37,10 @@ function todayIn(timeZone: string | undefined): string {
 // home page.
 export default async function HomePage({ params, searchParams }: PageProps<"/[locale]">) {
   const { locale } = await params;
-  const { error, nameError, created, deleted } = await searchParams;
+  const { error, nameError, created, deleted, left, removed, next } = await searchParams;
   setRequestLocale(locale);
+  // A join link sends a new user here with `next` set to its accept path (feature 009 D-3).
+  const nextPath = safeNextPath(typeof next === "string" ? next : undefined);
 
   // Thin Server Action (architecture.md rule 7: only `app/` calls a
   // module's `index.ts`; `NameCaptureScreen` only receives it as a
@@ -48,9 +56,13 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
     const result = await setDisplayName(name);
 
     if (!result.ok) {
-      redirect({ href: { pathname: "/", query: { nameError: "1" } }, locale });
+      const query = nextPath === null ? { nameError: "1" } : { nameError: "1", next: nextPath };
+      redirect({ href: { pathname: "/", query }, locale });
     }
 
+    if (nextPath !== null) {
+      nextRedirect(nextPath);
+    }
     redirect({ href: "/", locale });
   }
 
@@ -67,6 +79,7 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
     return <NameCaptureScreen action={submitDisplayName} error={nameError === "1"} />;
   }
 
+  const createdTripId = typeof created === "string" ? created : undefined;
   const today = todayIn((await cookies()).get(TIME_ZONE_COOKIE)?.value);
   const summary = await getHomeTrips({
     userId: currentUser.id,
@@ -81,8 +94,11 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
         displayName={currentUser.displayName}
         summary={summary}
         today={today}
-        justCreated={created === "1"}
+        justCreated={createdTripId !== undefined}
+        createdTripId={createdTripId}
         justDeleted={deleted === "1"}
+        leftTrip={typeof left === "string" ? left : undefined}
+        justRemoved={removed === "1"}
       />
     </>
   );
