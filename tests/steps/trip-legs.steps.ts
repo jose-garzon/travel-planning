@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { Then, When } from "./fixtures";
+import { scrollSettled } from "./support/trip-editor";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -41,6 +42,7 @@ When("I add a leg", async ({ page }) => {
   const before = await legs.count();
   await expect(async () => {
     if ((await legs.count()) === before) {
+      await scrollSettled(page);
       await page.getByRole("button", { name: "Add stop" }).click();
     }
     await expect(legs).toHaveCount(before + 1, { timeout: 1000 });
@@ -64,11 +66,19 @@ When("I remove leg {int}", async ({ page }, legNumber: number) => {
 });
 
 When("I add legs until there are {int}", async ({ page }, count: number) => {
+  const legs = page.getByRole("group", { name: /^Stop \d+$/ });
   const add = page.getByRole("button", { name: "Add stop" });
   for (let n = 1; n < count; n++) {
-    await add.click();
+    // Each new stop takes focus and scrolls into view; click once it
+    // settles, and check the stop really landed before the next one.
+    await expect(async () => {
+      if ((await legs.count()) === n) {
+        await scrollSettled(page);
+        await add.click();
+      }
+      await expect(legs).toHaveCount(n + 1, { timeout: 1000 });
+    }).toPass({ timeout: 10_000 });
   }
-  await expect(page.getByRole("group", { name: /^Stop \d+$/ })).toHaveCount(count);
 });
 
 Then("leg {int} starts from {string}", async ({ page }, legNumber: number, from: string) => {

@@ -43,7 +43,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 };
 
 const BASE_CLASSES =
-  "inline-flex items-center justify-center gap-2 rounded-full whitespace-nowrap " +
+  "inline-flex items-center justify-center gap-2 rounded-full text-center " +
   "font-bold transition duration-fast ease-out cursor-pointer " +
   "motion-safe:ui-active:not-disabled:not-aria-disabled:scale-97 outline-focus " +
   "ui-focus:outline-2 ui-focus:outline-solid ui-focus:outline-focus " +
