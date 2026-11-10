@@ -13,7 +13,8 @@ const client = createClient({
 });
 const busyTimeoutReady = client.execute("PRAGMA busy_timeout = 5000;");
 
-const CONFLICT_MESSAGE = "This trip changed. Reload to see the latest.";
+const CONFLICT_MESSAGE =
+  "Someone changed this trip while you were editing. Your edits are still here.";
 
 Then(
   "I see no {string}, {string} or {string} controls",
@@ -39,7 +40,8 @@ When("I rename the trip to {string} and save", async ({ page }, name: string) =>
 });
 
 Then("the trip is named {string}", async ({ page }, name: string) => {
-  await expect(page.getByText(name, { exact: true })).toBeVisible();
+  // Saving lands back on the trip, whose title heading carries the name.
+  await expect(page.getByRole("heading", { level: 1, name, exact: true })).toBeVisible();
 });
 
 Given("I opened the trip {string}", async ({ page }, name: string) => {

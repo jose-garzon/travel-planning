@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { Then, When } from "./fixtures";
 
-/** The leg's group is named "Leg N" or "Tramo N" depending on the locale. */
+/** The leg's group is named "Stop N" or "Parada N" depending on the locale. */
 function legField(page: Page, legNumber: number, field: string) {
   return page
     .getByRole("group", { name: new RegExp(`\\b${legNumber}$`) })

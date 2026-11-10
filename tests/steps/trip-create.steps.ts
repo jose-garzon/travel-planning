@@ -21,7 +21,7 @@ When("I name the trip {string}", async ({ page }, name: string) => {
 When(
   "I set leg {int} from {string} to {string}",
   async ({ page }, legNumber: number, from: string, to: string) => {
-    const leg = page.getByRole("group", { name: `Leg ${legNumber}` });
+    const leg = page.getByRole("group", { name: `Stop ${legNumber}` });
     await leg.getByLabel("From", { exact: true }).fill(from);
     await leg.getByLabel("To", { exact: true }).fill(to);
   },

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, House, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, CircleAlert, House, Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { previousDate, validateRoute } from "@/modules/trips/domain/route";
 import type { TripDto, TripInput } from "@/modules/trips/service/schemas";
@@ -92,12 +92,13 @@ function snapshot(name: string, currency: string | null, legs: EditorLeg[]): str
 async function saveTrip(
   input: TripInput,
   trip: TripDto | undefined,
+  version = trip?.version,
 ): Promise<"conflict" | "removed" | "failed" | { tripId: string }> {
   try {
     const response = await fetch(trip ? `/api/v1/trips/${trip.id}` : "/api/v1/trips", {
       method: trip ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(trip ? { ...input, version: trip.version } : input),
+      body: JSON.stringify(trip ? { ...input, version } : input),
     });
     if (response.status === 409) {
       return "conflict";
@@ -123,6 +124,19 @@ type TripFormProps = {
   /** The saved trip to edit; the form creates a new trip without it. */
   trip?: TripDto;
 };
+
+/** The version the server holds now, so "save mine" can win a conflict. */
+async function latestVersion(tripId: string): Promise<number | null> {
+  try {
+    const response = await fetch(`/api/v1/trips/${tripId}`);
+    if (response.status !== 200) {
+      return null;
+    }
+    return ((await response.json()) as { version: number }).version;
+  } catch {
+    return null;
+  }
+}
 
 /** Create or edit form: name, currency and the route, leg by leg. */
 export function TripForm({ trip }: TripFormProps) {
@@ -189,19 +203,14 @@ export function TripForm({ trip }: TripFormProps) {
     (remove ?? addRef.current)?.focus();
   }, [change?.id]);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  useSaveShortcut(formRef);
 
-    if (hasErrors(findErrors(name, legs, today, trip?.legs))) {
-      setAttempts((count) => count + 1);
-      return;
-    }
-
+  async function save(version?: number) {
     const input: TripInput = { name: name.trim(), currency, legs: toInputLegs(legs) };
     setIsSaving(true);
     setHasSaveError(false);
     setHasConflict(false);
-    const outcome = await saveTrip(input, trip);
+    const outcome = await saveTrip(input, trip, version ?? trip?.version);
     setIsSaving(false);
     if (outcome === "conflict") {
       setHasConflict(true);
@@ -209,9 +218,35 @@ export function TripForm({ trip }: TripFormProps) {
       router.push({ pathname: "/", query: { removed: "1" } });
     } else if (outcome === "failed") {
       setHasSaveError(true);
+    } else if (isEdit) {
+      router.push({ pathname: `/trips/${outcome.tripId}`, query: { saved: "1" } });
     } else {
-      router.push(isEdit ? "/" : { pathname: "/", query: { created: outcome.tripId } });
+      router.push({ pathname: "/", query: { created: outcome.tripId } });
     }
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (hasErrors(findErrors(name, legs, today, trip?.legs))) {
+      setAttempts((count) => count + 1);
+      return;
+    }
+    await save();
+  }
+
+  // The user keeps their draft and saves it over the newer version.
+  async function overwrite() {
+    if (!isEdit) {
+      return;
+    }
+    const version = await latestVersion(trip.id);
+    if (version === null) {
+      setHasConflict(false);
+      setHasSaveError(true);
+      return;
+    }
+    await save(version);
   }
 
   // Closes the dialog so the error toast on the form is not behind it.
@@ -241,21 +276,20 @@ export function TripForm({ trip }: TripFormProps) {
   }
 
   function insertButton(at: number, city: string) {
+    const label = translate({
+      translateId: "trips.form.insertLeg",
+      values: { city: city || "…" },
+    });
+    // Pointer devices show it faint until hover or focus of the leg; touch keeps it full.
     return (
-      <div className="mt-4">
+      <div className="mt-4 transition-opacity duration-150 ease-out [@media(hover:hover)]:opacity-40 [@media(hover:hover)]:group-focus-within/leg:opacity-100 [@media(hover:hover)]:group-hover/leg:opacity-100">
         <Button
           type="button"
           variant="outline"
           size="sm"
           icon={Plus}
-          title={translate({
-            translateId: "trips.form.insertLeg",
-            values: { city: city || "…" },
-          })}
-          aria-label={translate({
-            translateId: "trips.form.insertLeg",
-            values: { city: city || "…" },
-          })}
+          title={label}
+          aria-label={label}
           onClick={() => route.insertLeg(at)}
           translateId="trips.form.insertLegShort"
         />
@@ -263,11 +297,21 @@ export function TripForm({ trip }: TripFormProps) {
     );
   }
 
+  const exitHref = isEdit ? `/trips/${trip.id}` : "/";
+  const exitLabel = translate({
+    translateId: isEdit ? "trips.edit.backToTrip" : "trips.form.cancel",
+  });
+
   return (
-    <form ref={formRef} noValidate onSubmit={handleSubmit} className="flex flex-col gap-10">
-      {/* One bar for the form's two exits: back (with the unsaved-changes
-          guard) and save. Sticky, so saving is always in reach. */}
-      <div className="sticky top-0 z-20 -mx-6 -mb-4 flex items-center justify-between gap-3 border-border border-b-2 bg-bg/95 px-6 py-3 backdrop-blur-sm">
+    <form
+      ref={formRef}
+      noValidate
+      data-sticky-bars
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-10"
+    >
+      {/* Back, with the unsaved-changes guard. Saving lives in the bottom bar. */}
+      <div className="sticky top-0 z-20 -mx-6 -mb-4 flex items-center gap-3 border-border border-b-2 bg-bg/95 px-6 py-3 backdrop-blur-sm">
         <Dialog
           open={isDiscardOpen}
           onOpenChange={(next) => setIsDiscardOpen(next && isDirty)}
@@ -276,9 +320,9 @@ export function TripForm({ trip }: TripFormProps) {
           closeLabel={{ translateId: "trips.edit.close" }}
           trigger={
             <Link
-              href={isEdit ? `/trips/${trip.id}` : "/"}
-              aria-label={translate({ translateId: "trips.form.cancel" })}
-              title={translate({ translateId: "trips.form.cancel" })}
+              href={exitHref}
+              aria-label={exitLabel}
+              title={exitLabel}
               className={buttonClasses({ variant: "outline", labelHidden: true })}
               onClick={(event) => {
                 // Radix skips its own toggle once the default is prevented, so open here.
@@ -298,27 +342,32 @@ export function TripForm({ trip }: TripFormProps) {
               </DialogClose>
               <Button
                 type="button"
-                onClick={() => router.push(isEdit ? `/trips/${trip.id}` : "/")}
+                onClick={() => router.push(exitHref)}
                 translateId="trips.edit.discard"
               />
             </>
           }
         />
-        {/* Editing saves from the bar; a new trip saves at the foot, once
-            the fields above it are filled in. */}
-        {isEdit ? (
-          <Button type="submit" icon={Check} isLoading={isSaving} translateId="trips.edit.submit" />
-        ) : null}
       </div>
-      <Input
-        appearance="title"
-        placeholder={translate({ translateId: "trips.form.namePlaceholder" })}
-        label={{ translateId: "trips.form.tripName" }}
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-        error={errors.name}
+      <div className="flex flex-col gap-3">
+        <Input
+          appearance="title"
+          placeholder={translate({ translateId: "trips.form.namePlaceholder" })}
+          label={{ translateId: "trips.form.tripName" }}
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          error={errors.name}
+        />
+        <p className="max-w-prose text-text-muted">
+          {translate({ translateId: isEdit ? "trips.edit.intro" : "trips.form.intro" })}
+        </p>
+      </div>
+      <CurrencySelect
+        value={currency}
+        onChange={setCurrency}
+        hint={isEdit ? { translateId: "trips.edit.currencyHint" } : undefined}
       />
-      <CurrencySelect value={currency} onChange={setCurrency} />
+
       <div>
         {legs.map((leg, index) => {
           const next = legs[index + 1];
@@ -382,65 +431,161 @@ export function TripForm({ trip }: TripFormProps) {
         {!route.canAddLeg && <p className="text-sm text-text-muted">{translate(MAX_LEGS_HINT)}</p>}
       </div>
       <p role="status" className="sr-only">
-        {change &&
-          translate({
-            translateId: change.kind === "added" ? "trips.form.legAdded" : "trips.form.legRemoved",
-            values: { number: change.number },
-          })}
+        {/* Removals announce through the undo toast. */}
+        {change?.kind === "added" &&
+          translate({ translateId: "trips.form.legAdded", values: { number: change.number } })}
       </p>
-      {hasConflict && (
-        <div role="alert" className="flex flex-wrap items-center gap-3 text-error">
-          <p>{translate({ translateId: "trips.edit.conflict" })}</p>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => router.refresh()}
-            translateId="trips.edit.reload"
-          />
-        </div>
-      )}
-      {hasSaveError && (
-        <p role="alert" className="text-error">
-          {translate({ translateId: "trips.form.errors.saveFailed" })}
-        </p>
-      )}
-      {isEdit ? null : (
-        <div>
-          <Button type="submit" icon={Check} isLoading={isSaving} translateId="trips.form.submit" />
-        </div>
-      )}
       {isEdit && trip.role === "owner" && (
-        <div className="mt-6 flex flex-col gap-4 rounded-md border-2 border-error border-dashed p-4">
-          <p className="max-w-prose text-sm text-text-muted">
-            {translate({ translateId: "trips.edit.deleteDescription" })}
-          </p>
-          <ConfirmDialog
-            open={isDeleteOpen}
-            onOpenChange={setIsDeleteOpen}
-            isLoading={isDeleting}
-            onConfirm={handleDelete}
-            title={{ translateId: "trips.edit.deleteTitle" }}
-            warning={{ translateId: "trips.edit.deleteDescription" }}
-            confirmLabel={{ translateId: "trips.edit.deleteConfirm" }}
-            closeLabel={{ translateId: "trips.edit.close" }}
-            cancelLabel={{ translateId: "trips.form.cancel" }}
-            trigger={
-              <Button
-                type="button"
-                variant="outline"
-                icon={Trash2}
-                fullWidth
-                translateId="trips.edit.delete"
-              />
-            }
-          />
-        </div>
+        <details className="group/danger border-border border-t-2 pt-6">
+          <summary className="inline-flex min-h-touch cursor-pointer items-center gap-2 font-semibold text-error">
+            <Icon icon={Trash2} size="sm" />
+            {translate({ translateId: "trips.edit.dangerZone" })}
+          </summary>
+          <div className="mt-4 flex flex-col gap-4 rounded-md border-2 border-error p-4">
+            <p className="max-w-prose text-sm text-text">
+              {translate({ translateId: "trips.edit.deleteDescription" })}
+            </p>
+            <ConfirmDialog
+              open={isDeleteOpen}
+              onOpenChange={setIsDeleteOpen}
+              isLoading={isDeleting}
+              onConfirm={handleDelete}
+              title={{ translateId: "trips.edit.deleteTitle", values: { name: trip.name } }}
+              warning={{ translateId: "trips.edit.deleteDescription" }}
+              confirmLabel={{ translateId: "trips.edit.deleteConfirm" }}
+              closeLabel={{ translateId: "trips.edit.close" }}
+              cancelLabel={{ translateId: "trips.edit.keepEditing" }}
+              trigger={
+                <Button
+                  type="button"
+                  variant="danger"
+                  icon={Trash2}
+                  translateId="trips.edit.delete"
+                />
+              }
+            />
+          </div>
+        </details>
+      )}
+      <SaveBar
+        isEdit={isEdit}
+        isSaving={isSaving}
+        hasConflict={hasConflict}
+        hasSaveError={hasSaveError}
+        onOverwrite={overwrite}
+        onReload={() => router.refresh()}
+      />
+      {route.removed !== null && change?.kind === "removed" && (
+        <Toast key={change.id} tone="success" placement="above-bar" onDismiss={route.forgetRemoved}>
+          <span className="flex flex-wrap items-center gap-3">
+            {translate({
+              translateId: "trips.form.legRemovedToast",
+              values: { number: change.number },
+            })}
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={route.undoRemove}
+              translateId="trips.form.undoRemove"
+            />
+          </span>
+        </Toast>
       )}
       {hasDeleteError && (
-        <Toast tone="error" onDismiss={() => setHasDeleteError(false)}>
+        <Toast tone="error" placement="above-bar" onDismiss={() => setHasDeleteError(false)}>
           {translate({ translateId: "trips.edit.deleteFailed" })}
         </Toast>
       )}
     </form>
+  );
+}
+
+/** Ctrl/Cmd+S submits the form, like any editor. */
+function useSaveShortcut(formRef: React.RefObject<HTMLFormElement | null>) {
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (!((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s")) {
+        return;
+      }
+      event.preventDefault();
+      // An open dialog (discard, delete) owns the keyboard; never save behind it.
+      if (document.querySelector('[role="dialog"], [role="alertdialog"]') === null) {
+        formRef.current?.requestSubmit();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [formRef]);
+}
+
+type SaveBarProps = {
+  isEdit: boolean;
+  isSaving: boolean;
+  hasConflict: boolean;
+  hasSaveError: boolean;
+  onOverwrite: () => void;
+  onReload: () => void;
+};
+
+function SaveBar({
+  isEdit,
+  isSaving,
+  hasConflict,
+  hasSaveError,
+  onOverwrite,
+  onReload,
+}: SaveBarProps) {
+  const translate = useTranslatable();
+  return (
+    <>
+      {/* Saving sits in the thumb zone, the same place when creating and editing.
+          A conflict or a failed save reports right above the button. */}
+      <div className="sticky bottom-0 z-20 -mx-6 flex flex-col gap-3 border-border border-t-2 bg-bg/95 px-6 py-3 backdrop-blur-sm">
+        {hasConflict && (
+          <div
+            role="alert"
+            className="flex flex-col gap-3 rounded-md border-2 border-border bg-surface-1 p-4"
+          >
+            <p className="flex items-start gap-2 text-text">
+              <span className="shrink-0 text-error">
+                <Icon icon={CircleAlert} />
+              </span>
+              {translate({ translateId: "trips.edit.conflict" })}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                type="button"
+                isLoading={isSaving}
+                onClick={onOverwrite}
+                translateId="trips.edit.overwrite"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onReload}
+                translateId="trips.edit.reload"
+              />
+            </div>
+          </div>
+        )}
+        {hasSaveError && (
+          <p role="alert" className="flex items-start gap-2 text-error text-sm">
+            <Icon icon={CircleAlert} size="sm" />
+            {translate({ translateId: "trips.form.errors.saveFailed" })}
+          </p>
+        )}
+        {hasConflict ? null : (
+          <Button
+            type="submit"
+            icon={Check}
+            fullWidth
+            isLoading={isSaving}
+            title={translate({ translateId: "trips.form.saveShortcut" })}
+            translateId={isEdit ? "trips.edit.submit" : "trips.form.submit"}
+          />
+        )}
+      </div>
+    </>
   );
 }

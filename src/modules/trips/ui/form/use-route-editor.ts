@@ -20,13 +20,23 @@ export type EditorLeg = {
 /** What changed last, for the live region and the focus rules. `id` makes repeats distinct. */
 export type RouteChange = { id: number; kind: "added" | "removed"; number: number };
 
-type State = { origin: CityRef; stops: EditorStop[]; nextKey: number; change: RouteChange | null };
+/** The stop last removed and where it stood, so the removal can be undone. */
+export type RemovedStop = { index: number; stop: EditorStop };
+
+type State = {
+  origin: CityRef;
+  stops: EditorStop[];
+  nextKey: number;
+  change: RouteChange | null;
+  removed: RemovedStop | null;
+};
 
 const INITIAL: State = {
   origin: EMPTY_CITY,
   stops: [{ key: 0, to: EMPTY_CITY, date: "" }],
   nextKey: 1,
   change: null,
+  removed: null,
 };
 
 /** The route of a saved trip, as the editor starts with it. */
@@ -42,6 +52,7 @@ function stateFrom(legs: InitialLeg[]): State {
     stops: legs.map((leg, key) => ({ key, to: leg.to, date: leg.date ?? "" })),
     nextKey: legs.length,
     change: null,
+    removed: null,
   };
 }
 
@@ -59,10 +70,15 @@ function sameName(a: CityRef, b: CityRef): boolean {
   return a.name.trim().toLowerCase() === b.name.trim().toLowerCase();
 }
 
+function stopAt(stops: EditorStop[], index: number): RemovedStop | null {
+  const stop = stops[index];
+  return stop === undefined ? null : { index, stop };
+}
+
 /** Route state for the trip form: legs chained from one origin, 1 to 10 legs. */
 export function useRouteEditor(initialLegs: InitialLeg[] = []) {
   const [state, setState] = useState<State>(() => stateFrom(initialLegs));
-  const { origin, stops, change } = state;
+  const { origin, stops, change, removed } = state;
 
   const legs: EditorLeg[] = stops.map((stop, index) => ({
     key: stop.key,
@@ -113,6 +129,7 @@ export function useRouteEditor(initialLegs: InitialLeg[] = []) {
     origin,
     legs,
     change,
+    removed,
     canAddLeg,
     canRemoveLeg,
     canAddReturnHome,
@@ -133,7 +150,26 @@ export function useRouteEditor(initialLegs: InitialLeg[] = []) {
           stops: current.stops.filter((_, i) => i !== index),
           change: { id: current.nextKey, kind: "removed", number: index + 1 },
           nextKey: current.nextKey + 1,
+          removed: stopAt(current.stops, index),
         };
       }),
+    /** Puts the last removed stop back where it was. */
+    undoRemove: () =>
+      setState((current) => {
+        const last = current.removed;
+        if (last === null || current.stops.length >= MAX_LEGS) {
+          return { ...current, removed: null };
+        }
+        const at = Math.min(last.index, current.stops.length);
+        return {
+          ...current,
+          stops: [...current.stops.slice(0, at), last.stop, ...current.stops.slice(at)],
+          change: { id: current.nextKey, kind: "added", number: at + 1 },
+          nextKey: current.nextKey + 1,
+          removed: null,
+        };
+      }),
+    /** The undo offer expired. */
+    forgetRemoved: () => setState((current) => ({ ...current, removed: null })),
   };
 }

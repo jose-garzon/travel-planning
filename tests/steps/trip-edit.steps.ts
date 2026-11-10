@@ -41,9 +41,10 @@ When("I save the changes", async ({ page }) => {
 });
 
 When("I delete the trip and confirm", async ({ page }) => {
+  await page.getByText("Delete this trip").click();
   await page.getByRole("button", { name: "Delete trip" }).click();
-  const dialog = page.getByRole("dialog", { name: "Delete this trip?" });
-  await dialog.getByRole("button", { name: "Delete", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: /^Delete “.+”\?$/ });
+  await dialog.getByRole("button", { name: "Yes, delete trip" }).click();
 });
 
 When("I go back to the home page", async ({ page }) => {

@@ -1373,3 +1373,9 @@
 @utility align-glyph {
   vertical-align: -0.1em;
 }
+
+/* Forms with sticky top and bottom bars (trip form): focus and
+   scroll-into-view stop clear of both bars, never under them. */
+:root:has(form[data-sticky-bars]) {
+  scroll-padding-block: 5rem 7rem;
+}

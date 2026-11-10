@@ -54,7 +54,7 @@ export default async function TripPage({
   }
   const memberNames = namesById(members.value);
 
-  const { joined, already, invite } = await searchParams;
+  const { joined, already, invite, saved } = await searchParams;
   const t = await getTranslations({ locale, namespace: "trips.edit" });
   const tj = await getTranslations({ locale, namespace: "trips.join" });
 
@@ -88,6 +88,8 @@ export default async function TripPage({
   return (
     <main className="mx-auto w-full max-w-page px-6 pt-4 pb-launcher lg:pt-10 lg:pb-16">
       <JoinToasts
+        saved={saved === "1"}
+        savedMessage={t("saved")}
         joined={joined === "1"}
         already={already === "1"}
         message={tj("joined", { trip: trip.name })}
@@ -316,14 +318,26 @@ function TripRail({ share, assistant }: { share: ReactNode; assistant: ReactNode
 }
 
 type JoinToastsProps = {
+  saved: boolean;
+  savedMessage: string;
   joined: boolean;
   already: boolean;
   message: string;
   alreadyMessage: string;
 };
 
-/** Confirms an invite on arrival: just joined, or already a member. */
-function JoinToasts({ joined, already, message, alreadyMessage }: JoinToastsProps) {
+/** Confirms on arrival: edits just saved, an invite just joined, or already a member. */
+function JoinToasts({
+  saved,
+  savedMessage,
+  joined,
+  already,
+  message,
+  alreadyMessage,
+}: JoinToastsProps) {
+  if (saved) {
+    return <Toast tone="success">{savedMessage}</Toast>;
+  }
   if (joined) {
     return <Toast tone="success">{message}</Toast>;
   }

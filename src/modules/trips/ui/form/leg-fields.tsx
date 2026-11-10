@@ -96,7 +96,7 @@ export function LegFields({
   const placed = isToPlaced && toName !== "";
 
   return (
-    <fieldset className="relative">
+    <fieldset className="group/leg relative">
       <legend className="sr-only">
         {translate({ translateId: "trips.form.leg", values: { number: legNumber } })}
       </legend>
@@ -139,7 +139,7 @@ export function LegFields({
                   />
                 )}
               </div>
-              <span className="shrink-0 rounded-full bg-sun px-3 py-1 font-semibold text-on-sun">
+              <span className="shrink-0 rounded-full bg-line px-3 py-1 font-semibold text-on-accent">
                 {translate({ translateId: "trips.form.takeoff" })}
               </span>
             </div>
@@ -160,7 +160,6 @@ export function LegFields({
                 ref={removeRef}
                 type="button"
                 variant="outline"
-                size="sm"
                 icon={X}
                 labelHidden
                 title={translate({
@@ -173,7 +172,7 @@ export function LegFields({
               />
             </div>
           )}
-          <div className={onRemove ? "pe-12" : undefined}>
+          <div className={onRemove ? "pe-14" : undefined}>
             <CityCombobox
               ref={toRef}
               label={{ translateId: "trips.form.to" }}

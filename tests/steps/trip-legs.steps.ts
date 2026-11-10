@@ -9,7 +9,7 @@ function dayFromOffset(offset: string): string {
 }
 
 function leg(page: import("@playwright/test").Page, legNumber: number) {
-  return page.getByRole("group", { name: `Leg ${legNumber}` });
+  return page.getByRole("group", { name: `Stop ${legNumber}` });
 }
 
 When(
@@ -37,7 +37,7 @@ When("I add a leg", async ({ page }) => {
   // Clicking blurs the open "To" field, which collapses into a heading and
   // shifts the button mid-click. Wait for the layout to settle, then check
   // a leg was really added.
-  const legs = page.getByRole("group", { name: /^Leg \d+$/ });
+  const legs = page.getByRole("group", { name: /^Stop \d+$/ });
   const before = await legs.count();
   await expect(async () => {
     if ((await legs.count()) === before) {
@@ -48,11 +48,19 @@ When("I add a leg", async ({ page }) => {
 });
 
 When("I add the return home leg", async ({ page }) => {
-  await page.getByRole("button", { name: "Add return home" }).click();
+  // Same mid-click layout shift as "I add a leg": retry until the leg lands.
+  const legs = page.getByRole("group", { name: /^Stop \d+$/ });
+  const before = await legs.count();
+  await expect(async () => {
+    if ((await legs.count()) === before) {
+      await page.getByRole("button", { name: "Add return home" }).click();
+    }
+    await expect(legs).toHaveCount(before + 1, { timeout: 1000 });
+  }).toPass();
 });
 
 When("I remove leg {int}", async ({ page }, legNumber: number) => {
-  await page.getByRole("button", { name: `Remove leg ${legNumber}` }).click();
+  await page.getByRole("button", { name: `Remove stop ${legNumber}` }).click();
 });
 
 When("I add legs until there are {int}", async ({ page }, count: number) => {
@@ -60,7 +68,7 @@ When("I add legs until there are {int}", async ({ page }, count: number) => {
   for (let n = 1; n < count; n++) {
     await add.click();
   }
-  await expect(page.getByRole("group", { name: /^Leg \d+$/ })).toHaveCount(count);
+  await expect(page.getByRole("group", { name: /^Stop \d+$/ })).toHaveCount(count);
 });
 
 Then("leg {int} starts from {string}", async ({ page }, legNumber: number, from: string) => {
@@ -84,7 +92,7 @@ Then("I cannot add a leg", async ({ page }) => {
 });
 
 Then("I cannot remove leg {int}", async ({ page }, legNumber: number) => {
-  await expect(page.getByRole("button", { name: `Remove leg ${legNumber}` })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: `Remove stop ${legNumber}` })).toHaveCount(0);
 });
 
 Then("the trip is not saved", async ({ page }) => {
