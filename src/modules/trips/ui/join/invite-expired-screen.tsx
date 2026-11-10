@@ -28,7 +28,7 @@ export function InviteExpiredScreen({ ownerName, askTripOwner = false }: InviteE
   return (
     <div className="flex flex-col items-start gap-4">
       <LineClosed className="mb-2" />
-      <h1 className="font-display text-3xl font-bold">{message()}</h1>
+      <h1 className="font-display text-3xl font-bold leading-none">{message()}</h1>
       {unknown ? <p className="text-text-muted">{t("invalidHint")}</p> : null}
       <Link href="/" className={buttonClasses()}>
         {t("goHome")}

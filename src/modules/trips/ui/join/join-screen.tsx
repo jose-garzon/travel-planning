@@ -69,7 +69,7 @@ export function JoinScreen({ token, preview, signedIn, children }: JoinScreenPro
   return (
     <div className="flex flex-col gap-4">
       <p className="text-text-muted">{t("invitedBy", { owner: preview.ownerName })}</p>
-      <h1 className="font-display text-3xl font-bold">{preview.tripName}</h1>
+      <h1 className="font-display text-3xl font-bold leading-none">{preview.tripName}</h1>
       {dates === null ? null : <p>{dates}</p>}
       <p>{t("travelers", { count: preview.memberCount })}</p>
       {signedIn ? (

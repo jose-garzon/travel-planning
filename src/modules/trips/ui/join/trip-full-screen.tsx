@@ -13,7 +13,9 @@ export function TripFullScreen() {
   return (
     <div className="flex flex-col items-start gap-4">
       <LineClosed className="mb-2" />
-      <h1 className="font-display text-3xl font-bold">{t("full", { count: MAX_MEMBERS })}</h1>
+      <h1 className="font-display text-3xl font-bold leading-none">
+        {t("full", { count: MAX_MEMBERS })}
+      </h1>
       <Link href="/" className={buttonClasses()}>
         {t("goHome")}
       </Link>
