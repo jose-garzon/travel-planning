@@ -3,10 +3,11 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement, useEffect, useRef, useState } from "react";
 import type { InviteDto } from "@/modules/trips/service/schemas";
-import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
 import { Button } from "@/shared/ui/components/button";
-import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
+import { ConfirmDialog } from "@/shared/ui/components/confirm-dialog";
+import { Dialog } from "@/shared/ui/components/dialog";
 import { Input } from "@/shared/ui/components/input";
+import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 
 export type InviteCardProps = {
   tripId: string;
@@ -150,7 +151,7 @@ function InviteBody({ tripId, tripName }: { tripId: string; tripName: string }) 
               />
             ) : null}
           </div>
-          <Dialog
+          <ConfirmDialog
             trigger={
               <Button
                 type="button"
@@ -159,24 +160,12 @@ function InviteBody({ tripId, tripName }: { tripId: string; tripName: string }) 
                 translateId="trips.invite.reset"
               />
             }
+            onConfirm={() => reset()}
             title={{ translateId: "trips.invite.resetTitle" }}
-            description={{ translateId: "trips.invite.resetDescription" }}
+            warning={{ translateId: "trips.invite.resetDescription" }}
+            confirmLabel={{ translateId: "trips.invite.resetConfirm" }}
             closeLabel={{ translateId: "trips.invite.close" }}
-            footer={
-              <>
-                <DialogClose>
-                  <Button type="button" variant="outline" translateId="trips.invite.cancel" />
-                </DialogClose>
-                <DialogClose>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    translateId="trips.invite.resetConfirm"
-                    onClick={() => reset()}
-                  />
-                </DialogClose>
-              </>
-            }
+            cancelLabel={{ translateId: "trips.invite.cancel" }}
           />
         </>
       ) : null}

@@ -22,6 +22,20 @@
       "when": 1793754625503,
       "tag": "0002_overjoyed_marvel_zombies",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793844894787,
+      "tag": "0003_lumpy_domino",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793891335040,
+      "tag": "0004_brainy_tinkerer",
+      "breakpoints": true
     }
   ]
 }

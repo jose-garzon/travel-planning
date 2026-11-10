@@ -58,6 +58,8 @@
   --text-3xl: 2.25rem;
   --text-4xl: 3rem;
   --text-5xl: 4rem;
+  /* Home spotlight city only: the one sign bigger than a page title. */
+  --text-hero: clamp(2.75rem, 1.5rem + 5.5vw, 6rem);
 
   --tracking-normal: 0;
   --tracking-wide: 0.02em;
@@ -69,6 +71,7 @@
 
   /* Space: n x 0.25rem. */
   --spacing-0: 0;
+  --spacing-0\.5: 0.125rem;
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
   --spacing-3: 0.75rem;
@@ -80,6 +83,10 @@
   --spacing-10: 2.5rem;
   --spacing-12: 3rem;
   --spacing-16: 4rem;
+  /* Larger steps: header scroll offset, thumbnails, list max height. */
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-72: 18rem;
   --spacing-touch: 2.75rem;
   --spacing-icon-sm: 1rem;
   --spacing-icon-md: 1.25rem;
@@ -87,6 +94,8 @@
   --spacing-sheet: 85dvh;
   --spacing-station: 1.75rem;
   --spacing-line: 0.5rem;
+  /* Assistant message box: grows to about four lines, then scrolls. */
+  --spacing-composer: 8rem;
   --spacing-below-header: calc(100svh - 70px);
 
   --radius-sm: 0.5rem;
@@ -114,12 +123,16 @@
   --animate-spin: spin 1s linear infinite;
   --animate-station-in: station-in 450ms var(--ease-out) both;
   --animate-line-in: line-in 450ms var(--ease-out) both;
+  --animate-sign-in: board-name-in 700ms var(--ease-out) both;
+  --animate-agent-ride: agent-ride 1.4s var(--ease-out) infinite alternate;
+  --animate-line-across: board-line-in 600ms var(--ease-out) 200ms both;
   --animate-logo-in: logo-in var(--motion-duration-normal) var(--ease-out);
 
   --container-prose: 70ch;
   --container-nav: 14rem;
   --container-dialog: 32rem;
   --container-page: 72rem;
+  --container-rail: 26rem;
   --container-card: 18rem;
 
   --breakpoint-sm: 40rem;
@@ -241,6 +254,24 @@
   }
 }
 
+/* One continuous route across leg fieldsets: a stop the line passes
+   through keeps its segment to the bottom, and a continuing leg's stop
+   takes its segment from the top. The doubled :nth-child(n) only lifts
+   specificity over route-stop's :first/:last/:only-child rules. */
+@utility route-stop-through {
+  &:nth-child(n):nth-child(n)::before {
+    bottom: 0;
+    height: auto;
+  }
+}
+
+@utility route-stop-continue {
+  &:nth-child(n):nth-child(n)::before {
+    display: block;
+    top: 0;
+  }
+}
+
 /* The open station: where the next city goes. Dashed ring, line color. */
 @utility route-stop-open {
   &::after {
@@ -300,6 +331,11 @@
   color-scheme: light;
   accent-color: var(--color-accent);
   min-height: var(--spacing-touch);
+
+  /* The calendar button beside the field opens the picker instead. */
+  &::-webkit-calendar-picker-indicator {
+    display: none;
+  }
 
   &:focus-visible {
     outline: 2px solid var(--color-text);
@@ -525,4 +561,821 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Trip page: content column plus the assistant rail. */
+@utility grid-cols-rail {
+  grid-template-columns: minmax(0, 1fr) var(--container-rail);
+}
+
+/* ---- Trip page: the metro board ------------------------------------ */
+
+/* Horizontal route on a trip's own header. Each station's
+   `--i` comes from its position; the line draws left to right, station by station,
+   and each ring pops as the line reaches it. */
+@utility route-board {
+  display: flex;
+  list-style: none;
+  padding: 0 0 var(--spacing-2);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+@utility route-board-stop {
+  --step: 140ms;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 7rem;
+  padding-right: var(--spacing-4);
+  min-width: 0;
+
+  &:last-child {
+    flex: 0 0 auto;
+    padding-right: 0;
+  }
+
+  /* The segment leaving this station. */
+  &::before {
+    content: "";
+    position: absolute;
+    top: calc((var(--spacing-station) - var(--spacing-line)) / 2);
+    left: calc(var(--spacing-station) / 2);
+    right: 0;
+    height: var(--spacing-line);
+    background-color: var(--color-line);
+    transform-origin: left;
+  }
+  &:last-child::before {
+    display: none;
+  }
+
+  /* The ring. */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--spacing-station);
+    height: var(--spacing-station);
+    border-radius: var(--radius-full);
+    border: 0.3125rem solid var(--color-text);
+    background-color: var(--color-bg);
+  }
+  &:first-child::after,
+  &:last-child::after {
+    background-color: var(--color-line);
+  }
+
+  & > span {
+    padding-top: calc(var(--spacing-station) + var(--spacing-3));
+    white-space: nowrap;
+  }
+
+  &:nth-child(2) {
+    --i: 1;
+  }
+  &:nth-child(3) {
+    --i: 2;
+  }
+  &:nth-child(4) {
+    --i: 3;
+  }
+  &:nth-child(5) {
+    --i: 4;
+  }
+  &:nth-child(6) {
+    --i: 5;
+  }
+  &:nth-child(7) {
+    --i: 6;
+  }
+  &:nth-child(8) {
+    --i: 7;
+  }
+  &:nth-child(9) {
+    --i: 8;
+  }
+  &:nth-child(10) {
+    --i: 9;
+  }
+  &:nth-child(11) {
+    --i: 10;
+  }
+  &:nth-child(12) {
+    --i: 11;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &::before {
+      animation: board-line-in 420ms var(--ease-out) both;
+      animation-delay: calc(var(--i, 0) * var(--step) + 120ms);
+    }
+    &::after {
+      animation: var(--animate-station-in);
+      animation-delay: calc(var(--i, 0) * var(--step));
+    }
+    & > span {
+      animation: board-name-in 500ms var(--ease-out) both;
+      animation-delay: calc(var(--i, 0) * var(--step) + 60ms);
+    }
+  }
+}
+
+/* Phones: the board turns vertical, the route running down the left
+   edge (DESIGN.md Layout), so long routes never scroll sideways. */
+@utility route-board-stack {
+  @media (width < 40rem) {
+    flex-direction: column;
+    overflow: visible;
+
+    & > li {
+      flex: none;
+      padding: 0 0 var(--spacing-4);
+      min-height: calc(var(--spacing-station) + var(--spacing-4));
+    }
+    & > li:last-child {
+      padding-bottom: 0;
+      min-height: var(--spacing-station);
+    }
+    & > li::before {
+      top: calc(var(--spacing-station) / 2);
+      left: calc((var(--spacing-station) - var(--spacing-line)) / 2);
+      right: auto;
+      bottom: calc(var(--spacing-station) / -2);
+      width: var(--spacing-line);
+      height: auto;
+      animation: none;
+    }
+    & > li > span {
+      padding-top: 0;
+      padding-left: calc(var(--spacing-station) + var(--spacing-3));
+      line-height: var(--spacing-station);
+      white-space: normal;
+    }
+  }
+}
+
+/* Always vertical: the trip ticket's narrow body. */
+@utility route-board-column {
+  flex-direction: column;
+  overflow: visible;
+
+  & > li {
+    flex: none;
+    padding: 0 0 var(--spacing-4);
+    min-height: calc(var(--spacing-station) + var(--spacing-4));
+  }
+  & > li:last-child {
+    padding-bottom: 0;
+    min-height: var(--spacing-station);
+  }
+  & > li::before {
+    top: calc(var(--spacing-station) / 2);
+    left: calc((var(--spacing-station) - var(--spacing-line)) / 2);
+    right: auto;
+    bottom: calc(var(--spacing-station) / -2);
+    width: var(--spacing-line);
+    height: auto;
+    /* Draws downward instead of across. */
+    transform-origin: top;
+    animation-name: board-line-down;
+  }
+  & > li > span {
+    padding-top: 0;
+    padding-left: calc(var(--spacing-station) + var(--spacing-3));
+    line-height: var(--spacing-station);
+    white-space: normal;
+  }
+}
+
+/* Today's car on the column board. Sits on the line inside the
+   station it last reached, `--t` of the way to the next one (each
+   segment spans its station's full height). Amber is the palette's
+   "time" colour. Once the whole line has drawn (`--n` stations), it
+   pulls out of its station and glides to today. */
+@utility route-train {
+  --car: 1.25rem;
+  --at: calc(var(--spacing-station) / 2 - var(--car) / 2);
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--spacing-station) / 2 - var(--car) / 2);
+  top: calc(var(--at) + var(--t, 0) * 100%);
+  width: var(--car);
+  height: var(--car);
+  border-radius: var(--radius-full);
+  background-color: var(--color-sun);
+  border: 3px solid var(--color-text);
+  box-shadow: 0 2px 6px var(--color-shadow);
+  padding: 0 !important;
+
+  /* Signal lamp: a slow ring that breathes out from the car. */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    border: 2px solid var(--color-sun);
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: train-arrive 900ms var(--ease-out) both;
+    animation-delay: calc(var(--n, 2) * 140ms + 250ms);
+
+    &::after {
+      animation: train-lamp 2400ms var(--ease-out) infinite;
+      animation-delay: calc(var(--n, 2) * 140ms + 1200ms);
+    }
+  }
+}
+
+@keyframes train-arrive {
+  from {
+    top: var(--at);
+    scale: 0;
+  }
+  25% {
+    top: var(--at);
+    scale: 1.15;
+  }
+  40% {
+    scale: 1;
+  }
+}
+
+@keyframes train-lamp {
+  from {
+    opacity: 0.9;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 2.2;
+  }
+}
+
+@keyframes board-line-down {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* The ticket folded into a strip (TicketStrip). Hidden everywhere
+   except browsers with scroll timelines, where it slides down from
+   under the viewport edge as the ticket (`--ticket`) leaves. With
+   reduced motion it only fades. */
+@utility ticket-strip {
+  display: none;
+  pointer-events: none;
+
+  @supports (animation-timeline: view()) {
+    position: absolute;
+    inset-inline: 0;
+    top: var(--spacing-6); /* Level with the sticky rail (lg:top-6). */
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-md);
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+    box-shadow: var(--shadow-md);
+    animation: strip-in linear both;
+    animation-timeline: --ticket;
+    animation-range: exit 55% exit 100%;
+
+    /* Page-coloured band in the gap above, so content never shows
+       through between the viewport edge and the strip. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      bottom: 100%;
+      height: var(--spacing-2);
+      background-color: var(--color-bg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      animation-name: strip-fade;
+    }
+  }
+}
+
+@utility ticket-strip-train {
+  position: absolute;
+  left: calc(var(--t, 0) * 100% - 0.4375rem);
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-sun);
+  border: 2px solid var(--color-on-accent);
+}
+
+@keyframes strip-in {
+  from {
+    opacity: 0;
+    transform: translateY(-140%);
+    clip-path: inset(0 30% 0 30% round var(--radius-md));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0 round var(--radius-md));
+  }
+}
+
+@keyframes strip-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Budget: the cap meter and the category bars (SVG rects) fill from
+   the left, one after another down the list. */
+@utility meter-fill {
+  transform-box: fill-box;
+  transform-origin: left;
+  transition: width 700ms var(--ease-out);
+}
+
+@utility meter-row {
+  &:nth-child(2) {
+    --i: 1;
+  }
+  &:nth-child(3) {
+    --i: 2;
+  }
+  &:nth-child(4) {
+    --i: 3;
+  }
+  &:nth-child(5) {
+    --i: 4;
+  }
+  &:nth-child(6) {
+    --i: 5;
+  }
+  &:nth-child(7) {
+    --i: 6;
+  }
+  &:nth-child(8) {
+    --i: 7;
+  }
+  &:nth-child(9) {
+    --i: 8;
+  }
+  &:nth-child(10) {
+    --i: 9;
+  }
+  &:nth-child(11) {
+    --i: 10;
+  }
+  &:nth-child(12) {
+    --i: 11;
+  }
+}
+
+/* Sections rise in as they scroll into view. Visible by default; only
+   browsers with view timelines, and only with motion allowed, play it. */
+@utility reveal-on-scroll {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+@keyframes board-line-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* A wipe, not a fade: text stays full contrast while it arrives. */
+@keyframes board-name-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+    transform: translateY(0.5rem);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+}
+
+@keyframes meter-in {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    transform: translateY(2rem) scale(0.98);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Home spotlight: the day's stops wipe in one after another, after
+   the city sign. `meter-row` on each item sets its `--i`. Visible by default. */
+@utility wipe-in {
+  @media (prefers-reduced-motion: no-preference) {
+    & > span,
+    & > a {
+      animation: board-name-in 500ms var(--ease-out) both;
+      animation-delay: calc(var(--i, 0) * 90ms + 350ms);
+    }
+    &::after {
+      animation: var(--animate-station-in);
+      animation-delay: calc(var(--i, 0) * 90ms + 300ms);
+    }
+  }
+}
+
+/* Trip page rail: viewport tall, less the sticky offset above and below. */
+@utility h-rail {
+  height: calc(100dvh - var(--spacing-12));
+}
+
+/* Trip page money strip: share, total, cap note, details link. */
+@utility grid-cols-money {
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+}
+
+/* Assistant drawer on phones: most of the screen, the page still peeking. */
+@utility h-drawer {
+  height: 88dvh;
+}
+
+/* Bottom sheets: clear the home indicator on notched phones. */
+@utility pb-safe {
+  padding-bottom: max(var(--spacing-2), env(safe-area-inset-bottom));
+}
+
+/* Floating launcher: off the bottom edge and clear of the home indicator. */
+@utility bottom-safe-fab {
+  bottom: max(var(--spacing-4), calc(env(safe-area-inset-bottom) + var(--spacing-2)));
+}
+
+/* Trip page foot on phones: room for the pinned assistant launcher, so
+   the last controls can scroll clear of it. */
+@utility pb-launcher {
+  padding-bottom: calc(var(--spacing-16) + var(--spacing-8));
+}
+
+/* A day to pick in a form: weekday, date and month stacked in a pill.
+   The radio inside is visually hidden; checked turns it amber (time). */
+@utility day-chip {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 3.5rem;
+  padding: 0.625rem 0.5rem;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-1);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) ease-out;
+
+  &:has(:checked) {
+    border-color: var(--color-text);
+    background-color: var(--color-sun);
+    color: var(--color-on-sun);
+  }
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* An amount beside its 3-letter currency code. */
+@utility grid-cols-amount {
+  grid-template-columns: 1fr 6rem;
+}
+
+/* A station on the trip pass rail: code over dot, centred on --t. */
+/* A station: zero width, so justify-between spaces centres evenly. */
+@utility rail-stop {
+  position: relative;
+  width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+/* Today's car on the pass rail, over the stations. */
+@utility rail-train {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: calc(var(--t, 0) * 100%);
+  width: 1rem;
+  height: 1rem;
+  transform: translateX(-50%);
+  border-radius: var(--radius-full);
+  background-color: var(--color-sun);
+  border: 3px solid var(--color-text);
+}
+
+/* The pass rail itself, through the centre of the 1rem station dots. */
+@utility rail-line {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.375rem;
+  height: 0.25rem;
+  background-color: var(--color-accent);
+}
+
+/* Assistant reply prose: paragraphs and lists spaced like a travel note,
+   list items marked as small line-coloured stations. */
+@utility agent-reply {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+
+  & ul,
+  & ol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    padding: 0;
+    list-style: none;
+  }
+
+  & ol {
+    counter-reset: stop;
+  }
+
+  & li {
+    position: relative;
+    padding-left: var(--spacing-6);
+  }
+
+  & ul > li::before {
+    content: "";
+    position: absolute;
+    left: var(--spacing-1);
+    top: 0.45em;
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-accent);
+  }
+
+  & ol > li {
+    counter-increment: stop;
+  }
+
+  & ol > li::before {
+    content: counter(stop);
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-full);
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+    font-size: var(--text-xs);
+    font-weight: 700;
+  }
+
+  & li > p + p,
+  & li > ul,
+  & li > ol {
+    margin-top: var(--spacing-2);
+  }
+
+  & code {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.9em;
+  }
+
+  & hr {
+    border: 0;
+    border-top: 2px dashed var(--color-border);
+  }
+}
+
+@utility agent-reply-heading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+/* Thinking: the amber car rides a short magenta stretch and back. */
+@utility agent-ride {
+  position: relative;
+  width: var(--spacing-12);
+  height: var(--spacing-1);
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+    border-radius: var(--radius-full);
+    background-color: var(--color-sun);
+    border: 2px solid var(--color-text);
+    transform: translate(-50%, -50%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &::after {
+      animation: var(--animate-agent-ride);
+    }
+  }
+}
+
+@keyframes agent-ride {
+  from {
+    left: 0;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+/* Assistant chat as a route: each turn is a station on one magenta line.
+   You are a people (teal) station, the assistant a ringed line station,
+   and a pending answer the dashed open station the car rides down. */
+@utility agent-stop {
+  position: relative;
+  padding-left: var(--spacing-8);
+
+  /* Line segment down to the next turn (spans the list gap). */
+  &::before {
+    content: "";
+    position: absolute;
+    top: var(--spacing-3);
+    bottom: calc(-1 * var(--spacing-4));
+    left: calc(var(--spacing-2) + 3px);
+    width: 4px;
+    background-color: var(--color-line);
+    transform-origin: top;
+  }
+
+  &:last-child::before {
+    display: none;
+  }
+
+  /* Station. */
+  &::after {
+    content: "";
+    position: absolute;
+    top: var(--spacing-1);
+    left: var(--spacing-1);
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+    border-radius: var(--radius-full);
+    border: 4px solid var(--color-line);
+    background-color: var(--color-surface-1);
+  }
+
+  &[data-role="user"]::after {
+    border-color: var(--color-secondary);
+    background-color: var(--color-secondary);
+  }
+
+  &[data-role="pending"]::before {
+    display: block;
+    top: calc(-1 * var(--spacing-4));
+    bottom: auto;
+    height: var(--spacing-5);
+    background: repeating-linear-gradient(to bottom, var(--color-line) 0 4px, transparent 4px 8px);
+  }
+
+  &[data-role="pending"]::after {
+    border-style: dashed;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &::before {
+      animation: var(--animate-line-in);
+    }
+    &::after {
+      animation: var(--animate-station-in);
+      animation-delay: 120ms;
+    }
+    &[data-role="pending"]::after {
+      animation: agent-wait 1.6s linear infinite;
+    }
+  }
+}
+
+@keyframes agent-wait {
+  to {
+    rotate: 1turn;
+  }
+}
+
+/* The approved card in flight (see fly-to-station.ts). */
+@utility agent-ghost {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  border: 4px solid var(--color-line);
+  background-color: var(--color-sun);
+  box-shadow: 0 6px 18px var(--color-shadow);
+}
+
+/* The section a suggestion just joined: its heading takes the hit. */
+@utility agent-arrive {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: agent-arrive 700ms var(--ease-out);
+  }
+}
+
+@keyframes agent-arrive {
+  0% {
+    transform: translateX(0);
+    color: var(--color-line);
+  }
+  25% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Scrolls without a visible bar (wheel, touch and keys still work). */
+@utility scrollbar-none {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* The home city sign: `--text-hero`, shrunk so the longest word (`--fit`
+   letters; condensed caps run about 0.52em each) fits its @container. */
+@utility text-hero-fit {
+  font-size: min(var(--text-hero), calc(100cqi / (var(--fit, 6) * 0.52)));
+}
+
+/* A stop opening: the panel grows to its height and fades in while the
+   station ring pops (station-in, on the dot). Browsers without
+   ::details-content or interpolate-size open at once. Reduced motion
+   opens at once. */
+@utility stop-accordion {
+  interpolate-size: allow-keywords;
+
+  &::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition:
+      block-size var(--motion-duration-normal) var(--ease-out),
+      opacity var(--motion-duration-normal) var(--ease-out),
+      content-visibility var(--motion-duration-normal) allow-discrete;
+  }
+
+  &[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::details-content {
+      transition: none;
+    }
+  }
+}
+
+/* An inline icon sitting on the text's baseline, not above it. */
+@utility align-glyph {
+  vertical-align: -0.1em;
+}
+
+/* Forms with sticky top and bottom bars (trip form): focus and
+   scroll-into-view stop clear of both bars, never under them. */
+:root:has(form[data-sticky-bars]) {
+  scroll-padding-block: 5rem 7rem;
 }

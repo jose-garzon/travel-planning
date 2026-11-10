@@ -8,5 +8,11 @@
   "OWNER_CANNOT_LEAVE": "El organizador no puede salir del viaje.",
   "MEMBER_NOT_FOUND": "Esa persona no está en este viaje.",
   "INVITE_EXPIRED": "Este enlace de invitación ha caducado.",
-  "TRIP_FULL": "Este viaje ya tiene 20 viajeros."
+  "TRIP_FULL": "Este viaje ya tiene 20 viajeros.",
+  "ACTIVITY_NOT_FOUND": "Esa actividad ya no existe.",
+  "ACTIVITY_OUTSIDE_TRIP": "Elige un día dentro de las fechas del viaje.",
+  "TOO_MANY_ACTIVITIES": "Este viaje tiene demasiadas actividades.",
+  "BUDGET_ITEM_NOT_FOUND": "Ese gasto ya no existe.",
+  "AGENT_RATE_LIMITED": "Llegaste al límite de hoy del asistente. Vuelve a intentarlo mañana.",
+  "AGENT_UNAVAILABLE": "El asistente no está disponible ahora. Inténtalo de nuevo en un momento."
 }

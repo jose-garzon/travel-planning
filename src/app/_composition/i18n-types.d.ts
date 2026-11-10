@@ -1,4 +1,7 @@
+import type { AgentMessages } from "@/modules/agent";
 import type { AuthMessages } from "@/modules/auth";
+import type { BudgetMessages } from "@/modules/budget";
+import type { ItineraryMessages } from "@/modules/itinerary";
 import type { StyleguideMessages } from "@/modules/styleguide";
 import type { TripsMessages } from "@/modules/trips";
 import type sharedEn from "@/shared/i18n/messages/en.json";
@@ -15,6 +18,9 @@ declare module "next-intl" {
       styleguide: StyleguideMessages;
       auth: AuthMessages;
       trips: TripsMessages;
+      itinerary: ItineraryMessages;
+      budget: BudgetMessages;
+      agent: AgentMessages;
     };
   }
 }

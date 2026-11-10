@@ -19,6 +19,17 @@ vi.mock("@/modules/trips/ui", () => ({ TripForm: () => null }));
 vi.mock("@/app/_composition/trip-members", () => ({
   tripMembers: { listTripMembers: async () => ({ ok: true, value: [] }), getTripAccess },
 }));
+vi.mock("@/app/_composition/trip-context", () => ({
+  agent: { isEnabled: () => false },
+  budget: {},
+  itinerary: {},
+}));
+vi.mock("@/modules/agent/ui/entries/agent", () => ({ AgentPanel: () => null }));
+vi.mock("@/modules/budget/ui/entries/budget", () => ({
+  BudgetCard: () => null,
+  BudgetCosts: () => null,
+}));
+vi.mock("@/modules/itinerary/ui/entries/itinerary", () => ({ ItineraryStop: () => null }));
 vi.mock("@/shared/i18n/navigation", () => ({ Link: () => null, redirect: vi.fn() }));
 
 const { default: EditTripPage } = await import("./page");

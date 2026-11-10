@@ -8,8 +8,8 @@
     "description": "Start with the route: where you leave from and where you are going. You can invite your crew right after.",
     "cta": "Create your first trip",
     "stepRoute": "Draw your route",
-    "stepCrew": "Invite your crew",
-    "stepShare": "Split the budget"
+    "stepCrew": "Bring your crew",
+    "stepShare": "See your share"
   },
   "countdown": "{days, plural, =0 {Today} one {Tomorrow} other {In # days}}",
   "members": "{count, plural, one {# traveler} other {# travelers}}",
@@ -22,5 +22,30 @@
   "routeName": "Route: {route}",
   "left": "You left {trip}",
   "removed": "You're no longer in this trip",
-  "inviteFriends": "Invite friends"
+  "inviteFriends": "Invite friends",
+  "nextStop": {
+    "today": "Today",
+    "arrive": "Arrive in {city}",
+    "from": "From {city}",
+    "anyTime": "Any time",
+    "youreIn": "You're in",
+    "going": "{count, plural, =0 {Nobody joined yet} one {# going} other {# going}}",
+    "dayPlan": "Plan for the day",
+    "plans": "{count, plural, one {# plan} other {# plans}}",
+    "nothingYet": "Nothing planned in {city} yet",
+    "planDay": "Plan the day",
+    "later": "Coming up",
+    "fieldDate": "Date",
+    "fieldWhen": "Departs",
+    "fieldCrew": "Crew",
+    "fieldNow": "Status",
+    "carousel": "Upcoming days",
+    "backToFirst": "Back to first day",
+    "position": "Day {n} of {total}",
+    "line": "Trip line",
+    "here": "you are here",
+    "nextHere": "next stop",
+    "crewSolo": "Just you",
+    "invite": "Bring your crew"
+  }
 }

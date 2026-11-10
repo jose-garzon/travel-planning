@@ -1,7 +1,7 @@
 # 0006. Agent: OpenRouter via Vercel AI SDK, suggest then approve
 
 Date: 2026-09-22
-Status: accepted
+Status: superseded by 0010
 
 
 ## Context

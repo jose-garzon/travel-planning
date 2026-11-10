@@ -14,21 +14,29 @@ type ToastProps = {
   /** Milliseconds before it dismisses itself. */
   durationMs?: number;
   onDismiss?: () => void;
+  /** "above-bar" lifts it clear of a sticky bottom action bar. */
+  placement?: "bottom" | "above-bar";
 };
 
 const DEFAULT_DURATION_MS = 6000;
 
-// Tone shows in the rule, the icon and the words, never colour alone.
+// Tone shows in the outline, the icon and the words, never colour alone.
 const TONE_CLASSES: Record<ToastTone, string> = {
-  success: "border-l-success",
-  error: "border-l-error",
+  success: "border-success",
+  error: "border-error",
 };
 
 /**
  * A short message that confirms or reports an action. Success is a polite
  * status; an error is an alert. Dismisses itself, or with its button.
  */
-export function Toast({ tone, children, durationMs = DEFAULT_DURATION_MS, onDismiss }: ToastProps) {
+export function Toast({
+  tone,
+  children,
+  durationMs = DEFAULT_DURATION_MS,
+  onDismiss,
+  placement = "bottom",
+}: ToastProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   function dismiss() {
@@ -52,8 +60,10 @@ export function Toast({ tone, children, durationMs = DEFAULT_DURATION_MS, onDism
       role={tone === "error" ? "alert" : "status"}
       aria-live={tone === "error" ? "assertive" : "polite"}
       className={cx(
-        "fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-dialog items-center gap-3 rounded-md",
-        "border-2 border-l-8 border-text bg-surface-1 py-2 pr-2 pl-4 text-text",
+        "fixed inset-x-4 z-50 mx-auto",
+        placement === "above-bar" ? "bottom-24" : "bottom-4",
+        "flex max-w-dialog items-center gap-3 rounded-md",
+        "border-2 bg-surface-1 py-2 pr-2 pl-4 text-text shadow-md",
         "motion-safe:animate-fade-in",
         TONE_CLASSES[tone],
       )}

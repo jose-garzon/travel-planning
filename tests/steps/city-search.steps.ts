@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { Then, When } from "./fixtures";
 
-/** The leg's group is named "Leg N" or "Tramo N" depending on the locale. */
+/** The leg's group is named "Stop N" or "Parada N" depending on the locale. */
 function legField(page: Page, legNumber: number, field: string) {
   return page
     .getByRole("group", { name: new RegExp(`\\b${legNumber}$`) })
@@ -55,5 +55,5 @@ Then("I do not see the city option {string}", async ({ page }, option: string) =
 
 Then("I see a list of city options", async ({ page }) => {
   await expect(page.getByRole("listbox")).toBeVisible();
-  await expect(page.getByRole("option").first()).toBeVisible();
+  await expect(page.getByRole("listbox").getByRole("option").first()).toBeVisible();
 });

@@ -25,7 +25,7 @@ export type DialogProps = {
 };
 
 const OVERLAY_CLASSES =
-  "fixed inset-0 bg-overlay animate-fade-in data-[state=closed]:animate-fade-out";
+  "fixed inset-0 z-50 bg-overlay animate-fade-in data-[state=closed]:animate-fade-out";
 
 // < md: bottom sheet (`inset-x-0 bottom-0`, rounded top, `max-h-sheet`,
 // `motion-safe:animate-sheet-up`, fade always). >= md: centered
@@ -37,7 +37,7 @@ const OVERLAY_CLASSES =
 // the content mounted until its own `data-[state=closed]` animation
 // finishes, keyed off the same breakpoint split.
 const CONTENT_CLASSES =
-  "fixed inset-x-0 bottom-0 flex max-h-sheet flex-col gap-4 overflow-y-auto rounded-t-lg " +
+  "fixed inset-x-0 bottom-0 z-50 flex max-h-sheet flex-col gap-4 overflow-y-auto rounded-t-lg " +
   "bg-surface-2 p-6 shadow-md animate-fade-in motion-safe:animate-sheet-up dark:border " +
   "dark:border-border data-[state=closed]:animate-fade-out " +
   "data-[state=closed]:motion-safe:animate-sheet-down md:inset-0 md:m-auto md:h-fit md:w-full " +

@@ -8,8 +8,8 @@
     "description": "Empieza por la ruta: de dónde sales y a dónde van. Justo después puedes invitar a tu parche.",
     "cta": "Crea tu primer viaje",
     "stepRoute": "Traza tu ruta",
-    "stepCrew": "Invita a tu parche",
-    "stepShare": "Divide el presupuesto"
+    "stepCrew": "Suma a tu parche",
+    "stepShare": "Mira tu parte"
   },
   "countdown": "{days, plural, =0 {Hoy} one {Mañana} other {En # días}}",
   "members": "{count, plural, one {# viajero} other {# viajeros}}",
@@ -22,5 +22,30 @@
   "routeName": "Ruta: {route}",
   "left": "Saliste de {trip}",
   "removed": "Ya no estás en este viaje",
-  "inviteFriends": "Invitar amigos"
+  "inviteFriends": "Invitar amigos",
+  "nextStop": {
+    "today": "Hoy",
+    "arrive": "Llegada a {city}",
+    "from": "Desde {city}",
+    "anyTime": "Cualquier hora",
+    "youreIn": "Vas",
+    "going": "{count, plural, =0 {Nadie se ha unido} one {# va} other {# van}}",
+    "dayPlan": "Plan del día",
+    "plans": "{count, plural, one {# plan} other {# planes}}",
+    "nothingYet": "Nada planeado en {city} aún",
+    "planDay": "Planea el día",
+    "later": "Lo que viene",
+    "fieldDate": "Fecha",
+    "fieldWhen": "Salida",
+    "fieldCrew": "Parche",
+    "fieldNow": "Estado",
+    "carousel": "Próximos días",
+    "backToFirst": "Volver al primer día",
+    "position": "Día {n} de {total}",
+    "line": "Línea del viaje",
+    "here": "estás aquí",
+    "nextHere": "próxima parada",
+    "crewSolo": "Solo tú",
+    "invite": "Suma a tu parche"
+  }
 }

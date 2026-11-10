@@ -5,9 +5,9 @@ import { type ReactNode, useState } from "react";
 import type { InvitePreviewDto, JoinResultDto } from "@/modules/trips/service/schemas";
 import { InviteExpiredScreen } from "@/modules/trips/ui/join/invite-expired-screen";
 import { TripFullScreen } from "@/modules/trips/ui/join/trip-full-screen";
-import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
 import { useRouter } from "@/shared/i18n/navigation";
 import { Button } from "@/shared/ui/components/button";
+import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 
 export type JoinScreenProps = {
   token: string;
@@ -69,7 +69,7 @@ export function JoinScreen({ token, preview, signedIn, children }: JoinScreenPro
   return (
     <div className="flex flex-col gap-4">
       <p className="text-text-muted">{t("invitedBy", { owner: preview.ownerName })}</p>
-      <h1 className="font-display text-3xl font-bold">{preview.tripName}</h1>
+      <h1 className="font-display text-3xl font-bold leading-none">{preview.tripName}</h1>
       {dates === null ? null : <p>{dates}</p>}
       <p>{t("travelers", { count: preview.memberCount })}</p>
       {signedIn ? (

@@ -80,9 +80,9 @@ Then("the API answers {int} {string}", async ({ page }, status: number, code: st
 When("I create the trip {string}", async ({ page }, name: string) => {
   await page.goto("/trips/new");
   await page.getByLabel("Trip name").fill(name);
-  const leg = page.getByRole("group", { name: "Leg 1" });
-  await leg.getByLabel("From").fill("Bogotá");
-  await leg.getByLabel("To").fill("Madrid");
+  const leg = page.getByRole("group", { name: "Stop 1" });
+  await leg.getByLabel("From", { exact: true }).fill("Bogotá");
+  await leg.getByLabel("To", { exact: true }).fill("Madrid");
   await page.getByRole("button", { name: "Create trip" }).click();
 });
 

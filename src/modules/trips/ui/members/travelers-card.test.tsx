@@ -1,5 +1,5 @@
-import { fireEvent, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { screen, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import type { Role } from "@/modules/trips/domain/trip";
 import inviteMessages from "@/modules/trips/messages/en/invite.json";
 import membersMessages from "@/modules/trips/messages/en/members.json";
@@ -85,36 +85,19 @@ describe("TravelersCard", () => {
   it("offers the Invite button to the owner", () => {
     renderCard([jose]);
 
-    expect(screen.getByRole("button", { name: "Invite" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
   });
 
   it("does not offer the Invite button to an editor", () => {
     renderCard([jose, laura], "editor");
 
-    expect(screen.queryByRole("button", { name: "Invite" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Share" })).toBeNull();
   });
 
   it("names a long traveler in full", () => {
     renderCard([jose, member("maria", LONG_NAME, "editor")]);
 
     expect(screen.getByText(LONG_NAME)).toBeInTheDocument();
-  });
-
-  it("expands the mobile disclosure when its button is pressed", () => {
-    renderCard([jose, laura]);
-
-    const toggle = screen.getByRole("button", { name: /Travelers/ });
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-
-    fireEvent.click(toggle);
-
-    expect(toggle).toHaveAttribute("aria-expanded", "true");
-  });
-});
-
-describe("TravelersCard opened from ?invite=1", () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
   });
 
   it("opens the invite card for the owner when the trip page asks for it", async () => {

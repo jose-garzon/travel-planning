@@ -18,5 +18,9 @@
   "leaveDescription": "You lose access to the trip. You can rejoin with the invite link.",
   "leaveConfirm": "Leave",
   "leaveFailed": "Couldn’t leave the trip. Check your connection and try again.",
-  "offline": "You’re offline. Removing and leaving need a connection."
+  "offline": "You’re offline. Removing and leaving need a connection.",
+  "inviteMore": "Bring more friends",
+  "inviteHint": "Share a link. Whoever opens it joins as an editor. It works for 7 days.",
+  "share": "Share",
+  "shareHint": "Anyone with the link joins as an editor."
 }

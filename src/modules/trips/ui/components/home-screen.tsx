@@ -3,6 +3,9 @@ import type { HomeTrips } from "@/modules/trips/service/get-home-trips";
 import type { TripDto } from "@/modules/trips/service/schemas";
 import { EmptyTripsState } from "@/modules/trips/ui/components/empty-trips-state";
 import { NewTripLink } from "@/modules/trips/ui/components/new-trip-link";
+import { NextStopPanel } from "@/modules/trips/ui/components/next-stop";
+import type { NextStop } from "@/modules/trips/ui/components/next-stop-model";
+import { formatTripDateRange } from "@/modules/trips/ui/components/trip-date-range";
 import { Link } from "@/shared/i18n/navigation";
 import { Panel } from "@/shared/ui/components/panel";
 import { Toast } from "@/shared/ui/components/toast";
@@ -12,6 +15,8 @@ import { useTranslatable } from "@/shared/ui/translatable";
 type HomeScreenProps = {
   displayName: string;
   summary: HomeTrips;
+  /** The next day of the next trip, with its plan; null when undated or ended. */
+  nextStop?: NextStop | null;
   /** `YYYY-MM-DD` in the member's zone; the countdown counts from it. */
   today: string;
   /** Shows the "Trip created" confirmation after a successful create. */
@@ -73,33 +78,53 @@ function codesOf(trip: TripDto): { id: string; code: string; hub: boolean }[] {
   ];
 }
 
+const MAX_STOPS = 4;
+
+type MiniStop = { id: string; code: string; hub: boolean; more?: number };
+
+/**
+ * Long routes fold their middle into one "+N" stop, so the line keeps
+ * the start and the end readable at any width.
+ */
+function foldStops(stops: MiniStop[]): MiniStop[] {
+  if (stops.length <= MAX_STOPS) {
+    return stops;
+  }
+  const hidden = stops.length - 3;
+  return [
+    ...stops.slice(0, 2),
+    { id: "more", code: `+${hidden}`, hub: false, more: hidden },
+    stops[stops.length - 1] as MiniStop,
+  ];
+}
+
 /**
  * The trip's route as a short line of station codes (BOG ━ CTG ━ SMR).
  * Decorative: the route is read out once, from `label`.
  */
 function MiniRoute({ trip, label, isPast }: { trip: TripDto; label: string; isPast: boolean }) {
-  const codes = codesOf(trip);
+  const codes = foldStops(codesOf(trip));
 
   return (
     <div className="flex min-w-0 items-center">
       <span className="sr-only">{label}</span>
       <span aria-hidden="true" className="flex min-w-0 flex-1 items-center">
         {codes.map((stop, index) => (
-          <span key={stop.id} className={cx("flex items-center", index > 0 && "min-w-0 flex-1")}>
+          <span key={stop.id} className={cx("flex items-center", index > 0 && "flex-1")}>
             {index > 0 && (
               <span
                 className={cx("h-1 min-w-3 flex-1", isPast ? "bg-border-strong" : "bg-accent")}
               />
             )}
-            <span className="flex flex-col items-center">
+            {stop.more === undefined && (
               <span
                 className={cx(
-                  "size-4 rounded-full border-3 border-text",
+                  "size-4 shrink-0 rounded-full border-3 border-text",
                   stop.hub ? (isPast ? "bg-border-strong" : "bg-accent") : "bg-bg",
                 )}
               />
-            </span>
-            <span className="ml-1 font-display text-lg font-bold uppercase leading-none tracking-wide">
+            )}
+            <span className="ml-1 shrink-0 font-display text-lg font-bold uppercase leading-none tracking-wide">
               {stop.code}
             </span>
           </span>
@@ -116,41 +141,6 @@ function routeOf(trip: TripDto): string {
     return "";
   }
   return [first.from.name, ...trip.legs.map((leg) => leg.to.name)].join(" → ");
-}
-
-/**
- * Formats a trip's date range (`YYYY-MM-DD`) with `Intl`, in each
- * locale's own word order (AC-14: "Mar 3 – 10, 2027" in `en`,
- * "3 – 10 mar 2027" in `es`; en dash for ranges). Within one month the day part is widened
- * into a range from `formatToParts`; across months or years the
- * locale's own `formatRange` is used. Undated trips have no range.
- */
-function formatTripDateRange(trip: TripDto, locale: string): string | null {
-  if (trip.startDate === null || trip.endDate === null) {
-    return null;
-  }
-  const start = new Date(`${trip.startDate}T00:00:00Z`);
-  const end = new Date(`${trip.endDate}T00:00:00Z`);
-  const dateFormatter = new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-
-  if (trip.startDate === trip.endDate) {
-    return dateFormatter.format(start);
-  }
-  if (trip.startDate.slice(0, 7) !== trip.endDate.slice(0, 7)) {
-    return dateFormatter.formatRange(start, end);
-  }
-
-  const endDay = new Intl.DateTimeFormat(locale, { day: "numeric", timeZone: "UTC" }).format(end);
-
-  return dateFormatter
-    .formatToParts(start)
-    .map((part) => (part.type === "day" ? `${part.value} – ${endDay}` : part.value))
-    .join("");
 }
 
 type TripRowProps = {
@@ -179,14 +169,14 @@ function TripRow({ trip, today, locale, isNext = false, isNew = false }: TripRow
       href={`/trips/${trip.id}`}
       className={cx(
         TRIP_LINK_CLASSES,
-        "grid gap-4 p-5 lg:grid-cols-12 lg:items-center lg:gap-8 lg:p-6",
+        "grid gap-3 p-4 sm:gap-4 sm:p-5 lg:grid-cols-12 lg:items-center lg:gap-8 lg:p-6",
         isNext && "border-accent!",
         isPast && "border-border-strong! text-text-muted",
         isNew && "motion-safe:animate-fade-in",
       )}
     >
       <div className="min-w-0 lg:col-span-4">
-        <p className="font-display text-3xl font-bold uppercase leading-none tracking-wide wrap-anywhere">
+        <p className="font-display text-2xl font-bold uppercase leading-none tracking-wide wrap-anywhere sm:text-3xl">
           {trip.name}
         </p>
         <p className="mt-1 tabular-nums">{range}</p>
@@ -216,7 +206,8 @@ function TripRow({ trip, today, locale, isNext = false, isNew = false }: TripRow
           </span>
         )}
         {!isPast && trip.startDate === null && (
-          <span className="rounded-full bg-sun px-3 py-1 text-on-sun">
+          // A to-do, not a time: the open-station dashed ring, not amber.
+          <span className="rounded-full border-2 border-dashed border-border-strong px-3 py-0.5">
             {translate({ translateId: "trips.home.nextStepDates" })}
           </span>
         )}
@@ -244,6 +235,7 @@ function TripRow({ trip, today, locale, isNext = false, isNew = false }: TripRow
 export function HomeScreen({
   displayName,
   summary,
+  nextStop = null,
   today,
   justCreated = false,
   createdTripId,
@@ -259,12 +251,11 @@ export function HomeScreen({
   const past = otherTrips.filter((trip) => trip.endDate !== null && trip.endDate < today);
 
   return (
-    <main className="mx-auto w-full max-w-page px-6 pt-6 pb-16 lg:pt-10">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h1 className="text-3xl leading-none text-text lg:text-4xl">
+    <main className="mx-auto w-full max-w-page px-4 pt-5 pb-16 sm:px-6 lg:pt-10">
+      <div className="mb-4 sm:mb-6 lg:mb-8">
+        <h1 className="text-2xl leading-none text-text sm:text-3xl lg:text-4xl">
           {translate({ translateId: "trips.home.greeting", values: { name: displayName } })}
         </h1>
-        {!hasNoTrips && <NewTripLink />}
       </div>
 
       {justCreated && (
@@ -299,7 +290,9 @@ export function HomeScreen({
 
       {hasNoTrips && <EmptyTripsState />}
 
-      {nextTrip !== null && (
+      {nextStop !== null && <NextStopPanel stop={nextStop} />}
+
+      {nextTrip !== null && nextStop === null && (
         <section aria-labelledby={NEXT_TRIP_HEADING_ID} className="mb-4">
           {/* Names the region; each row's trip name is its visible heading. */}
           <h2 id={NEXT_TRIP_HEADING_ID} className="sr-only">
@@ -309,13 +302,22 @@ export function HomeScreen({
         </section>
       )}
 
+      {!hasNoTrips && (
+        <div className="mb-8 flex sm:mb-10">
+          <NewTripLink />
+        </div>
+      )}
+
       {otherTrips.length > 0 && (
         <section aria-labelledby={OTHER_TRIPS_HEADING_ID}>
-          <h2 id={OTHER_TRIPS_HEADING_ID} className="sr-only">
+          <h2
+            id={OTHER_TRIPS_HEADING_ID}
+            className={nextStop === null ? "sr-only" : "mb-3 text-xl sm:mb-4 sm:text-2xl"}
+          >
             {translate({ translateId: "trips.home.otherTripsHeading" })}
           </h2>
           {upcoming.length > 0 && (
-            <ul className="flex flex-col gap-4">
+            <ul className="flex flex-col gap-3 sm:gap-4">
               {upcoming.map((trip) => (
                 <li key={trip.id}>
                   <TripRow trip={trip} today={today} locale={locale} />
@@ -328,7 +330,7 @@ export function HomeScreen({
               <h3 className="mt-12 mb-4 text-xl text-text-muted">
                 {translate({ translateId: "trips.home.pastHeading" })}
               </h3>
-              <ul className="flex flex-col gap-4">
+              <ul className="flex flex-col gap-3 sm:gap-4">
                 {past.map((trip) => (
                   <li key={trip.id}>
                     <TripRow trip={trip} today={today} locale={locale} />

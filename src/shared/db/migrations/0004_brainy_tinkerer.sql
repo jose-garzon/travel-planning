@@ -1,0 +1,1 @@
+ALTER TABLE `budget_item` ADD `stop` integer;

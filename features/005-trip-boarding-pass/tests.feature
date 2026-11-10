@@ -119,17 +119,17 @@ Feature: Create a trip by drawing its route, and see it on home
     Then I cannot remove leg 1
     When I add legs until there are 10
     Then I cannot add a leg
-    And I see "Up to 10 legs"
+    And I see "Up to 10 stops"
 
   @T05 @AC-10 @a11y
   Scenario: Edit a trip
     Given I have a trip "Europe" with route:
       | from   | to     | day |
       | Bogotá | Madrid | +10 |
-    When I open the trip "Europe"
+    When I edit the trip "Europe"
     And I name the trip "Europe 2027"
     And I save the changes
-    Then I see "Europe 2027" as my next trip
+    Then I see "Changes saved"
     And the page has no accessibility violations
 
   @T05 @AC-10
@@ -137,18 +137,18 @@ Feature: Create a trip by drawing its route, and see it on home
     Given I have a trip "Europe" with route:
       | from   | to     | day |
       | Bogotá | Madrid | +10 |
-    When I open the trip "Europe"
+    When I edit the trip "Europe"
     And someone else changes the trip "Europe"
     And I name the trip "Mine"
     And I save the changes
-    Then I see "This trip changed. Reload to see the latest."
+    Then I see "Someone changed this trip while you were editing. Your edits are still here."
 
   @T05 @AC-11
   Scenario: Delete a trip
     Given I have a trip "Europe" with route:
       | from   | to     | day |
       | Bogotá | Madrid | +10 |
-    When I open the trip "Europe"
+    When I edit the trip "Europe"
     And I delete the trip and confirm
     Then I see "Trip deleted"
     And I do not see "Europe" on the home page

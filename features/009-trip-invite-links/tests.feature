@@ -90,9 +90,9 @@ Feature: Invite friends to a trip by link
     Examples:
       | state          | message                                                   |
       | 8 days old     | This invite link has expired. Ask Jose for a new one.    |
-      | reset          | This invite link has expired.                             |
-      | for a deleted trip | This invite link has expired.                         |
-      | unknown        | This invite link has expired.                             |
+      | reset          | This invite link doesn’t work anymore.                             |
+      | for a deleted trip | This invite link doesn’t work anymore.                         |
+      | unknown        | This invite link doesn’t work anymore.                             |
 
   @T03 @EC-4
   Scenario: Link reset while on the join page
@@ -193,7 +193,7 @@ Feature: Invite friends to a trip by link
     And I am signed in as "Laura"
     And "Laura" is an editor of "Europe"
     When I open the trip "Europe"
-    Then I see no "Delete trip", "Invite" or "Remove" controls
+    Then I see no "Delete trip", "Share" or "Remove" controls
     When I rename the trip to "Europe 2027" and save
     Then the trip is named "Europe 2027"
     And the page has no accessibility violations

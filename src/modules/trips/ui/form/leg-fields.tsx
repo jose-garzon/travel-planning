@@ -1,10 +1,12 @@
 "use client";
 
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, X } from "lucide-react";
+import type { ReactNode } from "react";
 import { useId, useState } from "react";
 import type { CityRef } from "@/modules/trips/domain/trip";
 import { CityCombobox } from "@/modules/trips/ui/form/city-combobox";
 import { Button } from "@/shared/ui/components/button";
+import { DateChip } from "@/shared/ui/components/date-chip";
 import { Icon } from "@/shared/ui/components/icon";
 import { Input } from "@/shared/ui/components/input";
 import { cx } from "@/shared/ui/cx";
@@ -37,6 +39,17 @@ type LegFieldsProps = {
   /** Departure date, `YYYY-MM-DD` or "" when not set yet. */
   date: string;
   onDateChange: (date: string) => void;
+  /** Legs after the first: the From station is the stop above, so it is
+   * not drawn again (it stays for assistive tech) and the line runs on. */
+  isContinuation?: boolean;
+  /** More legs follow: the line runs through this leg's To station. */
+  hasNext?: boolean;
+  /** Under the To station, before the next one (the insert-stop button). */
+  after?: ReactNode;
+  /** Under the From station of leg 1 (insert a stop right after the origin). */
+  afterFrom?: ReactNode;
+  /** Month the calendar opens on when no date is set. */
+  suggestedMonth?: string;
 };
 
 /** The amber meta line under a station: time lives here (DESIGN.md). */
@@ -71,6 +84,11 @@ export function LegFields({
   fromCityId = null,
   date,
   onDateChange,
+  isContinuation = false,
+  hasNext = false,
+  after,
+  afterFrom,
+  suggestedMonth,
 }: LegFieldsProps) {
   const translate = useTranslatable();
   const dateId = useId();
@@ -78,72 +96,117 @@ export function LegFields({
   const placed = isToPlaced && toName !== "";
 
   return (
-    <fieldset>
+    <fieldset className="group/leg relative">
       <legend className="sr-only">
         {translate({ translateId: "trips.form.leg", values: { number: legNumber } })}
       </legend>
       <ol className="route">
-        <li className={cx("route-stop route-stop-hub", placed && "route-stop-extend")}>
-          {fromName === null ? (
-            <CityCombobox
-              ref={fromRef}
-              label={{ translateId: "trips.form.from" }}
-              placeholder={translate({ translateId: "trips.form.fromPlaceholder" })}
-              error={fromError}
-              defaultValue={initialFromName}
-              onChange={onFromChange}
-            />
-          ) : (
+        {isContinuation ? (
+          <li className="sr-only">
             <Input
               appearance="station"
               label={{ translateId: "trips.form.from" }}
-              value={fromName}
+              value={fromName ?? ""}
               readOnly
+              tabIndex={-1}
             />
+          </li>
+        ) : (
+          <li
+            className={cx(
+              "route-stop route-stop-hub",
+              placed && "route-stop-extend",
+              afterFrom !== undefined && "route-stop-through",
+            )}
+          >
+            <div className="flex items-center gap-4">
+              <div className="min-w-0">
+                {fromName === null ? (
+                  <CityCombobox
+                    ref={fromRef}
+                    label={{ translateId: "trips.form.from" }}
+                    placeholder={translate({ translateId: "trips.form.fromPlaceholder" })}
+                    error={fromError}
+                    defaultValue={initialFromName}
+                    onChange={onFromChange}
+                  />
+                ) : (
+                  <Input
+                    appearance="station"
+                    label={{ translateId: "trips.form.from" }}
+                    value={fromName}
+                    readOnly
+                  />
+                )}
+              </div>
+              <span className="shrink-0 rounded-full bg-line px-3 py-1 font-semibold text-on-accent">
+                {translate({ translateId: "trips.form.takeoff" })}
+              </span>
+            </div>
+            {afterFrom}
+          </li>
+        )}
+        <li
+          className={cx(
+            "route-stop",
+            placed ? "route-stop-new" : "route-stop-open",
+            isContinuation && "route-stop-continue",
+            hasNext && "route-stop-through",
           )}
+        >
+          {onRemove && (
+            <div className="absolute top-0 right-0">
+              <Button
+                ref={removeRef}
+                type="button"
+                variant="outline"
+                icon={X}
+                labelHidden
+                title={translate({
+                  translateId: "trips.form.removeLeg",
+                  values: { number: legNumber },
+                })}
+                onClick={onRemove}
+                translateId="trips.form.removeLeg"
+                values={{ number: legNumber }}
+              />
+            </div>
+          )}
+          <div className={onRemove ? "pe-14" : undefined}>
+            <CityCombobox
+              ref={toRef}
+              label={{ translateId: "trips.form.to" }}
+              placeholder={translate({ translateId: "trips.form.toPlaceholder" })}
+              error={toError}
+              defaultValue={initialToName}
+              exclude={fromCityId}
+              onChange={(city) => {
+                onToChange(city);
+                if (city.name === "") {
+                  setIsToPlaced(false);
+                }
+              }}
+              onCommit={() => setIsToPlaced(true)}
+            />
+          </div>
           <StationMeta>
-            <span className="rounded-full bg-sun px-3 py-1 font-semibold text-on-sun">
-              {translate({ translateId: "trips.form.takeoff" })}
-            </span>
-          </StationMeta>
-        </li>
-        <li className={cx("route-stop", placed ? "route-stop-new" : "route-stop-open")}>
-          <CityCombobox
-            ref={toRef}
-            label={{ translateId: "trips.form.to" }}
-            placeholder={translate({ translateId: "trips.form.toPlaceholder" })}
-            error={toError}
-            defaultValue={initialToName}
-            exclude={fromCityId}
-            onChange={(city) => {
-              onToChange(city);
-              if (city.name === "") {
-                setIsToPlaced(false);
-              }
-            }}
-            onCommit={() => setIsToPlaced(true)}
-          />
-          <StationMeta>
-            <label
-              htmlFor={dateId}
-              className="inline-flex min-h-touch items-center gap-2 rounded-full bg-sun px-4 font-semibold text-on-sun"
-            >
-              <span>
+            <div className="flex flex-col gap-1">
+              <label htmlFor={dateId} className="font-semibold text-text-muted text-xs uppercase">
                 {translate({ translateId: "trips.form.date" })}{" "}
-                <span className="font-regular">
+                <span className="font-regular normal-case">
                   ({translate({ translateId: "trips.form.dateHint" })})
                 </span>
-              </span>
-              <input
+              </label>
+              <DateChip
                 id={dateId}
-                type="date"
                 value={date}
-                onChange={(event) => onDateChange(event.target.value)}
-                aria-invalid={dateError === undefined ? undefined : true}
-                aria-describedby={dateError === undefined ? undefined : `${dateId}-error`}
-                className="date-chip"
+                onChange={onDateChange}
+                pickerLabel={{ translateId: "trips.form.pickDate" }}
+                suggestedMonth={suggestedMonth}
+                invalid={dateError !== undefined}
+                describedBy={dateError === undefined ? undefined : `${dateId}-error`}
               />
-            </label>
+            </div>
           </StationMeta>
           <div aria-live="polite">
             {dateError !== undefined && (
@@ -155,18 +218,9 @@ export function LegFields({
               </p>
             )}
           </div>
+          {after}
         </li>
       </ol>
-      {onRemove && (
-        <Button
-          ref={removeRef}
-          type="button"
-          variant="outline"
-          onClick={onRemove}
-          translateId="trips.form.removeLeg"
-          values={{ number: legNumber }}
-        />
-      )}
     </fieldset>
   );
 }

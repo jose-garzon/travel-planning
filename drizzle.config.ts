@@ -6,6 +6,7 @@ export default defineConfig({
   out: "./src/shared/db/migrations",
   dbCredentials: {
     url: process.env.DATABASE_URL ?? "file:local.db",
-    authToken: process.env.DATABASE_AUTH_TOKEN,
+    // drizzle-kit's turso dialect insists on a token; a local file ignores it.
+    authToken: process.env.DATABASE_AUTH_TOKEN || "local",
   },
 });

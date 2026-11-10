@@ -4,10 +4,10 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { Role } from "@/modules/trips/domain/trip";
 import type { MemberDto } from "@/modules/trips/service/schemas";
-import { useIsOnline } from "@/modules/trips/ui/members/use-is-online";
 import { useRouter } from "@/shared/i18n/navigation";
 import { Button } from "@/shared/ui/components/button";
-import { Dialog, DialogClose } from "@/shared/ui/components/dialog";
+import { ConfirmDialog } from "@/shared/ui/components/confirm-dialog";
+import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 
 export type MemberRowProps = {
   member: MemberDto;
@@ -88,12 +88,16 @@ export function MemberRow({
         </span>
       </div>
       {canRemove ? (
-        <Dialog
+        <ConfirmDialog
           open={isRemoveOpen}
           onOpenChange={setIsRemoveOpen}
+          isLoading={isBusy}
+          onConfirm={removeTraveler}
           title={{ translateId: "trips.members.removeTitle", values: { name: member.name } }}
-          description={{ translateId: "trips.members.removeDescription" }}
+          warning={{ translateId: "trips.members.removeDescription" }}
+          confirmLabel={{ translateId: "trips.members.removeConfirm" }}
           closeLabel={{ translateId: "trips.edit.close" }}
+          cancelLabel={{ translateId: "trips.form.cancel" }}
           trigger={
             <Button
               type="button"
@@ -102,28 +106,19 @@ export function MemberRow({
               translateId="trips.members.remove"
             />
           }
-          footer={
-            <>
-              <DialogClose>
-                <Button type="button" variant="secondary" translateId="trips.form.cancel" />
-              </DialogClose>
-              <Button
-                type="button"
-                isLoading={isBusy}
-                onClick={removeTraveler}
-                translateId="trips.members.removeConfirm"
-              />
-            </>
-          }
         />
       ) : null}
       {canLeave ? (
-        <Dialog
+        <ConfirmDialog
           open={isLeaveOpen}
           onOpenChange={setIsLeaveOpen}
+          isLoading={isBusy}
+          onConfirm={leaveTrip}
           title={{ translateId: "trips.members.leaveTitle" }}
-          description={{ translateId: "trips.members.leaveDescription" }}
+          warning={{ translateId: "trips.members.leaveDescription" }}
+          confirmLabel={{ translateId: "trips.members.leaveConfirm" }}
           closeLabel={{ translateId: "trips.edit.close" }}
+          cancelLabel={{ translateId: "trips.form.cancel" }}
           trigger={
             <Button
               type="button"
@@ -131,19 +126,6 @@ export function MemberRow({
               disabled={!isOnline}
               translateId="trips.members.leave"
             />
-          }
-          footer={
-            <>
-              <DialogClose>
-                <Button type="button" variant="secondary" translateId="trips.form.cancel" />
-              </DialogClose>
-              <Button
-                type="button"
-                isLoading={isBusy}
-                onClick={leaveTrip}
-                translateId="trips.members.leaveConfirm"
-              />
-            </>
           }
         />
       ) : null}

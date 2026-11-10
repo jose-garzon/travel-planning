@@ -20,7 +20,7 @@ function ExampleTrip() {
   const t = (key: ExampleKey) => translate({ translateId: `auth.landing.example.${key}` });
 
   return (
-    <Panel aria-hidden="true" className="flex flex-col gap-6 p-6 lg:p-10">
+    <Panel aria-hidden="true" className="flex flex-col gap-6 p-6 lg:flex-1 lg:p-10">
       <span className="font-display text-3xl font-bold uppercase leading-none tracking-wide">
         {t("name")}
       </span>
@@ -33,11 +33,11 @@ function ExampleTrip() {
           { id: "home", name: t("home"), meta: t("homeMeta"), variant: "hub" },
         ]}
       />
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3 lg:mt-auto">
         <span className="rounded-full bg-sun px-4 py-2 font-display text-2xl font-bold uppercase leading-none text-on-sun">
           {t("perPerson")}
         </span>
-        <span className="text-sm text-text-muted">{t("label")}</span>
+        <span className="text-sm font-semibold text-text-muted">{t("label")}</span>
       </div>
     </Panel>
   );
@@ -87,7 +87,7 @@ export function LandingScreen() {
         <MagicLinkForm />
         <HowItWorks />
       </div>
-      <div className="lg:basis-1/2">
+      <div className="lg:flex lg:basis-1/2">
         <ExampleTrip />
       </div>
     </main>

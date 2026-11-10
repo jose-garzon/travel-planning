@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { Then, When } from "./fixtures";
 import { openTravelers } from "./support/travelers";
@@ -8,19 +8,28 @@ function travelers(page: Page) {
   return page.getByRole("region", { name: "Travelers" }).getByRole("listitem");
 }
 
+/**
+ * Scrolls the control to the middle of the screen first: on phones the
+ * assistant launcher is pinned to the foot and would take a click aimed
+ * at a control scrolled just into view.
+ */
+async function clickCentered(target: Locator) {
+  await target.evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+  await target.click();
+}
+
 When("I remove {string} and confirm", async ({ page }, name: string) => {
   await openTravelers(page);
-  await travelers(page)
-    .filter({ hasText: name })
-    .getByRole("button", { name: "Remove", exact: true })
-    .click();
+  await clickCentered(
+    travelers(page).filter({ hasText: name }).getByRole("button", { name: "Remove", exact: true }),
+  );
   const dialog = page.getByRole("dialog", { name: `Remove ${name} from this trip?` });
   await dialog.getByRole("button", { name: "Remove", exact: true }).click();
 });
 
 When("I leave the trip and confirm", async ({ page }) => {
   await openTravelers(page);
-  await page.getByRole("button", { name: "Leave trip", exact: true }).click();
+  await clickCentered(page.getByRole("button", { name: "Leave trip", exact: true }));
   const dialog = page.getByRole("dialog", { name: "Leave this trip?" });
   await dialog.getByRole("button", { name: "Leave", exact: true }).click();
 });

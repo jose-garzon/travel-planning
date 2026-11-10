@@ -17,7 +17,6 @@ export default async function NewTripPage({ params }: PageProps<"/[locale]/trips
     <main className="mx-auto w-full max-w-dialog px-6 pt-4 pb-6 lg:pt-10">
       {/* The trip-name field is the visible title; this names the page. */}
       <h1 className="sr-only">{t("title")}</h1>
-      <p className="mb-8 text-text-muted">{t("intro")}</p>
       <TripForm />
     </main>
   );
