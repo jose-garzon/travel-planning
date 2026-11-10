@@ -16,7 +16,7 @@ import { SectionHeader } from "@/shared/ui/components/section-header";
 import { StopAccordion } from "@/shared/ui/components/stop-accordion";
 import { Toast } from "@/shared/ui/components/toast";
 import { formatMoney } from "@/shared/ui/money";
-import { groupByStop } from "./plan";
+import { currentStop, groupByStop } from "./plan";
 
 export default async function TripPage({
   params,
@@ -78,6 +78,8 @@ export default async function TripPage({
   const myShare = formatMoney(costs.value.mine, costs.value.currency, locale);
 
   const plan = groupByStop(stops, activities.value.activities, costs.value.items);
+  // Open where the trip is today; before or after it, the first stop.
+  const openStop = Math.max(0, currentStop(stops, today, trip.endDate));
 
   const isOwner = trip.role === "owner";
   const alone = members.value.length === 1;
@@ -112,6 +114,7 @@ export default async function TripPage({
             crewCount={members.value.length}
             myShare={myShare}
             shareHint={shareHintFor(costs.value.mine, t("shareEmptyHint"))}
+            datesHint={undatedHint(legs.length, legDates.length, t("trainUndated"))}
             legDates={legDates}
             today={today}
             total={formatMoney(costs.value.summary.total, costs.value.currency, locale)}
@@ -130,6 +133,11 @@ export default async function TripPage({
             tripName={trip.name}
             openInvite={invite === "1"}
           />
+          <EmptyPlanPrompt
+            planned={activities.value.activities.length + costs.value.items.length}
+            title={t("emptyPlanTitle")}
+            body={t("emptyPlanBody")}
+          />
           <div className="mt-6 flex flex-col gap-16">
             <section
               id="itinerary"
@@ -138,10 +146,8 @@ export default async function TripPage({
             >
               <SectionHeader id="itinerary-heading" title={t("planHeading")} />
               {plan.map((group, index) => {
-                const stop = group.stop === null ? null : stops[group.stop];
-                const from = stop === undefined || stop === null ? trip.startDate : stop.from;
-                const to =
-                  stop === undefined || stop === null ? trip.endDate : (stop.to ?? trip.endDate);
+                const stop = group.stop === null ? undefined : stops[group.stop];
+                const { from, to } = stopDays(stop, trip);
                 const meta = stopMeta({
                   whole: group.stop === null,
                   activityCount: group.activities.length,
@@ -156,7 +162,7 @@ export default async function TripPage({
                     tone={group.stop === null ? "whole" : "stop"}
                     dates={formatRange(from, to, locale)}
                     meta={meta}
-                    defaultOpen={index === 0}
+                    defaultOpen={index === openStop}
                   >
                     <ItineraryStop
                       tripId={tripId}
@@ -225,6 +231,47 @@ export default async function TripPage({
   );
 }
 
+/** Why the train is off the line: a stop has no date yet. */
+function undatedHint(legs: number, dated: number, hint: string): string | undefined {
+  return legs > 0 && dated === 0 ? hint : undefined;
+}
+
+/** A brand-new trip: one invitation to start, instead of a wall of empty stops. */
+function EmptyPlanPrompt({
+  planned,
+  title,
+  body,
+}: {
+  planned: number;
+  title: string;
+  body: string;
+}) {
+  return planned === 0 ? (
+    <div className="flex items-start gap-4 rounded-md border-2 border-accent border-dashed p-5">
+      <span
+        aria-hidden="true"
+        className="mt-1 size-5 shrink-0 rounded-full border-4 border-accent"
+      />
+      <div className="flex flex-col gap-1">
+        <p className="font-bold font-display text-2xl uppercase leading-none tracking-wide">
+          {title}
+        </p>
+        <p className="text-text-muted">{body}</p>
+      </div>
+    </div>
+  ) : null;
+}
+
+/** A stop's days; the whole-trip group (no stop) spans the trip. */
+function stopDays(
+  stop: { from: string | null; to: string | null } | undefined,
+  trip: { startDate: string | null; endDate: string | null },
+): { from: string | null; to: string | null } {
+  return stop === undefined
+    ? { from: trip.startDate, to: trip.endDate }
+    : { from: stop.from, to: stop.to ?? trip.endDate };
+}
+
 /** Phones: the invite strip under the ticket while the owner is still alone. */
 function AloneInvite({
   show,
@@ -283,12 +330,12 @@ function JoinToasts({ joined, already, message, alreadyMessage }: JoinToastsProp
   return already ? <Toast tone="success">{alreadyMessage}</Toast> : null;
 }
 
-/** Each route city's own station code: the origin, then every stop. */
 /** The empty share explains how it fills up; a real share speaks for itself. */
 function shareHintFor(mine: number, hint: string): string | undefined {
   return mine === 0 ? hint : undefined;
 }
 
+/** Each route city's own station code: the origin, then every stop. */
 function codesOf(legs: { from: { code: string }; to: { code: string } }[]): string[] {
   const first = legs[0];
   return first === undefined ? [] : [first.from.code, ...legs.map((leg) => leg.to.code)];

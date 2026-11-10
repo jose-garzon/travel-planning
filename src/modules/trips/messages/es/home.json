@@ -8,7 +8,7 @@
     "description": "Empieza por la ruta: de dónde sales y a dónde van. Justo después puedes invitar a tu parche.",
     "cta": "Crea tu primer viaje",
     "stepRoute": "Traza tu ruta",
-    "stepCrew": "Invita a tu parche",
+    "stepCrew": "Suma a tu parche",
     "stepShare": "Mira tu parte"
   },
   "countdown": "{days, plural, =0 {Hoy} one {Mañana} other {En # días}}",
@@ -35,15 +35,17 @@
     "nothingYet": "Nada planeado en {city} aún",
     "planDay": "Planea el día",
     "later": "Lo que viene",
-    "openTrip": "Abrir viaje",
     "fieldDate": "Fecha",
     "fieldWhen": "Salida",
     "fieldCrew": "Parche",
     "fieldNow": "Estado",
-    "ticketNo": "Tiquete {code}",
     "carousel": "Próximos días",
     "backToFirst": "Volver al primer día",
-    "position": "Día {n} de {total}"
-  },
-  "tripsHeading": "Tus viajes"
+    "position": "Día {n} de {total}",
+    "line": "Línea del viaje",
+    "here": "estás aquí",
+    "nextHere": "próxima parada",
+    "crewSolo": "Solo tú",
+    "invite": "Suma a tu parche"
+  }
 }

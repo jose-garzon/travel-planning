@@ -32,8 +32,11 @@
   "trainHere": "You are here today",
   "planHeading": "Itinerary",
   "wholeTrip": "Whole trip",
-  "stopMeta": "{count, plural, =0 {Nothing planned} one {# activity} other {# activities}}",
+  "stopMeta": "{count, plural, =0 {Open to plan} one {# activity} other {# activities}}",
   "stopCosts": "{amount} in costs",
   "wholeTripHint": "Flights, food and anything not tied to one city",
-  "shareEmptyHint": "Grows as you join activities"
+  "shareEmptyHint": "Grows as you join activities",
+  "trainUndated": "Add a date to every stop to see where the trip is.",
+  "emptyPlanTitle": "Plan your first stop",
+  "emptyPlanBody": "Open a city below and add what you'd like to do, or ask the assistant for ideas."
 }

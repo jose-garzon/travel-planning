@@ -51,3 +51,17 @@ function stopFor(stops: PlanStop[], date: string): number {
   }
   return found;
 }
+
+/**
+ * The stop the trip is at today: its first day reached, its departure
+ * not yet. The last stop runs to the trip's end. -1 when today is
+ * outside every dated stop.
+ */
+export function currentStop(stops: PlanStop[], today: string, endDate: string | null): number {
+  return stops.findIndex(
+    (stop) =>
+      stop.from !== null &&
+      stop.from <= today &&
+      (stop.to === null ? endDate === null || today <= endDate : today < stop.to),
+  );
+}

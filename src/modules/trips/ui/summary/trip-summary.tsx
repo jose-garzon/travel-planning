@@ -24,6 +24,8 @@ type TripSummaryProps = {
   total: string;
   /** Under the share while it is still empty: how it fills up. */
   shareHint?: string;
+  /** Under the dates when a stop is undated: why the train is off the line. */
+  datesHint?: string;
   /** Extra actions beside Edit (the owner's Share on phones). */
   actions?: ReactNode;
   /** Day of each leg, in route order; places the train on the line. */
@@ -107,6 +109,7 @@ export function TripSummary({
   myShare,
   total,
   shareHint,
+  datesHint,
   actions,
   legDates,
   today,
@@ -159,9 +162,11 @@ export function TripSummary({
               </div>
             </div>
             <dl className="flex flex-wrap gap-x-8 gap-y-4">
-              <Field label={t("fieldDates")}>{dates}</Field>
+              <Field label={t("fieldDates")} note={datesHint}>
+                {dates}
+              </Field>
               <Field label={t("fieldShare")} note={shareHint}>
-                <span className="text-accent">{myShare}</span>
+                <span className="tabular-nums">{myShare}</span>
               </Field>
 
               <Field label={t("fieldCrew")} phone={false}>

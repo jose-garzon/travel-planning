@@ -33,7 +33,7 @@ export function StopAccordion({
     <details
       open={defaultOpen}
       className={cx(
-        "group rounded-md border-2 border-border transition-colors open:border-text",
+        "group stop-accordion rounded-md border-2 border-border transition-colors open:border-text",
         tone === "stop" ? "bg-surface-1" : "border-dashed bg-transparent",
       )}
     >
@@ -41,23 +41,25 @@ export function StopAccordion({
         <span
           aria-hidden="true"
           className={cx(
-            "size-5 shrink-0 rounded-full border-4 border-accent",
+            "size-5 shrink-0 rounded-full border-4 border-accent group-open:motion-safe:animate-station-in",
             tone === "stop" ? "bg-accent" : "bg-surface-1",
           )}
         />
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span
+            {/* h3 under the page's section h2; the stop's sub-lists are h4. */}
+            <h3
               className={cx(
                 "font-bold font-display uppercase leading-none tracking-wide",
                 tone === "stop" ? "text-2xl" : "text-xl",
               )}
             >
               {title}
-            </span>
-            {/* The whole trip's days are the ticket's: no chip to repeat them. */}
+            </h3>
+            {/* The whole trip's days are the ticket's: no chip to repeat them.
+                Open, the day headings carry the dates; amber stays with them. */}
             {dates === null || tone === "whole" ? null : (
-              <span className="rounded-full bg-sun px-3 py-0.5 font-semibold text-on-sun text-sm tabular-nums">
+              <span className="rounded-full bg-sun px-3 py-0.5 font-semibold text-on-sun text-sm tabular-nums group-open:hidden">
                 {dates}
               </span>
             )}

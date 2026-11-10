@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupByStop } from "./plan";
+import { currentStop, groupByStop } from "./plan";
 
 const stops = [
   { city: "Cartagena", from: "2026-11-03", to: "2026-11-07" },
@@ -30,5 +30,23 @@ describe("groupByStop", () => {
       [],
     );
     expect(groups[2]?.activities).toHaveLength(1);
+  });
+});
+
+describe("currentStop", () => {
+  it("finds the stop holding today; a travel day belongs to the arrival", () => {
+    expect(currentStop(stops, "2026-11-05", "2026-11-11")).toBe(0);
+    expect(currentStop(stops, "2026-11-07", "2026-11-11")).toBe(1);
+  });
+
+  it("runs the last stop to the trip's end, then nothing", () => {
+    const open = [...stops.slice(0, 1), { city: "Santa Marta", from: "2026-11-07", to: null }];
+    expect(currentStop(open, "2026-11-11", "2026-11-11")).toBe(1);
+    expect(currentStop(open, "2026-11-12", "2026-11-11")).toBe(-1);
+  });
+
+  it("is -1 before the trip and for undated stops", () => {
+    expect(currentStop(stops, "2026-10-01", "2026-11-11")).toBe(-1);
+    expect(currentStop([{ city: "X", from: null, to: null }], "2026-11-05", null)).toBe(-1);
   });
 });

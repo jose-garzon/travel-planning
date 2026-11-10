@@ -3,7 +3,7 @@
 import {
   BedDouble,
   Bus,
-  ChevronRight,
+  ChevronDown,
   Ellipsis,
   type LucideIcon,
   Plane,
@@ -117,14 +117,16 @@ export function BudgetCosts({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <h4 className="text-2xl leading-none">{t("items")}</h4>
+        <h4 className="font-bold font-display text-lg text-text-muted uppercase leading-none tracking-wide">
+          {t("items")}
+        </h4>
         <Dialog
           open={isAdding}
           onOpenChange={setIsAdding}
           title={t("add")}
           closeLabel={t("close")}
           trigger={
-            <Button type="button" icon={Plus} labelHidden disabled={!isOnline} title={t("add")}>
+            <Button type="button" size="sm" variant="outline" icon={Plus} disabled={!isOnline}>
               {t("add")}
             </Button>
           }
@@ -194,8 +196,8 @@ export function BudgetCosts({
             ) : null}
             <details className="group">
               <summary className="flex min-h-touch cursor-pointer list-none items-center gap-2 font-semibold">
-                <span className="inline-flex transition group-open:rotate-90">
-                  <Icon icon={ChevronRight} size="sm" />
+                <span className="inline-flex transition-transform duration-fast group-open:rotate-180">
+                  <Icon icon={ChevronDown} size="sm" />
                 </span>
                 {t("moreDetails")}
               </summary>
@@ -254,7 +256,7 @@ export function BudgetCosts({
                       labelHidden
                       disabled={!isOnline}
                     >
-                      {t("delete")}
+                      {t("deleteItem", { label: item.label })}
                     </Button>
                   }
                 />

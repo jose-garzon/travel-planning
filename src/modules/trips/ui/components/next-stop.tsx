@@ -1,3 +1,4 @@
+import { ArrowRight, UserPlus } from "lucide-react";
 import { useLocale } from "next-intl";
 import type { ReactNode } from "react";
 import { NextStopCarousel } from "@/modules/trips/ui/components/next-stop-carousel";
@@ -5,9 +6,10 @@ import type {
   HomeActivity,
   NextStop,
   NextStopDay,
+  NextStopStation,
 } from "@/modules/trips/ui/components/next-stop-model";
+import { formatTripDateRange } from "@/modules/trips/ui/components/trip-date-range";
 import { Link } from "@/shared/i18n/navigation";
-import { buttonClasses } from "@/shared/ui/components/button-classes";
 import { Panel } from "@/shared/ui/components/panel";
 import { cx } from "@/shared/ui/cx";
 import { useTranslatable } from "@/shared/ui/translatable";
@@ -37,29 +39,134 @@ function formatDuration(minutes: number, locale: string): string {
   return rest === 0 ? unit(hours, "hour") : `${unit(hours, "hour")} ${unit(rest, "minute")}`;
 }
 
+type MapItem =
+  | { kind: "station"; index: number; code: string; name: string }
+  | { kind: "gap"; hidden: number; after: number };
+
+const MAX_STATIONS = 5;
+
 /**
- * The travel into the day's city as a short stretch of line in the
- * on-line colour: origin code, the line, a filled ring, the city code.
+ * Long lines keep the ends and the day's neighbours; each folded run
+ * becomes one "+N" item, so the current station never drops off.
  */
-function TravelStrip({
-  fromCode,
-  toCode,
+function mapItems(stations: NextStopStation[], current: number): MapItem[] {
+  const keep = new Set([0, stations.length - 1, current - 1, current, current + 1]);
+  const visible =
+    stations.length <= MAX_STATIONS
+      ? stations.map((_, i) => i)
+      : stations.map((_, i) => i).filter((i) => keep.has(i));
+  const items: MapItem[] = [];
+  visible.forEach((index, n) => {
+    const prev = visible[n - 1];
+    if (prev !== undefined && index - prev > 1) {
+      items.push({ kind: "gap", hidden: index - prev - 1, after: prev });
+    }
+    const station = stations[index] as NextStopStation;
+    items.push({ kind: "station", index, code: station.code, name: station.name });
+  });
+  return items;
+}
+
+/**
+ * The trip's whole line, with the day's station marked: rode stretches
+ * solid, the rest still to ride faint. Codes are decorative; each
+ * station is read out by name.
+ */
+function StationMap({
+  stations,
+  current,
+  hereLabel,
   label,
 }: {
-  fromCode: string;
-  toCode: string;
+  stations: NextStopStation[];
+  current: number;
+  hereLabel: string;
   label: string;
 }) {
+  const items = mapItems(stations, current);
+  const reached = (item: MapItem | undefined) =>
+    item !== undefined && (item.kind === "station" ? item.index <= current : item.after < current);
+
   return (
-    <p className="flex items-center gap-3 font-display text-lg font-bold sm:text-2xl uppercase leading-none tracking-wide">
-      <span className="sr-only">{label}</span>
-      <span aria-hidden="true">{fromCode}</span>
-      <span aria-hidden="true" className="flex flex-1 items-center">
-        <span className="h-1 flex-1 origin-left sm:h-2 bg-on-accent motion-safe:animate-line-across" />
-        <span className="size-4 shrink-0 rounded-full border-3 sm:size-6 sm:border-4 border-on-accent bg-accent" />
+    <ol aria-label={label} className="flex items-start">
+      {items.map((item, n) => (
+        <MapStop
+          key={item.kind === "station" ? `s${item.index}` : `g${item.after}`}
+          item={item}
+          here={item.kind === "station" && item.index === current}
+          rodeIn={n > 0 && reached(item)}
+          rodeOut={reached(items[n + 1])}
+          first={n === 0}
+          last={n === items.length - 1}
+          hereLabel={hereLabel}
+        />
+      ))}
+    </ol>
+  );
+}
+
+function Segment({ hidden, rode }: { hidden: boolean; rode: boolean }) {
+  return (
+    <span
+      className={cx(
+        "h-1 flex-1 sm:h-1.5",
+        hidden ? "invisible" : rode ? "bg-on-accent" : "bg-on-accent/35",
+      )}
+    />
+  );
+}
+
+function stationDot(here: boolean, rode: boolean): string {
+  if (here) {
+    return "size-8 border-4 bg-on-accent ring-4 ring-on-accent/35 motion-safe:animate-station-in";
+  }
+  return rode ? "size-4 border-3 bg-on-accent" : "size-4 border-3 bg-accent";
+}
+
+/** One stop of the map: the line in, the station (or "+N"), the line out, the code. */
+function MapStop({
+  item,
+  here,
+  rodeIn,
+  rodeOut,
+  first,
+  last,
+  hereLabel,
+}: {
+  item: MapItem;
+  here: boolean;
+  rodeIn: boolean;
+  rodeOut: boolean;
+  first: boolean;
+  last: boolean;
+  hereLabel: string;
+}) {
+  const rode = rodeIn || first;
+  return (
+    <li className="relative flex min-w-0 flex-1 flex-col items-center">
+      <span aria-hidden="true" className="relative flex h-8 w-full items-center">
+        <Segment hidden={first} rode={rodeIn} />
+        {item.kind === "station" ? (
+          <span className={cx("shrink-0 rounded-full border-on-accent", stationDot(here, rode))} />
+        ) : (
+          <span className="shrink-0 px-1 font-display text-base font-bold leading-none">
+            +{item.hidden}
+          </span>
+        )}
+        <Segment hidden={last} rode={rodeOut} />
       </span>
-      <span aria-hidden="true">{toCode}</span>
-    </p>
+      {item.kind === "station" ? (
+        <span className="mt-2 max-w-full truncate px-0.5 font-display text-base font-bold uppercase leading-none tracking-wide sm:text-xl">
+          <span aria-hidden="true">{item.code}</span>
+          <span className="sr-only">
+            {item.name}
+            {here && `, ${hereLabel}`}
+          </span>
+        </span>
+      ) : (
+        <span className="sr-only">+{item.hidden}</span>
+      )}
+    </li>
   );
 }
 
@@ -94,7 +201,7 @@ function ActivityMeta({ activity, locale }: { activity: HomeActivity; locale: st
 }
 
 /** The day's plan on its own short line: travel first, then each activity. */
-function DayLine({ day }: { day: NextStopDay }) {
+function DayLine({ day, tripId }: { day: NextStopDay; tripId: string }) {
   const translate = useTranslatable();
   const locale = useLocale();
 
@@ -135,9 +242,12 @@ function DayLine({ day }: { day: NextStopDay }) {
               values: { city: day.city },
             })}
           </span>
-          <span className="mt-2 block font-semibold text-accent underline underline-offset-4">
+          <Link
+            href={`/trips/${tripId}`}
+            className="mt-2 inline-block font-semibold text-accent underline underline-offset-4 ui-hover:text-accent-hover"
+          >
             {translate({ translateId: "trips.home.nextStop.planDay" })}
-          </span>
+          </Link>
         </li>
       )}
     </ol>
@@ -179,22 +289,16 @@ function LaterDays({ days, locale }: { days: NextStopDay[]; locale: string }) {
   );
 }
 
-/** One ticket field: a small label over its value. */
+/** One board field: a small label over its value. */
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="min-w-0">
-      <dt className="text-xs font-semibold uppercase">{label}</dt>
+      <dt className="text-sm font-semibold uppercase">{label}</dt>
       <dd className="mt-1 whitespace-nowrap font-display text-xl font-bold uppercase leading-none tracking-wide">
         {children}
       </dd>
     </div>
   );
-}
-
-/** Short, stable ticket number from the trip id ("4F2A-9C1E"). */
-function ticketCode(tripId: string): string {
-  const hex = tripId.replace(/[^0-9a-f]/gi, "").toUpperCase();
-  return `${hex.slice(0, 4)}-${hex.slice(4, 8)}`;
 }
 
 const DAY_MS = 86_400_000;
@@ -204,13 +308,13 @@ function dayDiff(from: string, to: string): number {
 }
 
 /**
- * One day as a train ticket. The magenta stub carries the route, the
- * city at hero scale and the fare fields (date, departure, crew); a
- * perforated tear with punched notches parts it from the day's plan; a
- * barcode foot closes it. The whole ticket is one link to the trip.
- * The first one also lists the later days (from lg; phones swipe).
+ * One day of the next trip as a station board. The line-coloured head
+ * names the trip, places the day on its whole line ("you are here"),
+ * signs the city at hero scale and gives the day's facts (date,
+ * countdown, crew). The body is the day's plan. The trip name is the
+ * link to the trip; the foot carries the actions, so nothing nests.
  */
-function DayTicket({
+function DayBoard({
   stop,
   day,
   headingId,
@@ -228,45 +332,57 @@ function DayTicket({
   const when = today
     ? translate({ translateId: "trips.home.nextStop.today" })
     : translate({ translateId: "trips.home.countdown", values: { days: daysAway } });
+  const solo = stop.crewCount === 1;
 
   return (
-    <Panel
-      as={Link}
-      href={`/trips/${stop.tripId}`}
-      aria-describedby={`${headingId}-day`}
-      className={cx(
-        "group flex min-h-ticket flex-col border-accent! lg:flex-row",
-        "transition duration-fast ease-out motion-safe:active:scale-99",
-        "ui-focus:outline-2 ui-focus:outline-solid ui-focus:outline-focus ui-focus:outline-offset-4",
-      )}
-    >
-      <div className="@container flex min-w-0 flex-col gap-6 rounded-t-sm bg-accent p-5 text-on-accent sm:p-8 lg:w-5/12 lg:justify-between lg:rounded-tr-none lg:rounded-l-sm lg:p-10">
-        {day.travel !== null ? (
-          <TravelStrip
-            fromCode={day.travel.fromCode}
-            toCode={day.cityCode}
-            label={translate({
-              translateId: "trips.home.routeName",
-              values: { route: `${day.travel.from} → ${day.city}` },
-            })}
-          />
-        ) : (
-          <p className="font-display text-lg font-bold uppercase leading-none tracking-wide wrap-anywhere sm:text-2xl">
+    <Panel className="flex flex-col border-accent! lg:flex-row">
+      <div className="@container flex min-w-0 flex-col gap-5 rounded-t-sm bg-accent p-5 text-on-accent sm:gap-6 sm:p-8 lg:w-5/12 lg:rounded-tr-none lg:rounded-l-sm lg:p-10">
+        <h2 id={headingId} className="text-2xl leading-none text-on-accent sm:text-3xl">
+          <Link
+            href={`/trips/${stop.tripId}`}
+            className="group/trip wrap-anywhere underline-offset-6 ui-hover:underline ui-focus:outline-2 ui-focus:outline-solid ui-focus:outline-on-accent ui-focus:outline-offset-4"
+          >
             {stop.tripName}
-          </p>
-        )}
-
-        <h2
-          id={headingId}
-          className={cx(
-            "text-hero-fit leading-none text-on-accent wrap-break-word motion-safe:animate-sign-in",
-            heroFit(day.city),
-          )}
-        >
-          {day.city}
+            <ArrowRight
+              aria-hidden="true"
+              className="ml-2 inline size-6 align-glyph transition-transform duration-fast ease-out motion-safe:group-hover/trip:translate-x-1"
+            />
+          </Link>
         </h2>
 
-        <dl id={`${headingId}-day`} className="flex flex-wrap gap-x-6 gap-y-3">
+        <p className="-mt-3 font-semibold tabular-nums sm:-mt-4">
+          {formatTripDateRange(stop, locale)}
+        </p>
+
+        <StationMap
+          stations={stop.stations}
+          current={day.station}
+          label={translate({ translateId: "trips.home.nextStop.line" })}
+          hereLabel={translate({
+            translateId: today ? "trips.home.nextStop.here" : "trips.home.nextStop.nextHere",
+          })}
+        />
+
+        <div>
+          {day.travel !== null && (
+            <p className="text-lg font-semibold">
+              {translate({
+                translateId: "trips.home.nextStop.from",
+                values: { city: day.travel.from },
+              })}
+            </p>
+          )}
+          <p
+            className={cx(
+              "text-hero-fit font-display font-bold uppercase leading-none tracking-wide wrap-break-word motion-safe:animate-sign-in",
+              heroFit(day.city),
+            )}
+          >
+            {day.city}
+          </p>
+        </div>
+
+        <dl className="flex flex-wrap gap-x-6 gap-y-3">
           <Field label={translate({ translateId: "trips.home.nextStop.fieldDate" })}>
             {formatDay(day.date, locale, "short")}
           </Field>
@@ -278,12 +394,19 @@ function DayTicket({
             {when}
           </Field>
           <Field label={translate({ translateId: "trips.home.nextStop.fieldCrew" })}>
-            {stop.crewCount}
+            {solo ? translate({ translateId: "trips.home.nextStop.crewSolo" }) : stop.crewCount}
           </Field>
         </dl>
+        {solo && (
+          <Link
+            href={`/trips/${stop.tripId}?invite=1`}
+            className="inline-flex items-center gap-2 self-start font-semibold underline underline-offset-4 ui-hover:decoration-2 ui-focus:outline-2 ui-focus:outline-solid ui-focus:outline-on-accent ui-focus:outline-offset-4"
+          >
+            <UserPlus aria-hidden="true" className="size-5" />
+            {translate({ translateId: "trips.home.nextStop.invite" })}
+          </Link>
+        )}
       </div>
-
-      <div aria-hidden="true" className="ticket-tear" />
 
       <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-8 lg:p-10">
         <h3 className="mb-4 text-xl sm:mb-6 sm:text-2xl">
@@ -294,52 +417,32 @@ function DayTicket({
                 values: { count: day.activities.length },
               })}
         </h3>
-        <DayLine day={day} />
+        <DayLine day={day} tripId={stop.tripId} />
         {first && stop.later.length > 0 && (
           <div className="max-lg:hidden">
             <LaterDays days={stop.later} locale={locale} />
           </div>
         )}
-
-        <div className="mt-auto flex items-end gap-4 pt-6">
-          <div className="min-w-0 flex-1 text-text-muted">
-            <div aria-hidden="true" className="ticket-barcode" />
-            <p className="mt-1 text-xs font-semibold">
-              {translate({
-                translateId: "trips.home.nextStop.ticketNo",
-                values: { code: ticketCode(stop.tripId) },
-              })}
-              {" · "}
-              {stop.tripName}
-            </p>
-          </div>
-          <span
-            aria-hidden="true"
-            className={cx(
-              buttonClasses({ variant: "primary" }),
-              "max-lg:hidden group-hover:bg-accent-hover group-hover:text-on-accent",
-            )}
-          >
-            {translate({ translateId: "trips.home.nextStop.openTrip" })}
-          </span>
-        </div>
       </div>
     </Panel>
   );
 }
 
 /**
- * Home's spotlight: the next day of the next trip, as a ticket. On
- * phones it fills the screen under the greeting, and the later days
- * stack under it as more tickets to swipe through (never past days).
- * From lg the later days list inside the first ticket.
+ * Home's spotlight: the next day of the next trip, as a station
+ * board. On phones the later days stack under it as more boards to
+ * swipe through (never past days). From lg the later days list
+ * inside the first board.
  */
 export function NextStopPanel({ stop }: { stop: NextStop }) {
   const translate = useTranslatable();
   const days = [stop.focus, ...stop.later];
 
   return (
-    <section aria-labelledby={HEADING_ID} className="mb-6 sm:mb-10">
+    <section
+      aria-label={translate({ translateId: "trips.home.nextTripHeading" })}
+      className="mb-6 sm:mb-10"
+    >
       <NextStopCarousel
         label={translate({ translateId: "trips.home.nextStop.carousel" })}
         backLabel={translate({ translateId: "trips.home.nextStop.backToFirst" })}
@@ -350,7 +453,7 @@ export function NextStopPanel({ stop }: { stop: NextStop }) {
           }),
         )}
         slides={days.map((day, i) => (
-          <DayTicket
+          <DayBoard
             key={day.date}
             stop={stop}
             day={day}

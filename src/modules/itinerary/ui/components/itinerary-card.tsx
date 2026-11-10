@@ -1,6 +1,6 @@
 "use client";
 
-import { Ellipsis, Plus, TriangleAlert } from "lucide-react";
+import { Check, Ellipsis, Plus, TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import type { ActivityDto, ActivityInput } from "@/modules/itinerary/service/schemas";
@@ -115,14 +115,16 @@ export function ItineraryStop({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <h4 className="text-2xl leading-none">{t("subheading")}</h4>
+        <h4 className="font-bold font-display text-lg text-text-muted uppercase leading-none tracking-wide">
+          {t("subheading")}
+        </h4>
         <Dialog
           open={editing !== null}
           onOpenChange={(open) => setEditing(open ? (editing ?? { mode: "new" }) : null)}
           title={editing?.mode === "edit" ? t("editTitle") : t("add")}
           closeLabel={t("close")}
           trigger={
-            <Button type="button" icon={Plus} labelHidden disabled={!isOnline} title={t("add")}>
+            <Button type="button" size="sm" variant="outline" icon={Plus} disabled={!isOnline}>
               {t("add")}
             </Button>
           }
@@ -151,14 +153,14 @@ export function ItineraryStop({
         <ol className="flex flex-col gap-7">
           {days.map(([day, activities]) => (
             <li key={day} className="flex flex-col gap-3">
-              <h3 className="flex items-center gap-3">
+              <h5 className="flex items-center gap-3">
                 <span className="rounded-full bg-sun px-3 py-1 font-body font-semibold text-on-sun text-sm normal-case tracking-normal">
                   {dateFormat.format(new Date(`${day}T00:00:00Z`))}
                 </span>
-                <span className="text-2xl leading-none">
+                <span className="font-bold font-display text-2xl uppercase leading-none tracking-wide">
                   {weekdayFormat.format(new Date(`${day}T00:00:00Z`))}
                 </span>
-              </h3>
+              </h5>
               <ul className="flex flex-col gap-2">
                 {activities.map((activity) => (
                   <ActivityRow
@@ -221,26 +223,31 @@ function ActivityRow({
         activity.subscribed ? "border-2 border-secondary" : "border border-border-strong",
       )}
     >
-      <div className="flex items-center justify-between gap-3">
-        {activity.startTime === null ? (
-          <span />
-        ) : (
-          <span className="rounded-full bg-sun px-3 py-1 font-semibold text-on-sun text-sm tabular-nums">
-            {activity.startTime}
-          </span>
-        )}
+      <div className="flex items-start gap-4">
+        {/* Timetable column: the departure time, set like a board. */}
+        <span className="w-12 shrink-0 pt-0.5 font-bold font-display text-xl leading-none tabular-nums tracking-wide">
+          {activity.startTime ?? "—"}
+        </span>
+        <p className="min-w-0 flex-1 font-semibold text-lg leading-snug">{activity.title}</p>
         <div className="flex shrink-0 items-center gap-2">
-          <Button
+          <button
             type="button"
-            size="sm"
-            variant={activity.subscribed ? "outline" : "people"}
             aria-pressed={activity.subscribed}
-            disabled={!isOnline}
-            isLoading={isBusy}
+            aria-busy={isBusy}
+            disabled={!isOnline || isBusy}
             onClick={onToggle}
+            className={cx(
+              "inline-flex min-h-touch items-center gap-1 rounded-full border-2 border-secondary px-3 font-semibold text-sm",
+              "transition-colors duration-fast disabled:opacity-50",
+              "ui-focus:outline-2 ui-focus:outline-focus ui-focus:outline-offset-2 ui-focus:outline-solid",
+              activity.subscribed
+                ? "bg-secondary text-on-secondary"
+                : "text-secondary ui-hover:bg-secondary ui-hover:text-on-secondary",
+            )}
           >
-            {activity.subscribed ? t("leave") : t("join")}
-          </Button>
+            {activity.subscribed ? <Icon icon={Check} size="sm" /> : null}
+            {t("join")}
+          </button>
           <Button
             type="button"
             size="sm"
@@ -254,8 +261,7 @@ function ActivityRow({
           </Button>
         </div>
       </div>
-      <p className="font-semibold text-lg leading-snug">{activity.title}</p>
-      <p className="text-sm text-text-muted">
+      <p className="pl-16 text-sm text-text-muted">
         {activity.costPerPerson === null
           ? t("free")
           : t("perPerson", {
@@ -291,7 +297,7 @@ function ActivityRow({
         )}
       </p>
       {activity.overlaps ? (
-        <p className="flex items-center gap-2 font-semibold text-error text-sm">
+        <p className="flex items-center gap-2 pl-16 font-semibold text-error text-sm">
           <Icon icon={TriangleAlert} />
           {t("overlap")}
         </p>

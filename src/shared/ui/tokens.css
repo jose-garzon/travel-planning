@@ -1003,94 +1003,6 @@
   }
 }
 
-/* Home ticket (next stop). On phones it fills the screen under the
-   header and greeting; from lg it sizes to its content. */
-@utility min-h-ticket {
-  min-height: calc(100svh - 9.5rem);
-  @media (width >= 64rem) {
-    min-height: 0;
-  }
-}
-
-/* The ticket's tear: a dashed rule with a punched notch at each end.
-   Each notch is a page-coloured hole whose half-ring, in the line
-   colour, continues the panel's rule. Horizontal on phones, vertical
-   from lg. Decorative. */
-@utility ticket-tear {
-  --notch: 1.75rem;
-  position: relative;
-  flex: none;
-  height: 0;
-  border-top: 2px dashed var(--color-border-strong);
-
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    width: var(--notch);
-    height: var(--notch);
-    border-radius: var(--radius-full);
-    background-color: var(--color-bg);
-    border: 2px solid transparent;
-  }
-  &::before {
-    left: -2px;
-    border-top-color: var(--color-line);
-    border-right-color: var(--color-line);
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-  &::after {
-    right: -2px;
-    border-bottom-color: var(--color-line);
-    border-left-color: var(--color-line);
-    transform: translate(50%, -50%) rotate(45deg);
-  }
-
-  @media (width >= 64rem) {
-    height: auto;
-    width: 0;
-    border-top: 0;
-    border-left: 2px dashed var(--color-border-strong);
-
-    &::before {
-      top: -2px;
-      left: 0;
-      border-color: transparent;
-      border-right-color: var(--color-line);
-      border-bottom-color: var(--color-line);
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
-    &::after {
-      top: auto;
-      bottom: -2px;
-      right: auto;
-      left: 0;
-      border-color: transparent;
-      border-left-color: var(--color-line);
-      border-top-color: var(--color-line);
-      transform: translate(-50%, 50%) rotate(45deg);
-    }
-  }
-}
-
-/* Decorative barcode on the ticket's foot, in the current text colour. */
-@utility ticket-barcode {
-  height: 2.25rem;
-  background-image: repeating-linear-gradient(
-    90deg,
-    currentColor 0 2px,
-    transparent 2px 4px,
-    currentColor 4px 5px,
-    transparent 5px 8px,
-    currentColor 8px 11px,
-    transparent 11px 13px,
-    currentColor 13px 14px,
-    transparent 14px 17px
-  );
-}
-
 /* Trip page rail: viewport tall, less the sticky offset above and below. */
 @utility h-rail {
   height: calc(100dvh - var(--spacing-12));
@@ -1426,4 +1338,38 @@
    letters; condensed caps run about 0.52em each) fits its @container. */
 @utility text-hero-fit {
   font-size: min(var(--text-hero), calc(100cqi / (var(--fit, 6) * 0.52)));
+}
+
+/* A stop opening: the panel grows to its height and fades in while the
+   station ring pops (station-in, on the dot). Browsers without
+   ::details-content or interpolate-size open at once. Reduced motion
+   opens at once. */
+@utility stop-accordion {
+  interpolate-size: allow-keywords;
+
+  &::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition:
+      block-size var(--motion-duration-normal) var(--ease-out),
+      opacity var(--motion-duration-normal) var(--ease-out),
+      content-visibility var(--motion-duration-normal) allow-discrete;
+  }
+
+  &[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::details-content {
+      transition: none;
+    }
+  }
+}
+
+/* An inline icon sitting on the text's baseline, not above it. */
+@utility align-glyph {
+  vertical-align: -0.1em;
 }

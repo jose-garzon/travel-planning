@@ -4,9 +4,8 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { cx } from "@/shared/ui/cx";
 
 /**
- * Phones only: the day tickets as a swipeable deck. One ticket fills
- * the screen; the edges of the next ones peek out below it, like a
- * stack. Swipe left for the next day, right to go back, or jump back
+ * Phones only: the day boards as a swipeable deck. The edges of the
+ * next ones peek out below the one on screen, like a stack. Swipe left for the next day, right to go back, or jump back
  * to the first. From lg only the first ticket shows and nothing
  * scrolls.
  */
@@ -58,7 +57,7 @@ export function NextStopCarousel({
         className={cx(
           "flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none]",
           "lg:overflow-visible",
-          // Room under the ticket for the stacked edges.
+          // Room under the board for the stacked edges.
           total > 1 && "max-lg:pb-4",
         )}
       >
@@ -80,7 +79,7 @@ export function NextStopCarousel({
         ))}
       </section>
 
-      {/* The stack: edges of the tickets still ahead, under the one on screen. */}
+      {/* The stack: edges of the boards still ahead, under the one on screen. */}
       {ahead > 0 && (
         <div
           aria-hidden="true"
@@ -107,7 +106,7 @@ export function NextStopCarousel({
               />
             ))}
           </div>
-          <p className="sr-only" aria-live="polite">
+          <p aria-live="polite" className="mr-auto text-sm font-semibold tabular-nums">
             {positionLabels[index]}
           </p>
           {index > 0 && (

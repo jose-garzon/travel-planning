@@ -8,7 +8,7 @@
     "description": "Start with the route: where you leave from and where you are going. You can invite your crew right after.",
     "cta": "Create your first trip",
     "stepRoute": "Draw your route",
-    "stepCrew": "Invite your crew",
+    "stepCrew": "Bring your crew",
     "stepShare": "See your share"
   },
   "countdown": "{days, plural, =0 {Today} one {Tomorrow} other {In # days}}",
@@ -35,15 +35,17 @@
     "nothingYet": "Nothing planned in {city} yet",
     "planDay": "Plan the day",
     "later": "Coming up",
-    "openTrip": "Open trip",
     "fieldDate": "Date",
     "fieldWhen": "Departs",
     "fieldCrew": "Crew",
     "fieldNow": "Status",
-    "ticketNo": "Ticket {code}",
     "carousel": "Upcoming days",
     "backToFirst": "Back to first day",
-    "position": "Day {n} of {total}"
-  },
-  "tripsHeading": "Your trips"
+    "position": "Day {n} of {total}",
+    "line": "Trip line",
+    "here": "you are here",
+    "nextHere": "next stop",
+    "crewSolo": "Just you",
+    "invite": "Bring your crew"
+  }
 }

@@ -8,7 +8,7 @@ import { formatMoney } from "@/shared/ui/money";
 type BarProps = {
   /** 0..1 */
   fill: number;
-  tone: "ink" | "error";
+  tone: "ink" | "line" | "error";
   thick?: boolean;
 };
 
@@ -25,7 +25,10 @@ function Bar({ fill, tone, thick = false }: BarProps) {
       <rect
         width={width}
         height="100%"
-        className={cx("meter-fill", tone === "error" ? "fill-error" : "fill-text")}
+        className={cx(
+          "meter-fill",
+          tone === "error" ? "fill-error" : tone === "line" ? "fill-accent" : "fill-text",
+        )}
       />
     </svg>
   );
@@ -50,16 +53,23 @@ export function BudgetHero({ budget }: { budget: BudgetDto }) {
         <span className="font-bold font-display text-4xl leading-none tabular-nums tracking-wide">
           {money(summary.total)}
         </span>
-        <span className="text-text-muted">
-          {t("mine")}: {money(budget.mine)}
-        </span>
         {summary.cap === null || summary.remaining === null ? null : (
           <div className="mt-3 flex flex-col gap-2">
-            <Bar
-              fill={summary.cap === 0 ? 1 : summary.total / summary.cap}
-              tone={isOver ? "error" : "ink"}
-              thick
-            />
+            {/* The cap as a line to its last station: the ring is the cap. */}
+            <span className="flex items-center gap-1">
+              <Bar
+                fill={summary.cap === 0 ? 1 : summary.total / summary.cap}
+                tone={isOver ? "error" : "line"}
+                thick
+              />
+              <span
+                aria-hidden="true"
+                className={cx(
+                  "size-5 shrink-0 rounded-full border-4 bg-surface-1",
+                  isOver ? "border-error" : "border-accent",
+                )}
+              />
+            </span>
             {isOver ? (
               <span role="status" className="font-semibold text-error text-sm">
                 {t("over", { amount: money(-summary.remaining) })}

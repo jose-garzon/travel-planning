@@ -29,6 +29,7 @@
   "empty": "No costs yet. Add lodging, transport or food, or ask the assistant.",
   "splitEqually": "split equally",
   "delete": "Delete",
+  "deleteItem": "Delete “{label}”",
   "deleteConfirm": "Delete “{label}” for everyone?",
   "estimates": "All amounts are estimates. Activities count only for the people who joined them.",
   "categories": {
@@ -55,5 +56,6 @@
   "details": "Budget details",
   "moreDetails": "More details",
   "close": "Close",
-  "deleteWarning": "It's removed for everyone on the trip. This can't be undone."
+  "deleteWarning": "It's removed for everyone on the trip. This can't be undone.",
+  "capPreview": "Cap: {amount}"
 }

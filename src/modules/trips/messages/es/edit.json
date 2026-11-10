@@ -32,8 +32,11 @@
   "trainHere": "Hoy estás aquí",
   "planHeading": "Itinerario",
   "wholeTrip": "Todo el viaje",
-  "stopMeta": "{count, plural, =0 {Nada planeado} one {# actividad} other {# actividades}}",
+  "stopMeta": "{count, plural, =0 {Por planear} one {# actividad} other {# actividades}}",
   "stopCosts": "{amount} en gastos",
   "wholeTripHint": "Vuelos, comida y lo que no es de una sola ciudad",
-  "shareEmptyHint": "Sube a medida que te unes a actividades"
+  "shareEmptyHint": "Sube a medida que te unes a actividades",
+  "trainUndated": "Pon fecha a cada parada para ver dónde va el viaje.",
+  "emptyPlanTitle": "Planea tu primera parada",
+  "emptyPlanBody": "Abre una ciudad abajo y agrega lo que quieras hacer, o pide ideas al asistente."
 }

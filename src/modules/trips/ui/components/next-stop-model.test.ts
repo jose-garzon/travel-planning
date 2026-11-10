@@ -72,3 +72,19 @@ describe("buildNextStop", () => {
     expect(buildNextStop(trip, [], "2027-04-01")).toBeNull();
   });
 });
+
+describe("buildNextStop stations", () => {
+  it("lists the whole line and places each day on it", () => {
+    const stop = buildNextStop(trip, [activity("feria", "2027-03-07")], "2027-03-04");
+
+    expect(stop?.stations.map((s) => s.name)).toEqual(["Bogotá", "Madrid", "Sevilla", "Bogotá"]);
+    expect(stop?.focus.station).toBe(1);
+    expect(stop?.later[0]?.station).toBe(2);
+  });
+
+  it("before any leg has arrived, puts the day at the first destination", () => {
+    const stop = buildNextStop(trip, [], "2027-02-01");
+
+    expect(stop?.focus.station).toBe(1);
+  });
+});

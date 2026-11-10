@@ -27,14 +27,24 @@ export type NextStopDay = {
   cityCode: string;
   /** Set when a leg arrives that day: the travel into `city`. */
   travel: { from: string; fromCode: string } | null;
+  /** Index into `NextStop.stations` of the city the crew is in that day. */
+  station: number;
   activities: HomeActivity[];
 };
+
+/** One station of the trip's line: the first origin, then every destination. */
+export type NextStopStation = { code: string; name: string };
 
 export type NextStop = {
   tripId: string;
   tripName: string;
+  /** `YYYY-MM-DD`; the trip's first and last day. */
+  startDate: string;
+  endDate: string;
   /** Members on the trip. */
   crewCount: number;
+  /** The whole route, in order, so the day can be placed on it. */
+  stations: NextStopStation[];
   /** Whole days from today to `focus.date`; 0 when it is today. */
   daysAway: number;
   /** True when the trip is under way today. */
@@ -65,6 +75,7 @@ function dayOf(trip: TripDto, date: string, activities: HomeActivity[]): NextSto
     city: leg.to.name,
     cityCode: leg.to.code,
     travel: leg.date === date ? { from: leg.from.name, fromCode: leg.from.code } : null,
+    station: Math.max(arrived.length, 1),
     activities: activities.filter((activity) => activity.date === date),
   };
 }
@@ -99,7 +110,13 @@ export function buildNextStop(
   return {
     tripId: trip.id,
     tripName: trip.name,
+    startDate: trip.startDate,
+    endDate: trip.endDate,
     crewCount: trip.memberCount,
+    stations: [
+      { code: trip.legs[0]?.from.code ?? "", name: trip.legs[0]?.from.name ?? "" },
+      ...trip.legs.map((leg) => ({ code: leg.to.code, name: leg.to.name })),
+    ],
     daysAway: Math.max(0, dayDiff(today, focusDate)),
     underway,
     focus,

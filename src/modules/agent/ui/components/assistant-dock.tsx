@@ -84,6 +84,35 @@ function launcherFallback(): void {
   document.getElementById("assistant-launcher")?.focus();
 }
 
+/**
+ * True while the visitor scrolls down (reading), false on scroll up, near
+ * the top or at the foot of the page. Small jitters are ignored.
+ */
+function useTuckOnScroll(enabled: boolean): boolean {
+  const [isTucked, setIsTucked] = useState(false);
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const atFoot = window.innerHeight + y >= document.documentElement.scrollHeight - 8;
+      if (y < 80 || atFoot) {
+        setIsTucked(false);
+      } else if (Math.abs(y - last) > 12) {
+        setIsTucked(y > last);
+      } else {
+        return;
+      }
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [enabled]);
+  return enabled && isTucked;
+}
+
 type AssistantDockProps = {
   /** Launcher label ("Ask the assistant"). */
   label: string;
@@ -94,8 +123,9 @@ type AssistantDockProps = {
 
 /**
  * Where the assistant lives. Desktop: in the page's floating rail.
- * Phones: a drawer that slides up from the bottom, opened by a round amber
- * button in the bottom-right corner. The drawer stays mounted
+ * Phones: a drawer that slides up from the bottom, opened by a round
+ * station button (ink, line-coloured ring) in the bottom-right corner;
+ * icon only, so it never covers the stops under it. The drawer stays mounted
  * while closed (inert), so the chat is still there when it reopens.
  */
 export function AssistantDock({ label, closeLabel, children }: AssistantDockProps) {
@@ -104,6 +134,7 @@ export function AssistantDock({ label, closeLabel, children }: AssistantDockProp
   const drawerRef = useRef<HTMLDivElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const isDrawerOpen = isOpen && !isDesktop;
+  const isTucked = useTuckOnScroll(!isDesktop);
 
   useEffect(() => {
     if (!isDrawerOpen) {
@@ -174,19 +205,23 @@ export function AssistantDock({ label, closeLabel, children }: AssistantDockProp
         aria-expanded={isOpen}
         id="assistant-launcher"
         aria-controls="assistant-drawer"
+        aria-label={label}
+        title={label}
         onClick={() => setIsOpen(true)}
         className={cx(
-          "fixed right-4 bottom-safe-fab z-30 flex h-14 items-center gap-2 rounded-full px-5",
-          "font-bold font-display text-lg uppercase leading-none tracking-wide",
-          "border-2 border-text bg-sun text-on-sun shadow-md",
+          "fixed right-4 bottom-safe-fab z-30 grid size-16 place-items-center rounded-full",
+          "border-4 border-accent bg-text text-bg shadow-md",
           "transition duration-normal ease-out motion-safe:active:scale-97",
-          "ui-hover:brightness-90",
+          "ui-hover:bg-accent-hover ui-hover:text-on-accent",
           "ui-focus:outline-2 ui-focus:outline-focus ui-focus:outline-offset-2 ui-focus:outline-solid",
-          isOpen ? "pointer-events-none translate-y-16 opacity-0" : undefined,
+          // Out of the way while reading down the page; back on scroll up
+          // or at the foot. Reduced motion fades instead of sliding.
+          isOpen || isTucked
+            ? "pointer-events-none opacity-0 motion-safe:translate-y-24"
+            : undefined,
         )}
       >
-        <Icon icon={Sparkles} />
-        {label}
+        <Icon icon={Sparkles} size="lg" />
       </button>
 
       {/* Scrim: taps outside the drawer close it. */}

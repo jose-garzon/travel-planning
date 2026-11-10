@@ -5,6 +5,7 @@ import { EmptyTripsState } from "@/modules/trips/ui/components/empty-trips-state
 import { NewTripLink } from "@/modules/trips/ui/components/new-trip-link";
 import { NextStopPanel } from "@/modules/trips/ui/components/next-stop";
 import type { NextStop } from "@/modules/trips/ui/components/next-stop-model";
+import { formatTripDateRange } from "@/modules/trips/ui/components/trip-date-range";
 import { Link } from "@/shared/i18n/navigation";
 import { Panel } from "@/shared/ui/components/panel";
 import { Toast } from "@/shared/ui/components/toast";
@@ -142,41 +143,6 @@ function routeOf(trip: TripDto): string {
   return [first.from.name, ...trip.legs.map((leg) => leg.to.name)].join(" → ");
 }
 
-/**
- * Formats a trip's date range (`YYYY-MM-DD`) with `Intl`, in each
- * locale's own word order (AC-14: "Mar 3 – 10, 2027" in `en`,
- * "3 – 10 mar 2027" in `es`; en dash for ranges). Within one month the day part is widened
- * into a range from `formatToParts`; across months or years the
- * locale's own `formatRange` is used. Undated trips have no range.
- */
-function formatTripDateRange(trip: TripDto, locale: string): string | null {
-  if (trip.startDate === null || trip.endDate === null) {
-    return null;
-  }
-  const start = new Date(`${trip.startDate}T00:00:00Z`);
-  const end = new Date(`${trip.endDate}T00:00:00Z`);
-  const dateFormatter = new Intl.DateTimeFormat(locale, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-
-  if (trip.startDate === trip.endDate) {
-    return dateFormatter.format(start);
-  }
-  if (trip.startDate.slice(0, 7) !== trip.endDate.slice(0, 7)) {
-    return dateFormatter.formatRange(start, end);
-  }
-
-  const endDay = new Intl.DateTimeFormat(locale, { day: "numeric", timeZone: "UTC" }).format(end);
-
-  return dateFormatter
-    .formatToParts(start)
-    .map((part) => (part.type === "day" ? `${part.value} – ${endDay}` : part.value))
-    .join("");
-}
-
 type TripRowProps = {
   trip: TripDto;
   today: string;
@@ -240,7 +206,8 @@ function TripRow({ trip, today, locale, isNext = false, isNew = false }: TripRow
           </span>
         )}
         {!isPast && trip.startDate === null && (
-          <span className="rounded-full bg-sun px-3 py-1 text-on-sun">
+          // A to-do, not a time: the open-station dashed ring, not amber.
+          <span className="rounded-full border-2 border-dashed border-border-strong px-3 py-0.5">
             {translate({ translateId: "trips.home.nextStepDates" })}
           </span>
         )}
@@ -347,10 +314,7 @@ export function HomeScreen({
             id={OTHER_TRIPS_HEADING_ID}
             className={nextStop === null ? "sr-only" : "mb-3 text-xl sm:mb-4 sm:text-2xl"}
           >
-            {translate({
-              translateId:
-                nextStop === null ? "trips.home.otherTripsHeading" : "trips.home.tripsHeading",
-            })}
+            {translate({ translateId: "trips.home.otherTripsHeading" })}
           </h2>
           {upcoming.length > 0 && (
             <ul className="flex flex-col gap-3 sm:gap-4">
