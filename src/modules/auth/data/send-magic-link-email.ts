@@ -1,5 +1,9 @@
 import "server-only";
 import { Resend } from "resend";
+import {
+  MAGIC_LINK_EXPIRES_IN_SECONDS,
+  renderMagicLinkEmail,
+} from "@/modules/auth/data/magic-link-email-template";
 import type { MagicLinkEmailPayload, MagicLinkEmailSender } from "@/modules/auth/service/ports";
 import { env } from "@/shared/config/env";
 
@@ -8,16 +12,16 @@ export type { MagicLinkEmailPayload };
 // Placeholder sender identity (plan "Left to implementation": exact
 // copy is T01's call). Swap for a verified domain address once one
 // exists.
-const MAGIC_LINK_FROM_ADDRESS = "Travel Planning <travel-planning@jose-garzon.com>";
+const MAGIC_LINK_FROM_ADDRESS = "Parche <travel-planning@jose-garzon.com>";
 
 /**
  * Dev/test adapter (D-2): logs the magic link instead of sending it,
  * so `pnpm dev` and e2e never need a real email provider.
  */
 class ConsoleMagicLinkEmailSender implements MagicLinkEmailSender {
-  async send({ email, url, token }: MagicLinkEmailPayload): Promise<void> {
+  async send({ email, url, token, locale }: MagicLinkEmailPayload): Promise<void> {
     // biome-ignore lint/suspicious/noConsole: dev/test adapter (plan D-2).
-    console.log(`[auth] magic link for ${email}: ${url} (token=${token})`);
+    console.log(`[auth] magic link for ${email} (${locale}): ${url} (token=${token})`);
   }
 }
 
@@ -33,12 +37,18 @@ class ResendMagicLinkEmailSender implements MagicLinkEmailSender {
     this.client = new Resend(apiKey);
   }
 
-  async send({ email, url }: MagicLinkEmailPayload): Promise<void> {
+  async send({ email, url, locale }: MagicLinkEmailPayload): Promise<void> {
+    const { subject, html, text } = renderMagicLinkEmail({
+      url,
+      expiresInMinutes: MAGIC_LINK_EXPIRES_IN_SECONDS / 60,
+      locale,
+    });
     const { error } = await this.client.emails.send({
       from: MAGIC_LINK_FROM_ADDRESS,
       to: email,
-      subject: "Your sign-in link",
-      html: `<p>Tap the link below to sign in.</p><p><a href="${url}">${url}</a></p>`,
+      subject,
+      html,
+      text,
     });
 
     if (error !== null) {

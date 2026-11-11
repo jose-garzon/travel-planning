@@ -1,3 +1,5 @@
+import type { Locale } from "@/shared/i18n/routing";
+
 // Ports the auth service layer declares and `data/` implements
 // (architecture.md rule 3: "Ports belong to the service").
 
@@ -18,6 +20,8 @@ export type MagicLinkEmailPayload = {
   email: string;
   url: string;
   token: string;
+  /** Requester's app locale; picks the email's language. */
+  locale: Locale;
 };
 
 /**
