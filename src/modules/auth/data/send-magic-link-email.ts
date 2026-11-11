@@ -8,7 +8,7 @@ export type { MagicLinkEmailPayload };
 // Placeholder sender identity (plan "Left to implementation": exact
 // copy is T01's call). Swap for a verified domain address once one
 // exists.
-const MAGIC_LINK_FROM_ADDRESS = "Travel Planning <onboarding@resend.dev>";
+const MAGIC_LINK_FROM_ADDRESS = "Travel Planning <travel-planning@jose-garzon.com>";
 
 /**
  * Dev/test adapter (D-2): logs the magic link instead of sending it,
