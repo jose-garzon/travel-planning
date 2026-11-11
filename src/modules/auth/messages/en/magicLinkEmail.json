@@ -1,0 +1,16 @@
+{
+  "subject": "Your Parche sign-in link",
+  "preheader": "Tap to sign in. The link lasts {minutes} minutes.",
+  "headingLine1": "Next stop:",
+  "headingLine2": "your trip",
+  "lead": "Tap the button to sign in. No password needed.",
+  "button": "Sign in to Parche",
+  "expires": "Expires in {minutes} min",
+  "stationOpen": "Open the link",
+  "stationOpenMeta": "On this device or any other.",
+  "stationIn": "You're in",
+  "stationInMeta": "Plan the route with your crew.",
+  "fallback": "Button not working? Paste this link into your browser:",
+  "textOpen": "Open this link to sign in (it expires in {minutes} minutes):",
+  "ignore": "Didn't ask for this? Ignore this email; nobody can sign in without it."
+}

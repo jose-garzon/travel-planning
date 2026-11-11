@@ -1,0 +1,16 @@
+{
+  "subject": "Tu enlace para entrar a Parche",
+  "preheader": "Toca para entrar. El enlace dura {minutes} minutos.",
+  "headingLine1": "Próxima parada:",
+  "headingLine2": "tu viaje",
+  "lead": "Toca el botón para entrar. Sin contraseña.",
+  "button": "Entrar a Parche",
+  "expires": "Vence en {minutes} min",
+  "stationOpen": "Abre el enlace",
+  "stationOpenMeta": "En este dispositivo o en cualquier otro.",
+  "stationIn": "Ya estás dentro",
+  "stationInMeta": "Arma la ruta con tu parche.",
+  "fallback": "¿El botón no funciona? Pega este enlace en tu navegador:",
+  "textOpen": "Abre este enlace para entrar (vence en {minutes} minutos):",
+  "ignore": "¿No lo pediste? Ignora este correo; nadie puede entrar sin él."
+}

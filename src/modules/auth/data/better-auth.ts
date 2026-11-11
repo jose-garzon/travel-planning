@@ -3,15 +3,15 @@ import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { magicLink } from "better-auth/plugins/magic-link";
+// plan.md "Contracts": magic links are valid for 15 minutes.
+import { MAGIC_LINK_EXPIRES_IN_SECONDS } from "@/modules/auth/data/magic-link-email-template";
 import { sendMagicLinkEmail } from "@/modules/auth/data/send-magic-link-email";
 import { VerificationMagicLinkAttemptsRepository } from "@/modules/auth/data/verification-magic-link-attempts-repository";
 import { checkMagicLinkCooldown } from "@/modules/auth/service/check-magic-link-cooldown";
 import { env } from "@/shared/config/env";
 import { db } from "@/shared/db/client";
 import * as authSchema from "@/shared/db/schema/auth";
-
-// plan.md "Contracts": magic links are valid for 15 minutes.
-const MAGIC_LINK_EXPIRES_IN_SECONDS = 15 * 60;
+import { localeFromHeaders } from "@/shared/i18n/locale-from-headers";
 
 const MAGIC_LINK_SIGN_IN_PATH = "/sign-in/magic-link";
 
@@ -49,8 +49,11 @@ export const auth = betterAuth({
   plugins: [
     magicLink({
       expiresIn: MAGIC_LINK_EXPIRES_IN_SECONDS,
-      sendMagicLink: async ({ email, url, token }) => {
-        await sendMagicLinkEmail({ email, url, token });
+      sendMagicLink: async ({ email, url, token }, ctx) => {
+        // Email language follows the requester's app locale (cookie,
+        // then Accept-Language), since this endpoint has no locale segment.
+        const locale = localeFromHeaders(ctx?.headers);
+        await sendMagicLinkEmail({ email, url, token, locale });
       },
     }),
   ],
