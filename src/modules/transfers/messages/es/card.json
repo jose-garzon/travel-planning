@@ -20,6 +20,7 @@
   "reference": "Ref. {reference}",
   "openBooking": "Abrir reserva",
   "newTab": "(se abre en una pestaña nueva)",
+  "past": "Pasado",
   "routeChanged": "La ruta cambió. Revisa origen y destino",
   "needsReview": "Revisa los datos",
   "outsideWindow": "No coincide con las fechas de la ruta",

@@ -168,7 +168,10 @@ export function costInTripCurrency(transfer: Transfer): number | null {
 }
 
 /** Departed already; a transfer with no time counts as upcoming until its (UTC) day ends. */
-export function isPast(transfer: Transfer, now: number): boolean {
+export function isPast(
+  transfer: Pick<Transfer, "departDate" | "departTime" | "departTz">,
+  now: number,
+): boolean {
   if (transfer.departTime === null) {
     return now >= Date.parse(`${transfer.departDate}T00:00:00Z`) + DAY_MS;
   }

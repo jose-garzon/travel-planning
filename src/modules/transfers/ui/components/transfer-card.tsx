@@ -35,7 +35,7 @@ const MODE_ICONS: Record<TransferDto["mode"], LucideIcon> = {
 };
 
 /** `HH:MM` in the locale's clock: "8:00 AM" (en), "08:00" (es). */
-function formatTime(time: string, locale: string): string {
+export function formatTime(time: string, locale: string): string {
   const twelveHour = new Intl.DateTimeFormat(locale, { hour: "numeric" }).resolvedOptions().hour12;
   return new Intl.DateTimeFormat(locale, {
     hour: twelveHour ? "numeric" : "2-digit",
@@ -181,6 +181,9 @@ export function TransferCard({ transfer }: TransferCardProps) {
           <time dateTime={transfer.departDate} className="text-text-muted">
             {formatDay(transfer.departDate, locale, "short")}
           </time>
+          {transfer.isPast ? (
+            <span className="font-semibold text-text-muted">{t("past")}</span>
+          ) : null}
         </p>
         <Journey transfer={transfer} />
         <p className="flex flex-wrap items-center gap-x-1 text-sm text-text-muted">

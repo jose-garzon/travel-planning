@@ -166,7 +166,7 @@ Done when:
 ## T04. Join an opt-in transfer
 
 Status: todo
-Depends on: T01, T03
+Depends on: T01, T03, T06 (shares transfer-card.tsx)
 Model: haiku
 Scenarios: @T04
 Covers: AC-6, EC-6
@@ -176,6 +176,11 @@ Files:
 - `src/modules/transfers/ui/components/join-transfer-toggle.tsx` + `.test.tsx`
 - `src/app/api/v1/trips/[tripId]/transfers/[transferId]/participation/route.ts`
 - `tests/steps/transfer-join.steps.ts`
+- `src/modules/transfers/ui/components/transfer-card.tsx` (mount `JoinTransferToggle` on opt-in transfers)
+- `src/modules/transfers/service/ports.ts` (participant add/remove)
+- `src/modules/transfers/data/drizzle-transfers-repository.ts` + `.integration.test.ts`
+- `src/modules/transfers/index.ts` (`setTransferParticipation`)
+- `src/app/_composition/trip-context.ts` (wiring)
 
 Steps:
 1. Use case; PUT/DELETE route (copy activity subscription route).
@@ -189,7 +194,7 @@ Done when:
 ## T05. Find transfer options with the agent
 
 Status: doing
-Depends on: T01
+Depends on: T01, T02 ("No options" scenario ends in the T02 form)
 Model: sonnet
 Scenarios: @T05
 Covers: AC-7
@@ -218,7 +223,7 @@ Done when:
 
 ## T06. Next up card and route-change flags
 
-Status: todo
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T06
@@ -240,8 +245,8 @@ Steps:
 3. Next up card on top of the trip page, links to the transfer.
 
 Done when:
-- [ ] Scenarios tagged @T06 pass
-- [ ] Unit tests: past, today, date-only, tie on time
+- [x] Scenarios tagged @T06 pass
+- [x] Unit tests: past, today, date-only, tie on time
 
 
 ## T07. Accessibility and i18n hardening

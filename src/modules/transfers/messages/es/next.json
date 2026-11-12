@@ -1,1 +1,6 @@
-{}
+{
+  "heading": "Próximo traslado",
+  "route": "{from} a {to}",
+  "countdown": "{days, plural, =0 {hoy} =1 {mañana} other {en # días}}",
+  "departs": "sale a las {time}"
+}

@@ -240,4 +240,38 @@ describe("TransferCard", () => {
       }),
     );
   });
+
+  it("labels a past transfer as past", () => {
+    renderCard(dto({ isPast: true }));
+
+    expect(screen.getByRole("article")).toHaveTextContent("Past");
+  });
+
+  it("labels a past transfer in Spanish", () => {
+    renderCard(dto({ isPast: true }), "es");
+
+    expect(screen.getByRole("article")).toHaveTextContent("Pasado");
+  });
+
+  it("does not label an upcoming transfer as past", () => {
+    renderCard(dto());
+
+    expect(screen.getByRole("article")).not.toHaveTextContent("Past");
+  });
+
+  it("keeps the flags on a past transfer", () => {
+    renderCard(dto({ isPast: true, routeChanged: true, needsReview: true }));
+
+    const card = screen.getByRole("article");
+    expect(card).toHaveTextContent("Route changed. Check from/to");
+    expect(card).toHaveTextContent("Check details");
+  });
+
+  it("says the flags in Spanish", () => {
+    renderCard(dto({ routeChanged: true, needsReview: true }), "es");
+
+    const card = screen.getByRole("article");
+    expect(card).toHaveTextContent("La ruta cambió. Revisa origen y destino");
+    expect(card).toHaveTextContent("Revisa los datos");
+  });
 });

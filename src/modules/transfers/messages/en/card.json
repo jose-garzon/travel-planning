@@ -20,6 +20,7 @@
   "reference": "Ref {reference}",
   "openBooking": "Open booking",
   "newTab": "(opens in a new tab)",
+  "past": "Past",
   "routeChanged": "Route changed. Check from/to",
   "needsReview": "Check details",
   "outsideWindow": "Doesn't match route dates",

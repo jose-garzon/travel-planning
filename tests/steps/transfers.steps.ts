@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
 import { Given, Then, When } from "./fixtures";
 import { signedInEmail, signInAs } from "./support/session";
+import { shiftedDate } from "./support/today";
 import { seedTransfer } from "./support/transfers";
 import { seedTrip } from "./support/trips";
 
@@ -10,7 +11,7 @@ type SeededTrip = { id: string; legs: { from: string; to: string }[] };
 /** The trip each page's traveler seeded last: "the trip", "that trip". */
 const tripOfPage = new WeakMap<Page, SeededTrip>();
 
-function currentTrip(page: Page): SeededTrip {
+export function currentTrip(page: Page): SeededTrip {
   const trip = tripOfPage.get(page);
   if (trip === undefined) {
     throw new Error("no trip seeded for this scenario");
@@ -78,7 +79,7 @@ Given(
       mode,
       from,
       to,
-      departDate: date,
+      departDate: shiftedDate(page, date),
     });
   },
 );
@@ -92,7 +93,7 @@ Given(
       mode,
       from,
       to,
-      departDate: date,
+      departDate: shiftedDate(page, date),
       departTime: time,
     });
   },

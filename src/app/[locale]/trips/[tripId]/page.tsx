@@ -7,7 +7,7 @@ import { AgentPanel, AssistantDock } from "@/modules/agent/ui/entries/agent";
 import { getCurrentUser } from "@/modules/auth";
 import { BudgetCard, BudgetCosts } from "@/modules/budget/ui/entries/budget";
 import { ItineraryStop } from "@/modules/itinerary/ui/entries/itinerary";
-import { TransferGap } from "@/modules/transfers/ui/entries/transfers";
+import { NextTransferCard, TransferGap } from "@/modules/transfers/ui/entries/transfers";
 import { getTrip } from "@/modules/trips";
 import { ShareTripBox, ShareTripButton, TravelersCard } from "@/modules/trips/ui/entries/members";
 import { TicketStrip, TripSummary } from "@/modules/trips/ui/entries/summary";
@@ -131,6 +131,7 @@ export default async function TripPage({
               />
             }
           />
+          <NextTransferCard transfers={gapTransfers.value.transfers} now={Date.now()} />
           <AloneInvite
             show={isOwner && alone}
             tripId={tripId}
