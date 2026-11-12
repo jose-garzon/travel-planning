@@ -4,8 +4,8 @@
   - F015 Edit and delete a transfer ("transfer shows AV9512")
   - F015 Join and leave an opt-in transfer (budget 25 COP)
   - F3 First-time name capture Examples #3, #4 (magic link, pre-existing)
-- pnpm screenshots --grep @F015: 24/24 passed
+- pnpm screenshots --grep @F015: 25/25 passed (after next-transfer move to home)
 - pnpm lint: pass (5 warnings)
 - pnpm typecheck: pass
 - pnpm build: pass
-- unit: 715 passed
+- unit: 706 passed
