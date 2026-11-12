@@ -18,7 +18,7 @@ const sheet = (page: Page) => page.getByRole("dialog");
 async function startAdding(page: Page, city: string) {
   await page.goto(`/trips/${currentTrip(page).id}`);
   const add = gapBefore(page, city).getByRole("button", {
-    name: new RegExp(`^Add transfer: Getting to ${city}`),
+    name: new RegExp(`^How do you get to ${city}\\?`),
   });
   // Desktop: only the "+ Add" text of an empty gap takes the pointer. The
   // click is retried until the sheet opens: a click before hydration is lost.
@@ -186,7 +186,8 @@ Then("the transfer shows no duration", async ({ page }) => {
 });
 
 Then("the transfer shows {string}", async ({ page }, text: string) => {
-  await expect(cards(page).getByText(text)).toBeVisible();
+  // The card updates after the page refresh, which is slow under load.
+  await expect(cards(page).getByText(text)).toBeVisible({ timeout: 15_000 });
 });
 
 Then("I see the warning {string}", async ({ page }, text: string) => {

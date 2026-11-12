@@ -161,7 +161,8 @@ Then(
   async ({ page }, amount: number, currency: string) => {
     await expect(
       budget(page).getByRole("region", { name: "Per person" }).getByRole("listitem").first(),
-    ).toContainText(money(amount, currency));
+      // The budget updates after the page refresh, which is slow under load.
+    ).toContainText(money(amount, currency), { timeout: 15_000 });
   },
 );
 

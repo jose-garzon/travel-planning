@@ -4,7 +4,7 @@ import { shiftedDate } from "./support/today";
 import { currentTrip } from "./transfers.steps";
 
 function toggle(page: Page) {
-  return page.getByRole("button", { name: /^Join transfer/ });
+  return page.getByRole("button", { name: /^Join(ed)?:/ });
 }
 
 Given(
@@ -37,14 +37,26 @@ async function onTrip(page: Page) {
   }
 }
 
+/** Presses the toggle and waits for the server to answer, so later checks see its data. */
+async function clickAndWait(page: Page, method: "PUT" | "DELETE") {
+  const [response] = await Promise.all([
+    page.waitForResponse(
+      (candidate) =>
+        candidate.url().includes("/participation") && candidate.request().method() === method,
+    ),
+    toggle(page).click(),
+  ]);
+  expect(response.ok()).toBe(true);
+}
+
 When("I join the transfer", async ({ page }) => {
   await onTrip(page);
   await expect(toggle(page)).toHaveAttribute("aria-pressed", "false");
-  await toggle(page).click();
+  await clickAndWait(page, "PUT");
   await expect(toggle(page)).toHaveAttribute("aria-pressed", "true");
 });
 
 When("I leave the transfer", async ({ page }) => {
-  await toggle(page).click();
+  await clickAndWait(page, "DELETE");
   await expect(toggle(page)).toHaveAttribute("aria-pressed", "false");
 });
