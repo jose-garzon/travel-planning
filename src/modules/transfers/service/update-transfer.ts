@@ -11,6 +11,7 @@ import {
   type TransferUpdate,
   toTransferDto,
 } from "@/modules/transfers/service/schemas";
+import { lacksRate, withKnownZones } from "@/modules/transfers/service/transfer-input";
 import type { Result } from "@/shared/kernel/result";
 import { err, ok } from "@/shared/kernel/result";
 
@@ -24,7 +25,7 @@ export type UpdateTransferCommand = {
 
 /** Any member edits a transfer; the write fails when it changed since the editor read it. */
 export async function updateTransfer(
-  { userId, tripId, transferId, locale, input }: UpdateTransferCommand,
+  { userId, tripId, transferId, locale, input: raw }: UpdateTransferCommand,
   {
     transfers,
     trips,
@@ -39,12 +40,17 @@ export async function updateTransfer(
   if (context === null) {
     return err({ code: "TRIP_NOT_FOUND" });
   }
+  const gaps = gapsOf(context.route);
+  const input = withKnownZones(raw, gaps[raw.gap]);
   const stored = await transfers.find(tripId, transferId);
   if (stored === null) {
     return err({ code: "TRANSFER_NOT_FOUND" });
   }
   if (stored.version !== input.version) {
     return err({ code: "TRANSFER_VERSION_CONFLICT" });
+  }
+  if (lacksRate(input, context.currency)) {
+    return err({ code: "VALIDATION_FAILED" });
   }
   const currency = input.cost === null ? null : (input.currency ?? context.currency);
   const next: Transfer = {
@@ -61,7 +67,7 @@ export async function updateTransfer(
     arriveTz: input.arriveTz,
     cost: input.cost === null ? null : Math.round(input.cost * 100),
     currency,
-    rate: currency === null ? null : currency === context.currency ? "1" : (input.rate ?? "1"),
+    rate: currency === null ? null : currency === context.currency ? "1" : input.rate,
     charge: input.charge,
     bookingRef: input.bookingRef,
     link: input.link,
@@ -79,7 +85,7 @@ export async function updateTransfer(
   }
   return ok(
     toTransferDto(saved, {
-      gaps: gapsOf(context.route),
+      gaps,
       members: new Set(context.memberIds),
       now: clock.now(),
     }),

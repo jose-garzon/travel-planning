@@ -67,6 +67,8 @@ export type TransferDto = {
   /** Minor units in `currency`. */
   cost: number | null;
   currency: string | null;
+  /** Units of the trip currency per unit of `currency`; null without a cost. */
+  rate: string | null;
   /** Per traveler, trip-currency minor units. */
   costInTripCurrency: number | null;
   charge: ChargeMode;
@@ -89,6 +91,7 @@ export type TransfersDto = {
 
 /** Every failure the transfers use cases answer (plan "Contracts" errors). */
 export type TransferError =
+  | { code: "VALIDATION_FAILED" }
   | { code: "TRIP_NOT_FOUND" }
   | { code: "TRANSFER_NOT_FOUND" }
   | { code: "TRANSFER_ARRIVAL_BEFORE" }
@@ -118,6 +121,7 @@ export function toTransferDto(
     dayOffset: dayOffset(transfer),
     cost: transfer.cost,
     currency: transfer.currency,
+    rate: transfer.rate,
     costInTripCurrency: costInTripCurrency(transfer),
     charge: transfer.charge,
     participantIds: transfer.participantIds.filter((id) => members.has(id)),

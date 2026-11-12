@@ -17,6 +17,7 @@ import {
   type TransferInput,
   toTransferDto,
 } from "@/modules/transfers/service/schemas";
+import { lacksRate, withKnownZones } from "@/modules/transfers/service/transfer-input";
 import type { Result } from "@/shared/kernel/result";
 import { err, ok } from "@/shared/kernel/result";
 
@@ -49,7 +50,7 @@ function toRecord(
     arriveTz: input.arriveTz,
     cost: input.cost === null ? null : Math.round(input.cost * 100),
     currency,
-    rate: currency === null ? null : currency === tripCurrency ? "1" : (input.rate ?? "1"),
+    rate: currency === null ? null : currency === tripCurrency ? "1" : input.rate,
     charge: input.charge,
     bookingRef: input.bookingRef,
     link: input.link,
@@ -81,8 +82,13 @@ export async function createTransfer(
   if (context === null) {
     return err({ code: "TRIP_NOT_FOUND" });
   }
+  if (lacksRate(command.input, context.currency)) {
+    return err({ code: "VALIDATION_FAILED" });
+  }
   const now = clock.now();
-  const record = toRecord(ids.next(), command, context.currency, now);
+  const gaps = gapsOf(context.route);
+  const zoned = withKnownZones(command.input, gaps[command.input.gap]);
+  const record = toRecord(ids.next(), { ...command, input: zoned }, context.currency, now);
   if (arrivesBeforeDeparture({ ...record, participantIds: [] })) {
     return err({ code: "TRANSFER_ARRIVAL_BEFORE" });
   }
@@ -92,7 +98,7 @@ export async function createTransfer(
   const created: Transfer = await transfers.create(record);
   return ok(
     toTransferDto(created, {
-      gaps: gapsOf(context.route),
+      gaps,
       members: new Set(context.memberIds),
       now,
     }),
