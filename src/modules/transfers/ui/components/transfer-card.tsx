@@ -17,6 +17,7 @@ import {
 import { useLocale, useTranslations } from "next-intl";
 import type { TransferDto } from "@/modules/transfers/service/schemas";
 import { JoinTransferToggle } from "@/modules/transfers/ui/components/join-transfer-toggle";
+import { formatDay, formatTime } from "@/modules/transfers/ui/format-time";
 import { Button } from "@/shared/ui/components/button";
 import { Icon } from "@/shared/ui/components/icon";
 import { cx } from "@/shared/ui/cx";
@@ -38,25 +39,6 @@ const MODE_ICONS: Record<TransferDto["mode"], LucideIcon> = {
   car: Car,
   other: Route,
 };
-
-/** `HH:MM` in the locale's clock: "8:00 AM" (en), "08:00" (es). */
-export function formatTime(time: string, locale: string): string {
-  const twelveHour = new Intl.DateTimeFormat(locale, { hour: "numeric" }).resolvedOptions().hour12;
-  return new Intl.DateTimeFormat(locale, {
-    hour: twelveHour ? "numeric" : "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-  }).format(new Date(`1970-01-01T${time}:00Z`));
-}
-
-function formatDay(date: string, locale: string, style: "short" | "long"): string {
-  return new Intl.DateTimeFormat(locale, {
-    weekday: style,
-    month: style,
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${date}T00:00:00Z`));
-}
 
 /** The editable fields of a transfer, as the sheet takes them (cost in major units). */
 function toPrefill(transfer: TransferDto): TransferPrefill {

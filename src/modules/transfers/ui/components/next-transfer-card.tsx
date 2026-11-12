@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { daysUntil, nextTransfer } from "@/modules/transfers/domain/next-transfer";
 import type { TransferDto } from "@/modules/transfers/service/schemas";
-import { formatTime } from "@/modules/transfers/ui/components/transfer-card";
+import { formatTime } from "@/modules/transfers/ui/format-time";
 import { Icon } from "@/shared/ui/components/icon";
 
 export type NextTransferCardProps = {
