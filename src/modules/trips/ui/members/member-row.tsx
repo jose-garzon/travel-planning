@@ -1,5 +1,6 @@
 "use client";
 
+import { UserMinus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { Role } from "@/modules/trips/domain/trip";
@@ -81,54 +82,62 @@ export function MemberRow({
 
   return (
     <li className="flex flex-col gap-1 py-2">
-      <div className="flex items-center justify-between gap-3">
-        <span className="min-w-0 truncate font-medium">{member.name}</span>
+      <div className="flex min-h-touch items-center gap-3">
+        <span className="min-w-0 flex-1 truncate font-medium">{member.name}</span>
         <span className="shrink-0 rounded-full bg-surface-2 px-2 py-0.5 text-xs text-text-muted">
           {t(member.role)}
         </span>
+        {canRemove ? (
+          <ConfirmDialog
+            open={isRemoveOpen}
+            onOpenChange={setIsRemoveOpen}
+            isLoading={isBusy}
+            onConfirm={removeTraveler}
+            title={{ translateId: "trips.members.removeTitle", values: { name: member.name } }}
+            warning={{ translateId: "trips.members.removeDescription" }}
+            confirmLabel={{ translateId: "trips.members.removeConfirm" }}
+            closeLabel={{ translateId: "trips.edit.close" }}
+            cancelLabel={{ translateId: "trips.form.cancel" }}
+            trigger={
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                icon={UserMinus}
+                labelHidden
+                disabled={!isOnline}
+                translateId="trips.members.remove"
+              />
+            }
+          />
+        ) : null}
+        {/* The owner's view keeps an action column, so badges line up. */}
+        {viewerRole === "owner" && !canRemove ? (
+          <span aria-hidden="true" className="w-10 shrink-0" />
+        ) : null}
+        {canLeave ? (
+          <ConfirmDialog
+            open={isLeaveOpen}
+            onOpenChange={setIsLeaveOpen}
+            isLoading={isBusy}
+            onConfirm={leaveTrip}
+            title={{ translateId: "trips.members.leaveTitle" }}
+            warning={{ translateId: "trips.members.leaveDescription" }}
+            confirmLabel={{ translateId: "trips.members.leaveConfirm" }}
+            closeLabel={{ translateId: "trips.edit.close" }}
+            cancelLabel={{ translateId: "trips.form.cancel" }}
+            trigger={
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={!isOnline}
+                translateId="trips.members.leave"
+              />
+            }
+          />
+        ) : null}
       </div>
-      {canRemove ? (
-        <ConfirmDialog
-          open={isRemoveOpen}
-          onOpenChange={setIsRemoveOpen}
-          isLoading={isBusy}
-          onConfirm={removeTraveler}
-          title={{ translateId: "trips.members.removeTitle", values: { name: member.name } }}
-          warning={{ translateId: "trips.members.removeDescription" }}
-          confirmLabel={{ translateId: "trips.members.removeConfirm" }}
-          closeLabel={{ translateId: "trips.edit.close" }}
-          cancelLabel={{ translateId: "trips.form.cancel" }}
-          trigger={
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={!isOnline}
-              translateId="trips.members.remove"
-            />
-          }
-        />
-      ) : null}
-      {canLeave ? (
-        <ConfirmDialog
-          open={isLeaveOpen}
-          onOpenChange={setIsLeaveOpen}
-          isLoading={isBusy}
-          onConfirm={leaveTrip}
-          title={{ translateId: "trips.members.leaveTitle" }}
-          warning={{ translateId: "trips.members.leaveDescription" }}
-          confirmLabel={{ translateId: "trips.members.leaveConfirm" }}
-          closeLabel={{ translateId: "trips.edit.close" }}
-          cancelLabel={{ translateId: "trips.form.cancel" }}
-          trigger={
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={!isOnline}
-              translateId="trips.members.leave"
-            />
-          }
-        />
-      ) : null}
       {!isOnline && (canRemove || canLeave) ? (
         <p className="text-sm text-text-muted">{t("offline")}</p>
       ) : null}

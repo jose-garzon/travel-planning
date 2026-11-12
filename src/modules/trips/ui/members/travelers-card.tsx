@@ -52,7 +52,7 @@ export function TravelersCard({
           </span>
         }
       />
-      <ul className="flex flex-col">
+      <ul className="flex flex-col divide-y divide-dashed divide-border">
         {members.map((member) => (
           <MemberRow
             key={member.userId}
