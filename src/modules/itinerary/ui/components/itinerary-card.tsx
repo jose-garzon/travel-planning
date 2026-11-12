@@ -335,7 +335,6 @@ function ActivityRow({
       <div className="flex items-center gap-2 sm:pl-16">
         <button
           type="button"
-          aria-pressed={activity.subscribed}
           aria-busy={isBusy}
           disabled={!isOnline}
           onClick={onToggle}
@@ -349,7 +348,7 @@ function ActivityRow({
           )}
         >
           {activity.subscribed ? <Icon icon={Check} size="sm" /> : null}
-          {t("join")}
+          {activity.subscribed ? t("joined") : t("join")}
         </button>
         {activity.link === null ? null : (
           <a
