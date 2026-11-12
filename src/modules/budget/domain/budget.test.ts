@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { type BudgetItem, splitEqually, summarize } from "@/modules/budget/domain/budget";
+import {
+  type BudgetItem,
+  splitEqually,
+  summarize,
+  type TransferCost,
+} from "@/modules/budget/domain/budget";
 
 function item(overrides: Partial<BudgetItem>): BudgetItem {
   return {
@@ -33,10 +38,11 @@ describe("summarize", () => {
       cap: null,
       items: [
         item({ amount: 30000 }),
-        item({ category: "flights", amount: 50000, userId: "ana" }),
+        item({ category: "other", amount: 50000, userId: "ana" }),
         item({ category: "food", amount: 100, currency: "USD", rate: "0.9" }),
       ],
       activities: [{ title: "Tour", cost: 2000, participantIds: ["ana", "ben"] }],
+      transfers: [],
     });
     const byId = Object.fromEntries(summary.perPerson.map((p) => [p.userId, p.total]));
     expect(byId).toEqual({
@@ -51,8 +57,14 @@ describe("summarize", () => {
 
   it("grows the total of a unit price when a member joins", () => {
     const items = [item({ amount: 2500 })];
-    const two = summarize({ memberIds: ["ana", "ben"], cap: null, items, activities: [] });
-    const three = summarize({ memberIds, cap: null, items, activities: [] });
+    const two = summarize({
+      memberIds: ["ana", "ben"],
+      cap: null,
+      items,
+      activities: [],
+      transfers: [],
+    });
+    const three = summarize({ memberIds, cap: null, items, activities: [], transfers: [] });
     expect(two.total).toBe(5000);
     expect(three.total).toBe(7500);
     expect(three.perPerson.map((p) => p.total)).toEqual([2500, 2500, 2500]);
@@ -62,8 +74,9 @@ describe("summarize", () => {
     const summary = summarize({
       memberIds,
       cap: null,
-      items: [item({ category: "flights", amount: 9999, userId: "gone" })],
+      items: [item({ category: "other", amount: 9999, userId: "gone" })],
       activities: [{ title: "Tour", cost: 500, participantIds: ["gone"] }],
+      transfers: [],
     });
     expect(summary.total).toBe(0);
   });
@@ -74,9 +87,64 @@ describe("summarize", () => {
       cap: 1000,
       items: [item({ amount: 200 })],
       activities: [],
+      transfers: [],
     });
     expect(under.remaining).toBe(400);
-    const over = summarize({ memberIds, cap: 100, items: [item({ amount: 200 })], activities: [] });
+    const over = summarize({
+      memberIds,
+      cap: 100,
+      items: [item({ amount: 200 })],
+      activities: [],
+      transfers: [],
+    });
     expect(over.remaining).toBe(-500);
+  });
+
+  describe("transfers", () => {
+    const transfer = (overrides: Partial<TransferCost>): TransferCost => ({
+      id: "x",
+      gap: 0,
+      label: "Bogotá → Cartagena",
+      cost: 10000,
+      charge: "all",
+      participantIds: [],
+      ...overrides,
+    });
+
+    it("charges an all-travelers transfer to every member", () => {
+      const summary = summarize({
+        memberIds,
+        cap: null,
+        items: [],
+        activities: [],
+        transfers: [transfer({})],
+      });
+      expect(summary.byCategory.transfers).toBe(30000);
+      expect(summary.total).toBe(30000);
+      expect(summary.perPerson.map((p) => p.byCategory.transfers)).toEqual([10000, 10000, 10000]);
+    });
+
+    it("shrinks the all-travelers total when a member leaves", () => {
+      const summary = summarize({
+        memberIds: ["ana", "ben"],
+        cap: null,
+        items: [],
+        activities: [],
+        transfers: [transfer({})],
+      });
+      expect(summary.byCategory.transfers).toBe(20000);
+    });
+
+    it("charges an opt-in transfer only to participants still on the trip", () => {
+      const summary = summarize({
+        memberIds,
+        cap: null,
+        items: [],
+        activities: [],
+        transfers: [transfer({ charge: "opt-in", participantIds: ["ana", "gone"] })],
+      });
+      expect(summary.byCategory.transfers).toBe(10000);
+      expect(summary.perPerson.map((p) => p.byCategory.transfers)).toEqual([10000, 0, 0]);
+    });
   });
 });

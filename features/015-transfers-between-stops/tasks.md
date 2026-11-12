@@ -92,7 +92,7 @@ Notes:
 
 ## T02. Add, edit and delete a transfer by hand
 
-Status: todo
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T02
@@ -125,7 +125,7 @@ Done when:
 
 ## T03. Transfers in the budget, flights migrated
 
-Status: todo
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T03
@@ -158,9 +158,9 @@ Steps:
 5. Transfers group in the budget card linking to `#transfer-<id>`.
 
 Done when:
-- [ ] Scenarios tagged @T03 pass
-- [ ] Migration test: per-person and shared flights, null stop
-- [ ] POST budget item with `flights` → 400
+- [x] Scenarios tagged @T03 pass
+- [x] Migration test: per-person and shared flights, null stop
+- [x] POST budget item with `flights` → 400
 
 
 ## T04. Join an opt-in transfer
@@ -188,7 +188,7 @@ Done when:
 
 ## T05. Find transfer options with the agent
 
-Status: todo
+Status: doing
 Depends on: T01
 Model: sonnet
 Scenarios: @T05

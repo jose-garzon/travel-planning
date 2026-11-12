@@ -1,7 +1,11 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { DrizzleBudgetRepository } from "@/modules/budget/data/drizzle-budget-repository";
-import type { ActivityCostsReader, TripContextReader } from "@/modules/budget/service/ports";
+import type {
+  ActivityCostsReader,
+  TransferCostsReader,
+  TripContextReader,
+} from "@/modules/budget/service/ports";
 import {
   createBudgetItem,
   deleteBudgetItem,
@@ -28,14 +32,17 @@ type Args<F> = F extends (first: infer A, ...rest: never[]) => unknown ? A : nev
 export function createBudgetApi({
   trips,
   activityCosts,
+  transferCosts,
 }: {
   trips: TripContextReader;
   activityCosts: ActivityCostsReader;
+  transferCosts: TransferCostsReader;
 }) {
   const deps = {
     budget: new DrizzleBudgetRepository(),
     trips,
     activityCosts,
+    transferCosts,
     ids: { next: () => randomUUID() },
   };
   return {

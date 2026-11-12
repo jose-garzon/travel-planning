@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { BudgetItem, BudgetSummary } from "@/modules/budget/domain/budget";
+import type { BudgetItem, BudgetSummary, TransferCost } from "@/modules/budget/domain/budget";
 import { CATEGORIES } from "@/modules/budget/domain/budget";
 
 export const budgetItemInputSchema = z.object({
@@ -29,6 +29,8 @@ export type BudgetDto = {
   currency: string;
   items: BudgetItemDto[];
   summary: BudgetSummary;
+  /** Priced transfers, for the Transfers group. */
+  transfers: TransferCost[];
   /** The viewer's own total first: "how much does this cost me?". */
   mine: number;
 };

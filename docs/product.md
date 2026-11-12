@@ -39,8 +39,10 @@ join by invite link.
 - **Participants**: the itinerary is a list of suggestions. Each
   member subscribes to the activities they will join. Subscribing adds
   that activity's cost to their personal budget.
-- **Budget item**: flights, lodging, transport, activities, food,
-  other. Estimates only (no tracking of who paid, no settle-up).
+- **Transfer**: how the group moves between two stops (flight, train,
+  bus, ferry, car, other), with times and an optional cost. It sits in
+  a route gap and counts in the budget.
+- **Budget item**: lodging, transport, activities, food, other. Estimates only (no tracking of who paid, no settle-up).
 
 
 ## Budget rules
@@ -49,7 +51,9 @@ join by invite link.
 - Food, transport, lodging and other: entered as a unit price per
   traveler, charged to every member. The total grows or shrinks as
   members join or leave.
-- Flights: per person (each member may have their own flight).
+- Transfers: priced per traveler. "All travelers" is charged to every
+  member; "opt-in" only to the members who joined it. The total
+  follows the group like any unit price.
 - Totals: trip total and per-person total, in the trip currency.
 - Items may be entered in any currency. The exchange rate is stored
   with the item at entry time.

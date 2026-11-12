@@ -16,7 +16,6 @@
   "items": "Gastos",
   "add": "Agregar gasto",
   "category": "Categoría",
-  "forWhom": "Para quién",
   "label": "Qué",
   "amount": "Precio por persona",
   "currency": "Moneda",
@@ -34,15 +33,14 @@
   "deleteConfirm": "¿Eliminar “{label}” para todos?",
   "estimates": "Todos los montos son estimados. Las actividades cuentan solo para quienes se apuntaron.",
   "categories": {
-    "flights": "Vuelos",
     "lodging": "Alojamiento",
     "transport": "Transporte",
     "food": "Comida",
     "other": "Otros",
-    "activities": "Actividades"
+    "activities": "Actividades",
+    "transfers": "Traslados"
   },
   "splitHint": {
-    "flights": "Por persona: cuenta solo para el viajero que elijas.",
     "lodging": "Precio por viajero. El total crece con el grupo.",
     "transport": "Precio por viajero. El total crece con el grupo.",
     "food": "Estimado de comida por viajero. El total crece con el grupo.",
@@ -58,5 +56,9 @@
   "moreDetails": "Más detalles",
   "close": "Cerrar",
   "deleteWarning": "Se elimina para todos en el viaje. No se puede deshacer.",
-  "capPreview": "Tope: {amount}"
+  "capPreview": "Tope: {amount}",
+  "transfersHeading": "Traslados",
+  "includesTransfers": "incl. {amount} en traslados",
+  "transferAll": "por persona",
+  "transferOptIn": "{count, plural, one {# viajero se unió} other {# viajeros se unieron}}"
 }

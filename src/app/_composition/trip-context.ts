@@ -10,16 +10,17 @@ const trips = { get: (tripId: string, userId: string) => getTripContext({ tripId
 
 export const itinerary = createItineraryApi({ trips });
 
-export const budget = createBudgetApi({
-  trips,
-  activityCosts: { forTrip: (tripId: string) => itinerary.subscribedCosts(tripId) },
-});
-
 export const transfers = createTransfersApi({
   trips: {
     get: (tripId: string, userId: string, locale: "en" | "es") =>
       getTripContext({ tripId, userId, locale }),
   },
+});
+
+export const budget = createBudgetApi({
+  trips,
+  activityCosts: { forTrip: (tripId: string) => itinerary.subscribedCosts(tripId) },
+  transferCosts: { forTrip: (tripId: string) => transfers.transferCosts(tripId) },
 });
 
 export const agent = createAgentApi({

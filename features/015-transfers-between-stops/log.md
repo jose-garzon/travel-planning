@@ -22,3 +22,11 @@ desktop: question text + "+ Add" + "Find options").
 note: Add / Find options inert until T02 / T05 (listeners not built).
 
 ## 2026-11-12 visual gate: approved
+
+## 2026-11-12 T03 round 1
+implementer (sonnet): red OK (c135c55), 4 scenarios, 8 unit/integration
+green OK: 4/4 @F015 @T03 desktop, 602 unit
+extra files: transfers/index.ts (transferCosts export), transfer-card.tsx
+(id="transfer-<id>" anchor for budget links)
+migration 0007_flights_to_transfers.sql; budget rows show "incl. X transfers"
+open: agent still lists `flights` category until T05 lands

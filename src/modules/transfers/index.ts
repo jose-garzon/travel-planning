@@ -4,6 +4,7 @@ import { DrizzleTransfersRepository } from "@/modules/transfers/data/drizzle-tra
 import { createTransfer } from "@/modules/transfers/service/create-transfer";
 import { listTransfers } from "@/modules/transfers/service/list-transfers";
 import type { TripContextReader } from "@/modules/transfers/service/ports";
+import { transferCosts } from "@/modules/transfers/service/transfer-costs";
 
 export type { TransfersMessages } from "@/modules/transfers/messages/load";
 export { loadTransfersMessages } from "@/modules/transfers/messages/load";
@@ -28,6 +29,7 @@ export function createTransfersApi({ trips }: { trips: TripContextReader }) {
   };
   return {
     listTransfers: (query: Args<typeof listTransfers>) => listTransfers(query, deps),
+    transferCosts: (tripId: string) => transferCosts({ tripId }, deps),
     createTransfer: (command: Args<typeof createTransfer>) => createTransfer(command, deps),
   };
 }

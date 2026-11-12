@@ -163,6 +163,7 @@ export function TransferCard({ transfer }: TransferCardProps) {
     // One row on the line: mode and day, the journey, then one muted line of
     // price and booking. Actions sit at the end as icons, never a footer.
     <article
+      id={`transfer-${transfer.id}`}
       aria-label={sentence}
       className={cx(
         "flex items-start gap-3 border-border border-b py-2 last:border-b-0",

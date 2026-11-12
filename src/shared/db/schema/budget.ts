@@ -11,7 +11,7 @@ export const budgetItem = sqliteTable(
       .notNull()
       .references(() => trip.id, { onDelete: "cascade" }),
     category: text("category", {
-      enum: ["flights", "lodging", "transport", "food", "other"],
+      enum: ["lodging", "transport", "food", "other"],
     }).notNull(),
     label: text("label").notNull(),
     /** Unit price per traveler, minor units in `currency`. */
@@ -19,7 +19,7 @@ export const budgetItem = sqliteTable(
     currency: text("currency").notNull(),
     /** Units of trip currency per one unit of `currency`, stored at entry. */
     rate: text("rate").notNull(),
-    /** Set for a per-person item (a flight): it counts for this member only. */
+    /** Set for a per-person item (a per-person cost): it counts for this member only. */
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     link: text("link"),
     /** Leg position of the stop it belongs to; null is the whole trip. */

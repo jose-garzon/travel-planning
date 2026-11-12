@@ -105,6 +105,11 @@ export function BudgetCard({ tripId, budget, viewerId, memberNames }: BudgetCard
                   {memberNames[person.userId] ?? "?"}
                   {isViewer ? <span className="sr-only">{` (${t("you")})`}</span> : null}
                 </span>
+                {person.byCategory.transfers > 0 ? (
+                  <span className="shrink-0 text-sm text-text-muted">
+                    {t("includesTransfers", { amount: money(person.byCategory.transfers) })}
+                  </span>
+                ) : null}
                 {isViewer ? (
                   <span
                     aria-hidden="true"
@@ -125,6 +130,39 @@ export function BudgetCard({ tripId, budget, viewerId, memberNames }: BudgetCard
           })}
         </ul>
       </section>
+
+      {budget.transfers.length === 0 ? null : (
+        <section
+          aria-labelledby="budget-transfers"
+          className="overflow-hidden rounded-md border-2 border-text bg-surface-1"
+        >
+          <h3 id="budget-transfers" className="bg-text px-5 py-3 text-bg text-xl leading-none">
+            {t("transfersHeading")}
+          </h3>
+          <ul className="flex flex-col divide-y-2 divide-dashed divide-border">
+            {budget.transfers.map((transfer) => (
+              <li key={transfer.id} className="flex items-baseline gap-3 px-5 py-3">
+                <a
+                  href={`#transfer-${transfer.id}`}
+                  className="min-w-0 truncate font-semibold ui-hover:text-accent"
+                >
+                  {transfer.label}
+                </a>
+                <span
+                  aria-hidden="true"
+                  className="min-w-4 flex-1 border-border-strong border-b-2 border-dotted"
+                />
+                <span className="shrink-0 text-sm text-text-muted">
+                  {transfer.charge === "all"
+                    ? t("transferAll")
+                    : t("transferOptIn", { count: transfer.participantIds.length })}
+                </span>
+                <span className="shrink-0 font-bold tabular-nums">{money(transfer.cost)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <details className="group">
         <summary className="flex min-h-touch cursor-pointer list-none items-center gap-2 font-semibold ui-hover:text-accent [&::-webkit-details-marker]:hidden">
