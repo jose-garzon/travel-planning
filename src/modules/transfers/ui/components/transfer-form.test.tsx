@@ -223,4 +223,37 @@ describe("TransferForm", () => {
     expect(screen.getByLabelText("Booking reference")).toBeVisible();
     expect(screen.getByLabelText("Booking reference")).toHaveValue("AV9512");
   });
+
+  it("requires the rate when the currency is not the trip's", async () => {
+    renderForm(between);
+
+    await userEvent.type(screen.getByLabelText("Price per person"), "100");
+    const currency = screen.getByLabelText("Currency");
+    await userEvent.clear(currency);
+    await userEvent.type(currency, "usd");
+
+    expect(screen.getByLabelText("1 USD = ? COP")).toBeRequired();
+  });
+
+  it("starts the rate of an edited foreign-currency transfer from the stored one", async () => {
+    const onSubmit = renderForm(between, {
+      initial: {
+        id: "t1",
+        version: 2,
+        from: "Cartagena",
+        to: "Santa Marta",
+        departDate: "2027-03-18",
+        cost: 100,
+        currency: "USD",
+        rate: "4000",
+      },
+    });
+
+    expect(screen.getByLabelText("1 USD = ? COP")).toHaveValue(4000);
+    await save();
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ currency: "USD", rate: "4000" }),
+    );
+  });
 });

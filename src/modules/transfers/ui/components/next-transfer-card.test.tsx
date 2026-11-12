@@ -31,6 +31,7 @@ function dto(overrides: Partial<TransferDto> = {}): TransferDto {
     cost: null,
     currency: null,
     costInTripCurrency: null,
+    rate: null,
     charge: "all",
     participantIds: [],
     bookingRef: null,

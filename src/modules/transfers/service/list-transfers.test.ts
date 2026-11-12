@@ -125,6 +125,7 @@ describe("listTransfers", () => {
       cost: 18000,
       currency: "USD",
       costInTripCurrency: 72_000_000,
+      rate: "4000",
       charge: "all",
     });
   });

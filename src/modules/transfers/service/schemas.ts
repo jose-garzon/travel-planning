@@ -12,6 +12,7 @@ import {
   type Transfer,
   type TransferMode,
 } from "@/modules/transfers/domain/transfer";
+import { httpUrl } from "@/shared/kernel/http-url";
 
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
@@ -35,7 +36,7 @@ export const transferInputSchema = z.object({
   rate: optional(z.string().regex(/^\d+(\.\d+)?$/)),
   charge: z.enum(["all", "opt-in"]),
   bookingRef: optional(z.string().trim().max(60)),
-  link: optional(z.url().max(500)),
+  link: optional(httpUrl.max(500)),
   notes: optional(z.string().trim().max(500)),
 });
 

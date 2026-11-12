@@ -177,4 +177,47 @@ describe("createTransfer", () => {
 
     expect(result.ok).toBe(true);
   });
+
+  it.each([null, "0", "0.0"])("refuses a foreign-currency cost with rate %s", async (rate) => {
+    const { deps, created } = setup();
+
+    const result = await createTransfer(
+      { ...command, input: input({ cost: 180, currency: "USD", rate }) },
+      deps,
+    );
+
+    expect(result).toEqual({ ok: false, error: { code: "VALIDATION_FAILED" } });
+    expect(created).toEqual([]);
+  });
+
+  it("fills a missing zone from the gap's city when the name matches", async () => {
+    const { deps, created } = setup();
+
+    await createTransfer(
+      { ...command, input: input({ from: "bogota", to: "Cartagena", departTime: "09:00" }) },
+      deps,
+    );
+
+    expect(created[0]).toMatchObject({
+      departTz: "America/Bogota",
+      arriveTz: "America/Bogota",
+    });
+  });
+
+  it("keeps a zone the traveler gave and leaves unknown cities without one", async () => {
+    const { deps, created } = setup();
+
+    await createTransfer(
+      {
+        ...command,
+        input: input({ from: "Medellín", to: "Cartagena", departTz: "America/Lima" }),
+      },
+      deps,
+    );
+
+    expect(created[0]).toMatchObject({ departTz: "America/Lima" });
+    const { deps: other, created: others } = setup();
+    await createTransfer({ ...command, input: input({ from: "Medellín" }) }, other);
+    expect(others[0]?.departTz).toBeNull();
+  });
 });

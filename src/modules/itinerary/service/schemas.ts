@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { httpUrl } from "@/shared/kernel/http-url";
 
 export const activityInputSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -23,7 +24,7 @@ export const activityInputSchema = z.object({
     .string()
     .regex(/^\d+(\.\d+)?$/)
     .nullable(),
-  link: z.url().max(500).nullable(),
+  link: httpUrl.max(500).nullable(),
 });
 
 export type ActivityInput = z.infer<typeof activityInputSchema>;

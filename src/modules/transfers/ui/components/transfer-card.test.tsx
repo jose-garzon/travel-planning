@@ -35,6 +35,7 @@ function dto(overrides: Partial<TransferDto> = {}): TransferDto {
     cost: 2500,
     currency: "USD",
     costInTripCurrency: 10_000_000,
+    rate: "4000",
     charge: "all",
     participantIds: [],
     bookingRef: null,
@@ -283,5 +284,13 @@ describe("TransferCard", () => {
     const card = screen.getByRole("article");
     expect(card).toHaveTextContent("La ruta cambió. Revisa origen y destino");
     expect(card).toHaveTextContent("Revisa los datos");
+  });
+
+  it("can take focus programmatically, so a save or a budget link can land on it", () => {
+    renderCard(dto());
+
+    const card = document.getElementById("transfer-t1");
+    expect(card).not.toBeNull();
+    expect(card).toHaveAttribute("tabindex", "-1");
   });
 });

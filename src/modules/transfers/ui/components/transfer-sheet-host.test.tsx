@@ -181,4 +181,73 @@ describe("TransferSheetHost", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  describe("focus", () => {
+    function page(html: string) {
+      const root = document.createElement("div");
+      root.innerHTML = html;
+      document.body.append(root);
+      return root;
+    }
+
+    it("returns to the element that opened the sheet when it is cancelled", async () => {
+      const root = page('<button id="opener">Edit</button>');
+      const opener = root.querySelector<HTMLElement>("#opener");
+      opener?.focus();
+      open({ gap: 1 });
+      await screen.findByRole("dialog");
+
+      await userEvent.keyboard("{Escape}");
+
+      await waitFor(() => expect(opener).toHaveFocus());
+      root.remove();
+    });
+
+    it("moves to the saved transfer after a save", async () => {
+      const root = page('<button id="opener">Edit</button>');
+      root.querySelector<HTMLElement>("#opener")?.focus();
+      open({ gap: 1, action: "edit", prefill: editing });
+      await screen.findByRole("dialog");
+      answer(200, { id: "t1" });
+
+      await userEvent.click(screen.getByRole("button", { name: "Save transfer" }));
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      const card = document.createElement("article");
+      card.id = "transfer-t1";
+      card.tabIndex = -1;
+      root.append(card);
+
+      await waitFor(() => expect(card).toHaveFocus());
+      root.remove();
+    });
+
+    it("moves to the new transfer after an add", async () => {
+      const root = page("");
+      open({ gap: 1 });
+      await screen.findByRole("dialog");
+      answer(201, { id: "new" });
+
+      await userEvent.click(screen.getByRole("button", { name: "Save transfer" }));
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      const card = document.createElement("article");
+      card.id = "transfer-new";
+      card.tabIndex = -1;
+      root.append(card);
+
+      await waitFor(() => expect(card).toHaveFocus());
+      root.remove();
+    });
+
+    it("moves to the gap's Add button after a delete", async () => {
+      const root = page('<button id="add" data-gap-add="1">Add</button>');
+      open({ gap: 1, action: "delete", prefill: editing });
+      await screen.findByRole("dialog");
+      answer(204);
+
+      await userEvent.click(screen.getByRole("button", { name: "Delete" }));
+
+      await waitFor(() => expect(root.querySelector("#add")).toHaveFocus());
+      root.remove();
+    });
+  });
 });

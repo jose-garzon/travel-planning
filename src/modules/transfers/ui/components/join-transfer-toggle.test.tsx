@@ -52,6 +52,15 @@ describe("JoinTransferToggle", () => {
     expect(screen.getByRole("button", { name: /^Join/ })).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("names the button with the text it shows, whatever its state (WCAG 2.5.3)", () => {
+    const { unmount } = renderToggle(["other"]);
+    expect(screen.getByRole("button", { name: /^Join\b(?!ed)/ })).toBeInTheDocument();
+    unmount();
+
+    renderToggle(["me"]);
+    expect(screen.getByRole("button", { name: /^Joined\b/ })).toBeInTheDocument();
+  });
+
   it("joins with PUT, updates the count and refreshes the page", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
     vi.stubGlobal("fetch", fetchMock);

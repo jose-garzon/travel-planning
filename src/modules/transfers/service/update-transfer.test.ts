@@ -191,4 +191,27 @@ describe("updateTransfer", () => {
 
     expect(writes[0]?.transfer).toMatchObject({ cost: null, currency: null, rate: null });
   });
+
+  it.each([null, "0"])("refuses a foreign-currency cost with rate %s", async (rate) => {
+    const { deps, writes } = setup();
+
+    const result = await updateTransfer(
+      { ...command, input: input({ cost: 100, currency: "USD", rate }) },
+      deps,
+    );
+
+    expect(result).toEqual({ ok: false, error: { code: "VALIDATION_FAILED" } });
+    expect(writes).toEqual([]);
+  });
+
+  it("fills a missing zone from the gap's city when the name matches", async () => {
+    const { deps, writes } = setup();
+
+    await updateTransfer({ ...command, input: input({ departTime: "09:00" }) }, deps);
+
+    expect(writes[0]?.transfer).toMatchObject({
+      departTz: "America/Bogota",
+      arriveTz: "America/Bogota",
+    });
+  });
 });

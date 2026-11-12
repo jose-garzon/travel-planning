@@ -56,6 +56,7 @@ function dto(id: string, departTime: string): TransferDto {
     cost: null,
     currency: null,
     costInTripCurrency: null,
+    rate: null,
     charge: "all",
     participantIds: [],
     bookingRef: null,
@@ -109,25 +110,36 @@ describe("TransferGap", () => {
   it("offers Add and Find options in an empty gap", () => {
     renderGap(between);
 
-    expect(screen.getByRole("button", { name: /^Add/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^How do you get to Santa Marta\?/ }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Find options/ })).toBeInTheDocument();
   });
 
   it("hides Find options when the agent is off", () => {
     renderGap(between, [], false);
 
-    expect(screen.getByRole("button", { name: /^Add/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^How do you get to Santa Marta\?/ }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^Find options/ })).toBeNull();
   });
 
-  it("opens the sheet for this gap when Add is pressed", async () => {
+  it("opens the sheet for this gap when the question is pressed", async () => {
     const listener = vi.fn();
     unsubscribers.push(onOpenTransferSheet(listener));
     renderGap(between);
 
-    await userEvent.click(screen.getByRole("button", { name: /^Add/ }));
+    await userEvent.click(screen.getByRole("button", { name: /^How do you get to Santa Marta\?/ }));
 
     expect(listener).toHaveBeenCalledWith(expect.objectContaining({ gap: 1 }));
+  });
+
+  it("names the empty-gap button with the question it shows (WCAG 2.5.3)", () => {
+    renderGap(between);
+
+    const button = screen.getByRole("button", { name: /^How do you get to Santa Marta\?/ });
+    expect(button).toHaveAttribute("data-gap-add", "1");
   });
 
   it("asks the assistant about this gap when Find options is pressed", async () => {

@@ -8,6 +8,7 @@ import {
   TRANSFER_MODES,
 } from "@/modules/agent/domain/suggestion";
 import type { AgentModel } from "@/modules/agent/service/ports";
+import { httpUrl } from "@/shared/kernel/http-url";
 
 // Anthropic needs each tool input to be a plain object (no top-level union),
 // so activities and budget items are two tools.
@@ -24,7 +25,7 @@ const activitySchema = z.object({
     .string()
     .regex(/^[A-Z]{3}$/)
     .nullable(),
-  sourceUrl: z.url().nullable(),
+  sourceUrl: httpUrl.nullable(),
 });
 
 const budgetSchema = z.object({
@@ -33,7 +34,7 @@ const budgetSchema = z.object({
   amount: z.number().min(0),
   currency: z.string().regex(/^[A-Z]{3}$/),
   perPerson: z.boolean(),
-  sourceUrl: z.url().nullable(),
+  sourceUrl: httpUrl.nullable(),
   stop: z.number().int().min(0).max(100).nullable(),
 });
 
@@ -58,7 +59,7 @@ const transferSchema = z.object({
     .string()
     .regex(/^[A-Z]{3}$/)
     .nullable(),
-  sourceUrl: z.url().nullable(),
+  sourceUrl: httpUrl.nullable(),
 });
 
 /** Claude through the Vercel AI SDK, with Anthropic web search (ADR 0011). */
