@@ -250,4 +250,49 @@ describe("TransferSheetHost", () => {
       root.remove();
     });
   });
+
+  describe("a transfer whose gap left the route", () => {
+    const orphan = { ...editing, gap: 7, from: "Medellín", to: "Cali" };
+
+    it("deletes it, confirming with its own cities, and focuses the first Add button", async () => {
+      const root = document.createElement("div");
+      root.innerHTML = '<button id="add" data-gap-add="0">Add</button>';
+      document.body.append(root);
+      open({ gap: 7, action: "delete", prefill: orphan });
+
+      await screen.findByRole("dialog", {
+        name: "Delete the transfer from Medellín to Cali?",
+      });
+      answer(204);
+      await userEvent.click(screen.getByRole("button", { name: "Delete" }));
+
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      expect(fetchMock.mock.calls[0]?.[1].method).toBe("DELETE");
+      await waitFor(() => expect(root.querySelector("#add")).toHaveFocus());
+      root.remove();
+    });
+
+    it("edits it with its own values and keeps its stored gap", async () => {
+      open({ gap: 7, action: "edit", prefill: orphan });
+      await screen.findByRole("dialog", { name: "Edit transfer" });
+      expect(screen.getByRole("textbox", { name: "From" })).toHaveValue("Medellín");
+      answer(200, { id: "t1" });
+
+      await userEvent.click(screen.getByRole("button", { name: "Save transfer" }));
+
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      expect(JSON.parse(fetchMock.mock.calls[0]?.[1].body)).toMatchObject({ gap: 7, version: 4 });
+    });
+
+    it("moves an edit to the gap that now connects its cities", async () => {
+      open({ gap: 7, action: "edit", prefill: { ...editing, gap: 7 } });
+      await screen.findByRole("dialog", { name: "Edit transfer" });
+      answer(200, { id: "t1" });
+
+      await userEvent.click(screen.getByRole("button", { name: "Save transfer" }));
+
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      expect(JSON.parse(fetchMock.mock.calls[0]?.[1].body)).toMatchObject({ gap: 1 });
+    });
+  });
 });
