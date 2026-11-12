@@ -96,3 +96,11 @@ implementer (sonnet): red OK (e82fc39); round 2 moved step edit into its own tes
 green OK: 21/21 F015 desktop (T01-T06), unit pass on feature branch
 test commits: zero-total = Transfers row absent; join step opens trip
 props: tripId, viewerId, memberCount page → gap → card (join prop); card.json join strings
+
+## 2026-11-12 fix after T04 merge
+next-transfer-card suite failed (card → toggle → router import). f2c5961 moves formatTime/formatDay to ui/format-time.ts. 684 unit green.
+
+## 2026-11-12 T07 round 1
+implementer (sonnet): red OK (5a4bec8), 3 scenarios, 3 unit; green OK 24/24 F015 desktop
+spoken duration "1 hr 25 min" (Intl short); es "sale 09:40, llega 11:05"; dock opens mobile drawer on Find options
+note: axe checked on gap/card pages; sheet + next-up not axe-checked in both locales; one flaky T01 run under load

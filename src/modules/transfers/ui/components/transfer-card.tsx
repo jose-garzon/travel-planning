@@ -99,6 +99,19 @@ function Journey({ transfer }: { transfer: TransferDto }) {
   );
 }
 
+/** "1 hr 25 min" (en), "1 h 25 min" (es): the sentence reads units, not letters. */
+function spokenDuration(minutes: number, locale: string): string {
+  return [
+    { unit: "hour", value: Math.floor(minutes / 60) },
+    { unit: "minute", value: minutes % 60 },
+  ]
+    .filter(({ value }) => value > 0)
+    .map(({ unit, value }) =>
+      new Intl.NumberFormat(locale, { style: "unit", unit, unitDisplay: "short" }).format(value),
+    )
+    .join(" ");
+}
+
 /** What the screen reader says for the whole card: mode, cities, date, times, duration. */
 function useSentence(transfer: TransferDto): string {
   const t = useTranslations("transfers.card");
@@ -113,7 +126,9 @@ function useSentence(transfer: TransferDto): string {
     }),
     departTime === null ? null : t("departs", { time: formatTime(departTime, locale) }),
     arriveTime === null ? null : t("arrives", { time: formatTime(arriveTime, locale) }),
-    durationMinutes === null ? null : formatDuration(durationMinutes, locale, "long"),
+    durationMinutes === null || durationMinutes <= 0
+      ? null
+      : spokenDuration(Math.round(durationMinutes), locale),
   ]
     .filter((part) => part !== null)
     .join(", ");

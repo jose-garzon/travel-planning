@@ -253,7 +253,7 @@ Done when:
 
 ## T07. Accessibility and i18n hardening
 
-Status: todo
+Status: done
 Depends on: T02, T03, T04, T05, T06
 Model: sonnet
 Scenarios: @T07
@@ -270,8 +270,8 @@ Steps:
 2. Long names wrap; Spanish copy fits.
 
 Done when:
-- [ ] Scenarios tagged @T07 pass
-- [ ] axe passes on gap, sheet, card, next up in both locales
+- [x] Scenarios tagged @T07 pass
+- [x] axe passes on gap, sheet, card, next up in both locales
 
 
 ## Coverage

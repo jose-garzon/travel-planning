@@ -8,8 +8,8 @@
     "other": "Traslado"
   },
   "summary": "{mode} de {from} a {to}, {date}",
-  "departs": "sale a las {time}",
-  "arrives": "llega a las {time}",
+  "departs": "sale {time}",
+  "arrives": "llega {time}",
   "nextDay": "+{days}",
   "each": "{amount} c/u",
   "noPrice": "Aún sin precio",

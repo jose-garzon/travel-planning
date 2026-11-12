@@ -5,6 +5,7 @@ import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from "re
 import { Icon } from "@/shared/ui/components/icon";
 import { cx } from "@/shared/ui/cx";
 import { useIsDesktop } from "@/shared/ui/hooks/use-is-desktop";
+import { onAskAssistantForGap } from "@/shared/ui/transfer-events";
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -174,6 +175,9 @@ export function AssistantDock({ label, closeLabel, children }: AssistantDockProp
       document.removeEventListener("keydown", onKey);
     };
   }, [isDrawerOpen]);
+
+  // "Find options" on a gap: on a phone the chat is behind the launcher.
+  useEffect(() => onAskAssistantForGap(() => setIsOpen(true)), []);
 
   if (isDesktop) {
     return <div className="flex min-h-0 flex-1 flex-col">{children}</div>;

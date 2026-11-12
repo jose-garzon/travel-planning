@@ -175,9 +175,19 @@ describe("TransferCard", () => {
     renderCard(dto());
 
     const card = screen.getByRole("article", {
-      name: /^Bus from Cartagena to Santa Marta, .*March 19.*, departs 8:00\sAM, arrives 12:30\sPM, 4 hours 30 minutes$/,
+      name: /^Bus from Cartagena to Santa Marta, .*March 19.*, departs 8:00\sAM, arrives 12:30\sPM, 4 hr 30 min$/,
     });
     expect(card).toBeInTheDocument();
+  });
+
+  it("is read as one sentence in Spanish", () => {
+    renderCard(dto(), "es");
+
+    expect(
+      screen.getByRole("article", {
+        name: /^Autobús de Cartagena a Santa Marta, .*19 de marzo, sale 08:00, llega 12:30, 4 h 30 min$/,
+      }),
+    ).toBeInTheDocument();
   });
 
   it("leaves duration and arrival out of the sentence when unknown", () => {
