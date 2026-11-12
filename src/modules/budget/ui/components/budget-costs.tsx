@@ -25,9 +25,6 @@ import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 import { formatMoney } from "@/shared/ui/money";
 import { withViewTransition } from "@/shared/ui/view-transition";
 
-const SELECT_CLASSES =
-  "min-h-touch rounded-md border border-border-strong bg-surface-1 px-4 text-md text-text";
-
 const CATEGORY_ICONS: Record<Category, LucideIcon> = {
   lodging: BedDouble,
   transport: Bus,

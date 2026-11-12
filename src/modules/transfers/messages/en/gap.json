@@ -6,5 +6,6 @@
   "add": "Add",
   "addLabel": "Add transfer: {place}",
   "findOptions": "Find options",
-  "findLabel": "Find options: {place}"
+  "findLabel": "Find options: {place}",
+  "routeChangedGroup": "Route changed"
 }

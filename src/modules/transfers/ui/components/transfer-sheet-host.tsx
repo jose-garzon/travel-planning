@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Gap } from "@/modules/transfers/domain/gaps";
 import type { TransferInput } from "@/modules/transfers/service/schemas";
 import { TransferForm } from "@/modules/transfers/ui/components/transfer-form";
@@ -18,6 +18,18 @@ export type TransferSheetHostProps = {
 
 type Request = OpenTransferSheet & { key: number };
 
+/** Focuses `find()` once it exists (the page refreshes after a save), for about two seconds. */
+function focusWhenPresent(find: () => HTMLElement | null, tries = 40) {
+  window.setTimeout(() => {
+    const target = find();
+    if (target !== null) {
+      target.focus();
+    } else if (tries > 0) {
+      focusWhenPresent(find, tries - 1);
+    }
+  }, 50);
+}
+
 /**
  * One add/edit sheet and one delete confirmation for the whole page. Cards
  * and gaps open them by event (`openTransferSheet`), so they never import it.
@@ -29,10 +41,16 @@ export function TransferSheetHost({ tripId, tripCurrency, gaps }: TransferSheetH
   const [request, setRequest] = useState<Request | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  // What had focus when the sheet opened: focus goes back there if nothing better exists.
+  const openerRef = useRef<HTMLElement | null>(null);
 
   useEffect(
     () =>
       onOpenTransferSheet((detail) => {
+        if (!document.activeElement?.closest('[role="dialog"]')) {
+          openerRef.current =
+            document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        }
         setDeleteError(null);
         setRequest((previous) => ({ ...detail, key: (previous?.key ?? 0) + 1 }));
       }),
@@ -41,18 +59,33 @@ export function TransferSheetHost({ tripId, tripCurrency, gaps }: TransferSheetH
 
   const gap = request === null ? undefined : gaps[request.gap];
   const transferId = request?.prefill?.id;
-  const close = () => setRequest(null);
+  const close = () => {
+    setRequest(null);
+    const opener = openerRef.current;
+    focusWhenPresent(() => (opener?.isConnected ? opener : null), 0);
+  };
   const base = `/api/v1/trips/${tripId}/transfers`;
 
-  async function send(url: string, method: string, body?: unknown): Promise<string | null> {
+  async function send(
+    url: string,
+    method: string,
+    body?: unknown,
+    /** Selector of what should take focus once the page shows the result. */
+    landing?: (savedId: string | undefined) => string,
+  ): Promise<string | null> {
     const response = await fetch(url, {
       method,
       headers: { "content-type": "application/json", "accept-language": locale },
       body: body === undefined ? undefined : JSON.stringify(body),
     }).catch(() => null);
     if (response?.ok) {
+      const saved = (await response.json().catch(() => null)) as { id?: string } | null;
       router.refresh();
       close();
+      if (landing !== undefined) {
+        const selector = landing(saved?.id);
+        focusWhenPresent(() => document.querySelector<HTMLElement>(selector));
+      }
       return null;
     }
     const payload = (await response?.json().catch(() => null)) as {
@@ -63,17 +96,22 @@ export function TransferSheetHost({ tripId, tripCurrency, gaps }: TransferSheetH
 
   function save(input: TransferInput) {
     if (transferId === undefined) {
-      return send(base, "POST", input);
+      return send(base, "POST", input, (id) => `#transfer-${id}`);
     }
-    return send(`${base}/${transferId}`, "PATCH", {
-      ...input,
-      version: request?.prefill?.version,
-    });
+    return send(
+      `${base}/${transferId}`,
+      "PATCH",
+      { ...input, version: request?.prefill?.version },
+      () => `#transfer-${transferId}`,
+    );
   }
 
   async function remove() {
     setIsDeleting(true);
-    setDeleteError(await send(`${base}/${transferId}`, "DELETE"));
+    const index = request?.gap;
+    setDeleteError(
+      await send(`${base}/${transferId}`, "DELETE", undefined, () => `[data-gap-add="${index}"]`),
+    );
     setIsDeleting(false);
   }
 

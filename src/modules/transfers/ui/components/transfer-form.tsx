@@ -248,6 +248,8 @@ export function TransferForm({ gap, tripCurrency, initial, onSubmit }: TransferF
           inputMode="decimal"
           label={t("rate", { from: currency || "?", to: tripCurrency })}
           hint={t("rateHint")}
+          defaultValue={initial?.rate ?? undefined}
+          required
         />
       ) : null}
       <fieldset className="flex flex-wrap gap-x-6">

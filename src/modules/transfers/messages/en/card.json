@@ -30,7 +30,7 @@
   "deleteLabel": "Delete transfer from {from} to {to}",
   "join": "Join",
   "joined": "Joined",
-  "joinLabel": "Join transfer from {from} to {to}",
+  "joinLabel": "{action}: transfer from {from} to {to}",
   "participants": "{count} of {total}",
   "joinFailed": "Could not update."
 }

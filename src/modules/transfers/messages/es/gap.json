@@ -6,5 +6,6 @@
   "add": "Añadir",
   "addLabel": "Añadir traslado: {place}",
   "findOptions": "Buscar opciones",
-  "findLabel": "Buscar opciones: {place}"
+  "findLabel": "Buscar opciones: {place}",
+  "routeChangedGroup": "Ruta modificada"
 }

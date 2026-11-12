@@ -9,6 +9,7 @@ import { BudgetCard, BudgetCosts } from "@/modules/budget/ui/entries/budget";
 import { ItineraryStop } from "@/modules/itinerary/ui/entries/itinerary";
 import {
   NextTransferCard,
+  RouteChangedGroup,
   TransferGap,
   TransferSheetHost,
 } from "@/modules/transfers/ui/entries/transfers";
@@ -21,7 +22,7 @@ import { SectionHeader } from "@/shared/ui/components/section-header";
 import { StopAccordion } from "@/shared/ui/components/stop-accordion";
 import { Toast } from "@/shared/ui/components/toast";
 import { formatMoney } from "@/shared/ui/money";
-import { currentStop, groupByStop } from "./plan";
+import { currentStop, groupByStop, orphanTransfers } from "./plan";
 
 export default async function TripPage({
   params,
@@ -207,6 +208,12 @@ export default async function TripPage({
                   </Fragment>
                 );
               })}
+              <RouteChangedGroup
+                transfers={orphanTransfers(gapTransfers.value.transfers, gapTransfers.value.gaps)}
+                tripId={tripId}
+                viewerId={currentUser.id}
+                memberCount={members.value.length}
+              />
             </section>
             <BudgetCard
               tripId={tripId}

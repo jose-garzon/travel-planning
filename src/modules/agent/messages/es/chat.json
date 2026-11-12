@@ -17,6 +17,7 @@
   "dismiss": "Descartar",
   "approved": "Agregado al viaje.",
   "approveFailed": "No se pudo agregar. Corrige los datos de arriba e inténtalo de nuevo.",
+  "foreignTransfer": "Este precio está en {currency}. Añade el traslado desde el itinerario, con un tipo de cambio.",
   "offline": "Sin conexión. El asistente necesita internet.",
   "startersLabel": "Ideas para preguntar",
   "starterActivities": "Qué hacer en {city} el {date}",

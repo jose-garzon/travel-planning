@@ -18,6 +18,8 @@ export type TransferPrefill = Partial<{
   /** Major units (180.5), as the form shows it. */
   cost: number | null;
   currency: string | null;
+  /** Trip-currency units per unit of `currency`, as stored. */
+  rate: string | null;
   charge: string;
   bookingRef: string | null;
   link: string | null;

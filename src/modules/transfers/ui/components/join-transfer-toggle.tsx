@@ -81,7 +81,7 @@ export function JoinTransferToggle({
           variant={joined ? "primary" : "outline"}
           icon={joined ? Check : Plus}
           aria-pressed={joined}
-          aria-label={t("joinLabel", { from, to })}
+          aria-label={t("joinLabel", { action: joined ? t("joined") : t("join"), from, to })}
           disabled={!isOnline}
           onClick={() => void toggle()}
         >

@@ -65,3 +65,12 @@ export function currentStop(stops: PlanStop[], today: string, endDate: string | 
       (stop.to === null ? endDate === null || today <= endDate : today < stop.to),
   );
 }
+
+/** Transfers whose gap is no longer on the route (it changed under them). */
+export function orphanTransfers<T extends { gap: number }>(
+  transfers: T[],
+  gaps: { index: number }[],
+): T[] {
+  const known = new Set(gaps.map((gap) => gap.index));
+  return transfers.filter((transfer) => !known.has(transfer.gap));
+}

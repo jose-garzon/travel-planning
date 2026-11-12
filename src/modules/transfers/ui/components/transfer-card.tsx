@@ -56,6 +56,7 @@ function toPrefill(transfer: TransferDto): TransferPrefill {
     arriveTz: transfer.arriveTz,
     cost: transfer.cost === null ? null : transfer.cost / 100,
     currency: transfer.currency,
+    rate: transfer.rate,
     charge: transfer.charge,
     bookingRef: transfer.bookingRef,
     link: transfer.link,
@@ -166,6 +167,7 @@ export function TransferCard({ transfer, join }: TransferCardProps) {
     // price and booking. Actions sit at the end as icons, never a footer.
     <article
       id={`transfer-${transfer.id}`}
+      tabIndex={-1}
       aria-label={sentence}
       className={cx(
         "flex items-start gap-3 border-border border-b py-2 last:border-b-0",

@@ -30,7 +30,7 @@
   "deleteLabel": "Eliminar traslado de {from} a {to}",
   "join": "Unirme",
   "joined": "Unido",
-  "joinLabel": "Unirse al traslado de {from} a {to}",
+  "joinLabel": "{action}: traslado de {from} a {to}",
   "participants": "{count} de {total}",
   "joinFailed": "No se pudo actualizar."
 }

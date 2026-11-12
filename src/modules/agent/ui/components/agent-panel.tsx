@@ -49,6 +49,15 @@ function gapPlaces(
   return { from: from ?? "", to: to ?? "" };
 }
 
+/** A transfer priced in another currency: the suggestion has no exchange rate for it. */
+function needsRate(suggestion: Suggestion, tripCurrency: string): boolean {
+  return (
+    suggestion.kind === "transfer" &&
+    suggestion.cost !== null &&
+    (suggestion.currency ?? tripCurrency) !== tripCurrency
+  );
+}
+
 /** Approves a suggestion through the public itinerary or budget API. */
 function approvalRequest(
   suggestion: Suggestion,
@@ -447,10 +456,41 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
     composerRef.current?.focus();
   }
 
+  /** Remembers what an approval created, says so and sends the card to its station. */
+  async function afterApproved(
+    suggestion: Suggestion,
+    url: string,
+    response: Response,
+    announce: boolean,
+  ) {
+    const saved = (await response.json().catch(() => null)) as { id?: string } | null;
+    if (saved?.id !== undefined) {
+      const resource = `${url}/${saved.id}`;
+      setCreated((current) => ({ ...current, [suggestion.id]: resource }));
+    }
+    if (announce) {
+      setAnnouncement(t("approved"));
+    }
+    const card = document.querySelector<HTMLElement>(`[data-suggestion="${suggestion.id}"]`);
+    if (card !== null) {
+      flyToStation(card, suggestion.kind === "budget" ? "budget-heading" : "itinerary-heading");
+    }
+  }
+
+  /** Marks a suggestion as not added, with the reason on its card. */
+  function refuse(id: string, message: string): string {
+    setStates((current) => ({ ...current, [id]: "failed" }));
+    setFailures((current) => ({ ...current, [id]: message }));
+    return message;
+  }
+
   /** Approves the suggestion as shown on its card (edits included). */
   async function approve(suggestion: Suggestion, announce = true): Promise<string | null> {
     setStates((current) => ({ ...current, [suggestion.id]: "saving" }));
     setFailures(({ [suggestion.id]: _, ...rest }) => rest);
+    if (needsRate(suggestion, tripCurrency)) {
+      return refuse(suggestion.id, t("foreignTransfer", { currency: suggestion.currency ?? "" }));
+    }
     const places = suggestion.kind === "transfer" ? gapPlaces(suggestion.gap, origin, stops) : null;
     const { url, body } = approvalRequest(
       suggestion,
@@ -473,18 +513,7 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
       setEditing((current) => ({ ...current, [suggestion.id]: true }));
       return message;
     }
-    const saved = (await response.json().catch(() => null)) as { id?: string } | null;
-    if (saved?.id !== undefined) {
-      const resource = `${url}/${saved.id}`;
-      setCreated((current) => ({ ...current, [suggestion.id]: resource }));
-    }
-    if (announce) {
-      setAnnouncement(t("approved"));
-    }
-    const card = document.querySelector<HTMLElement>(`[data-suggestion="${suggestion.id}"]`);
-    if (card !== null) {
-      flyToStation(card, suggestion.kind === "budget" ? "budget-heading" : "itinerary-heading");
-    }
+    await afterApproved(suggestion, url, response, announce);
     router.refresh();
     return null;
   }

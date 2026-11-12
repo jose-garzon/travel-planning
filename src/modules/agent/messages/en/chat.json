@@ -17,6 +17,7 @@
   "dismiss": "Dismiss",
   "approved": "Added to the trip.",
   "approveFailed": "Could not add it. Fix the details above and try again.",
+  "foreignTransfer": "This price is in {currency}. Add the transfer from the itinerary, with an exchange rate.",
   "offline": "You are offline. The assistant needs a connection.",
   "startersLabel": "Try asking",
   "starterActivities": "Things to do in {city} on {date}",

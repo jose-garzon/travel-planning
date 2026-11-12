@@ -63,7 +63,7 @@ export function TransferGap({
           <div className="flex items-center gap-x-2 sm:gap-x-3">
             <button
               type="button"
-              aria-label={t("addLabel", { place })}
+              data-gap-add={gap.index}
               onClick={() => openTransferSheet({ gap: gap.index })}
               className="group/add -mx-1 inline-flex min-h-touch min-w-0 cursor-pointer items-center gap-2 rounded-md px-1 text-start text-sm sm:pointer-events-none ui-focus:outline-2 ui-focus:outline-focus ui-focus:outline-solid sm:gap-3"
             >
@@ -109,6 +109,7 @@ export function TransferGap({
                 icon={Plus}
                 label={t("add")}
                 name={t("addLabel", { place })}
+                gapAdd={gap.index}
                 onClick={() => openTransferSheet({ gap: gap.index })}
               />
             </div>
@@ -125,6 +126,7 @@ function GapAction({
   label,
   mobileLabel,
   name,
+  gapAdd,
   onClick,
 }: {
   icon: LucideIcon;
@@ -132,12 +134,15 @@ function GapAction({
   /** Text below `sm`: a different label, or `null` for the icon alone. Omit to keep `label`. */
   mobileLabel?: string | null;
   name: string;
+  /** Marks the gap's Add button so focus can return to it. */
+  gapAdd?: number;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       aria-label={name}
+      data-gap-add={gapAdd}
       onClick={onClick}
       className="-mx-1 inline-flex min-h-touch min-w-touch shrink-0 cursor-pointer justify-center items-center gap-1 rounded-full px-2 font-semibold text-sm underline-offset-4 ui-hover:text-accent-hover ui-hover:underline ui-focus:outline-2 ui-focus:outline-focus ui-focus:outline-solid"
     >
