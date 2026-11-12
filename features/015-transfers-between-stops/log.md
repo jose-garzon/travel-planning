@@ -104,3 +104,10 @@ next-transfer-card suite failed (card → toggle → router import). f2c5961 mov
 implementer (sonnet): red OK (5a4bec8), 3 scenarios, 3 unit; green OK 24/24 F015 desktop
 spoken duration "1 hr 25 min" (Intl short); es "sale 09:40, llega 11:05"; dock opens mobile drawer on Find options
 note: axe checked on gap/card pages; sheet + next-up not axe-checked in both locales; one flaky T01 run under load
+
+## 2026-11-12 T07 merged: c3936d0
+
+## 2026-11-12 feature verification
+test all: 390 passed, 4 failed under load (F015 edit/delete, F015 join budget, F3 name capture x2); all pass alone (2 reruns)
+lint pass (5 warnings, 1 ours: budget-costs.tsx unused SELECT_CLASSES), typecheck pass, build pass
+screenshots: 24/24 F015 → evidence/screenshots
