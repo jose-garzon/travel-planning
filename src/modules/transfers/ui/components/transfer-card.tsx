@@ -211,7 +211,7 @@ export function TransferCard({ transfer }: TransferCardProps) {
           </p>
         ))}
       </div>
-      <div className="flex shrink-0">
+      <div className="flex shrink-0 gap-2">
         <Button
           type="button"
           size="sm"

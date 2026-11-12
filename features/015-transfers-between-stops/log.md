@@ -83,3 +83,6 @@ implementer (haiku) stopped before red: card gets no viewerId / member count, so
 ## 2026-11-12 T05 round 2
 test commit b218ab5 drops duplicate step (T02 owns it). green OK: 19/19 F015 desktop for T01,T02,T03,T05,T06; 670 unit
 open for PR: AssistantDock mobile drawer does not open on Find options
+
+## 2026-11-12 visual fix
+user: edit/delete icon buttons too close → gap-2 on card actions
