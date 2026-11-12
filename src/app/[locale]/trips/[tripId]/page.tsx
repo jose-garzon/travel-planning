@@ -8,7 +8,6 @@ import { getCurrentUser } from "@/modules/auth";
 import { BudgetCard, BudgetCosts } from "@/modules/budget/ui/entries/budget";
 import { ItineraryStop } from "@/modules/itinerary/ui/entries/itinerary";
 import {
-  NextTransferCard,
   RouteChangedGroup,
   TransferGap,
   TransferSheetHost,
@@ -136,7 +135,6 @@ export default async function TripPage({
               />
             }
           />
-          <NextTransferCard transfers={gapTransfers.value.transfers} now={Date.now()} />
           <AloneInvite
             show={isOwner && alone}
             tripId={tripId}

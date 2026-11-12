@@ -46,6 +46,9 @@
     "here": "you are here",
     "nextHere": "next stop",
     "crewSolo": "Just you",
-    "invite": "Bring your crew"
+    "invite": "Bring your crew",
+    "transfer": "Next transfer",
+    "transferCountdown": "{days, plural, =0 {Today} =1 {Tomorrow} other {In # days}}",
+    "transferName": "{label}: {mode, select, flight {flight} train {train} bus {bus} ferry {ferry} car {car} other {transfer}} {from} to {to}, {when}, {countdown}"
   }
 }

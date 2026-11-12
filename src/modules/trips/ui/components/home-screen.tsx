@@ -4,7 +4,7 @@ import type { TripDto } from "@/modules/trips/service/schemas";
 import { EmptyTripsState } from "@/modules/trips/ui/components/empty-trips-state";
 import { NewTripLink } from "@/modules/trips/ui/components/new-trip-link";
 import { NextStopPanel } from "@/modules/trips/ui/components/next-stop";
-import type { NextStop } from "@/modules/trips/ui/components/next-stop-model";
+import type { HomeTransfer, NextStop } from "@/modules/trips/ui/components/next-stop-model";
 import { formatTripDateRange } from "@/modules/trips/ui/components/trip-date-range";
 import { Link } from "@/shared/i18n/navigation";
 import { Panel } from "@/shared/ui/components/panel";
@@ -17,6 +17,8 @@ type HomeScreenProps = {
   summary: HomeTrips;
   /** The next day of the next trip, with its plan; null when undated or ended. */
   nextStop?: NextStop | null;
+  /** The next trip's next transfer, shown on its board. */
+  nextTransfer?: HomeTransfer | null;
   /** `YYYY-MM-DD` in the member's zone; the countdown counts from it. */
   today: string;
   /** Shows the "Trip created" confirmation after a successful create. */
@@ -236,6 +238,7 @@ export function HomeScreen({
   displayName,
   summary,
   nextStop = null,
+  nextTransfer = null,
   today,
   justCreated = false,
   createdTripId,
@@ -290,7 +293,7 @@ export function HomeScreen({
 
       {hasNoTrips && <EmptyTripsState />}
 
-      {nextStop !== null && <NextStopPanel stop={nextStop} />}
+      {nextStop !== null && <NextStopPanel stop={nextStop} transfer={nextTransfer} />}
 
       {nextTrip !== null && nextStop === null && (
         <section aria-labelledby={NEXT_TRIP_HEADING_ID} className="mb-4">

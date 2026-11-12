@@ -152,3 +152,6 @@ implementer (sonnet): b2e3346, 2e1c399 (tests), 66e8d02 (fix): Edit/Delete work 
 verification: 715 unit, F015 48/48 desktop+mobile, typecheck pass
 reviewer recheck B8b: resolved. 0 blockers open.
 note: "moves edit to matching gap" unit test does not exercise the name-match path
+
+## 2026-11-12 owner change: next transfer moves to home
+Next up card removed from the trip page. Home next-trip board shows a "Next transfer" stub (inverted, amber countdown chip, links to the card) only from the day before departure and on the day. Scenarios updated in test commits fb67ae8, ccd94ef.

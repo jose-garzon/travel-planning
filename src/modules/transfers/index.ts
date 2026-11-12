@@ -9,6 +9,7 @@ import { setTransferParticipation } from "@/modules/transfers/service/set-transf
 import { transferCosts } from "@/modules/transfers/service/transfer-costs";
 import { updateTransfer } from "@/modules/transfers/service/update-transfer";
 
+export { nextTransfer } from "@/modules/transfers/domain/next-transfer";
 export type { TransfersMessages } from "@/modules/transfers/messages/load";
 export { loadTransfersMessages } from "@/modules/transfers/messages/load";
 export type { TripContext, TripContextReader } from "@/modules/transfers/service/ports";
