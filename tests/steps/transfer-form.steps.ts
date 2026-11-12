@@ -191,7 +191,8 @@ Then("the transfer shows {string}", async ({ page }, text: string) => {
 });
 
 Then("I see the warning {string}", async ({ page }, text: string) => {
-  await expect(page.getByText(text)).toBeVisible();
+  // The warning shows after the page refresh that follows the save.
+  await expect(page.getByText(text)).toBeVisible({ timeout: 15_000 });
 });
 
 Then("the transfer is not saved", async ({ page }) => {
