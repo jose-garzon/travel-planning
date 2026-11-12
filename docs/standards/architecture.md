@@ -38,6 +38,7 @@ If two modules need to talk, the app layer connects them (see
 | `trips`        | trip, route (legs), members, roles, invites        |
 | `itinerary`    | activities scheduled on days, participants         |
 | `budget`       | cost items, categories, splits, totals             |
+| `transfers`    | travel between destinations, participants (0011)  |
 | `agent`        | LLM agent: prompts, tools, search, suggestions     |
 | `styleguide`   | `/styleguide` screen (UI-only, ADR 0008)           |
 
