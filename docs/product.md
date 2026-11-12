@@ -46,9 +46,9 @@ join by invite link.
 ## Budget rules
 
 - Activities: cost counted only for subscribed members.
-- Food: entered as a total estimate, split equally among all members.
-  (v1; a daily per-person rate per destination is a later step.)
-- Transport and lodging: split equally among all members.
+- Food, transport, lodging and other: entered as a unit price per
+  traveler, charged to every member. The total grows or shrinks as
+  members join or leave.
 - Flights: per person (each member may have their own flight).
 - Totals: trip total and per-person total, in the trip currency.
 - Items may be entered in any currency. The exchange rate is stored

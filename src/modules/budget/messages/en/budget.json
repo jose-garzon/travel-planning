@@ -18,7 +18,7 @@
   "category": "Category",
   "forWhom": "For whom",
   "label": "What",
-  "amount": "Amount",
+  "amount": "Price per person",
   "currency": "Currency",
   "rate": "1 {from} = ? {to}",
   "rateHint": "Exchange rate today. It is saved with this cost.",
@@ -27,7 +27,7 @@
   "save": "Save cost",
   "cancel": "Cancel",
   "empty": "No costs yet. Add lodging, transport or food, or ask the assistant.",
-  "splitEqually": "split equally",
+  "splitEqually": "per person",
   "delete": "Delete",
   "deleteItem": "Delete “{label}”",
   "deleteConfirm": "Delete “{label}” for everyone?",
@@ -42,10 +42,10 @@
   },
   "splitHint": {
     "flights": "Per person: counts only for the traveler you pick.",
-    "lodging": "Split equally among all travelers.",
-    "transport": "Split equally among all travelers.",
-    "food": "Total food estimate, split equally among all travelers.",
-    "other": "Split equally among all travelers."
+    "lodging": "Price per traveler. The total grows with the group.",
+    "transport": "Price per traveler. The total grows with the group.",
+    "food": "Food estimate per traveler. The total grows with the group.",
+    "other": "Price per traveler. The total grows with the group."
   },
   "capToggle": "Set a budget cap",
   "capUsed": "Budget cap used",
