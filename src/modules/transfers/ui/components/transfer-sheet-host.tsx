@@ -18,6 +18,36 @@ export type TransferSheetHostProps = {
 
 type Request = OpenTransferSheet & { key: number };
 
+function plain(name: string | undefined): string {
+  return (name ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
+}
+
+/**
+ * The gap an edit saves into. The requested one while it exists; else the
+ * gap whose cities match the transfer's by name; else a stand-in that keeps
+ * the stored index (the API accepts it, and the transfer stays in "Route changed").
+ */
+function gapFor(request: Request, gaps: Gap[]): Gap {
+  const known = gaps[request.gap];
+  if (known !== undefined) {
+    return known;
+  }
+  const { from, to } = request.prefill ?? {};
+  const match = gaps.find(
+    (gap) => plain(gap.from?.name) === plain(from) && plain(gap.to?.name) === plain(to),
+  );
+  return (
+    match ?? {
+      index: request.gap,
+      kind: "between",
+      from: null,
+      to: null,
+      date: null,
+      window: { from: null, to: null },
+    }
+  );
+}
+
 /** Focuses `find()` once it exists (the page refreshes after a save), for about two seconds. */
 function focusWhenPresent(find: () => HTMLElement | null, tries = 40) {
   window.setTimeout(() => {
@@ -57,7 +87,7 @@ export function TransferSheetHost({ tripId, tripCurrency, gaps }: TransferSheetH
     [],
   );
 
-  const gap = request === null ? undefined : gaps[request.gap];
+  const gap = request === null ? undefined : gapFor(request, gaps);
   const transferId = request?.prefill?.id;
   const close = () => {
     setRequest(null);
@@ -110,7 +140,10 @@ export function TransferSheetHost({ tripId, tripCurrency, gaps }: TransferSheetH
     setIsDeleting(true);
     const index = request?.gap;
     setDeleteError(
-      await send(`${base}/${transferId}`, "DELETE", undefined, () => `[data-gap-add="${index}"]`),
+      await send(`${base}/${transferId}`, "DELETE", undefined, () =>
+        // The gap may be gone (route changed): fall back to the first Add button.
+        gaps[index ?? -1] === undefined ? "[data-gap-add]" : `[data-gap-add="${index}"]`,
+      ),
     );
     setIsDeleting(false);
   }
