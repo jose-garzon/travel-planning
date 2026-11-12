@@ -111,3 +111,44 @@ note: axe checked on gap/card pages; sheet + next-up not axe-checked in both loc
 test all: 390 passed, 4 failed under load (F015 edit/delete, F015 join budget, F3 name capture x2); all pass alone (2 reruns)
 lint pass (5 warnings, 1 ours: budget-costs.tsx unused SELECT_CLASSES), typecheck pass, build pass
 screenshots: 24/24 F015 → evidence/screenshots
+
+## 2026-11-12 feature review
+reviewer: 8 blocker, 8 major, 10 minor, 1 nit → fix round 1 on blockers
+blockers: B1 javascript:/data: links (transfer link, agent sourceUrl); B2 edit
+resets rate to 1; B3 foreign cost w/o rate stored 1:1 (agent sends no rate);
+B4 agent transfers lack tz (wrong duration); B5 gap Add label-in-name; B6 join
+toggle label-in-name; B7 sheet loses focus on save/delete/close; B8 orphan
+transfers (gap beyond route) never rendered
+majors (carried to PR):
+- major  create/update-transfer: gap index not checked against route gaps
+- major  domain/transfer.ts:101 overnight arrival without date rejected
+- major  transfer-form: arrival-before-departure is a form alert, not a field error
+- major  form.json: save/delete error copy differs from spec
+- major  join-transfer-toggle: optimistic override never cleared
+- major  budget-card.tsx:147 truncates transfer label (EC-11)
+- major  duration step maps "9 hr 30 min" → "9h 30m"; update tests.feature
+- major  AC-12 axe not run on sheet, next up, join toggle (en/es)
+minors: agent link target, Find options only in empty gaps, joined count
+includes leavers, next-transfer duplicates instantOf, countdown UTC day,
+countdown wording, mid-trip leg to origin = return, agent prompt omits return
+gap, transfers read twice per render, required copy; nit: gap landmarks
+follow-up: budget module rate ?? "1" same pattern as B3
+
+## 2026-11-12 fix round 1
+implementer (sonnet): 7ea9001..90fb1e1, all 8 blockers addressed
+note: B1 production code (shared/kernel/http-url.ts + schemas) landed inside test commit 2b2c735
+agent panel refuses foreign-currency transfer approvals (asks to add with a rate)
+route-changed group: display only (edit/delete need a gap) → reviewer to judge
+verification: F015 48/48 desktop+mobile; pnpm test 389 passed, 5 failed (F003, F005, F009
+under load; 12/12 pass alone); lint 0 errors; typecheck, build pass; unit 712
+
+## 2026-11-12 blocker recheck
+reviewer: B1-B8 resolved except B8 actions: Edit/Delete dead in "Route changed" group → fix round 2
+new major (carried to PR): agent refuses foreign-priced transfer suggestions and they have no Edit; AC-7 narrowed
+minor: Safari mouse click does not focus buttons, so focus return may fall to body
+
+## 2026-11-12 fix round 2
+implementer (sonnet): b2e3346, 2e1c399 (tests), 66e8d02 (fix): Edit/Delete work on route-changed transfers
+verification: 715 unit, F015 48/48 desktop+mobile, typecheck pass
+reviewer recheck B8b: resolved. 0 blockers open.
+note: "moves edit to matching gap" unit test does not exercise the name-match path
