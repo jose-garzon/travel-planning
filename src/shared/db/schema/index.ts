@@ -5,4 +5,5 @@ export * from "./agent";
 export * from "./auth";
 export * from "./budget";
 export * from "./itinerary";
+export * from "./transfers";
 export * from "./trips";

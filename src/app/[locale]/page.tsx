@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect as nextRedirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import { itinerary } from "@/app/_composition/trip-context";
+import { itinerary, transfers } from "@/app/_composition/trip-context";
 import { getCurrentUser, setDisplayName } from "@/modules/auth";
 import {
   LandingScreen,
@@ -9,8 +9,9 @@ import {
   NameCaptureScreen,
   safeNextPath,
 } from "@/modules/auth/ui";
+import { nextTransfer } from "@/modules/transfers";
 import { getHomeTrips } from "@/modules/trips";
-import { buildNextStop, HomeScreen } from "@/modules/trips/ui";
+import { buildNextStop, HomeScreen, type HomeTransfer } from "@/modules/trips/ui";
 import { redirect } from "@/shared/i18n/navigation";
 import type { Locale } from "@/shared/i18n/routing";
 import { FocusHeading } from "@/shared/ui/components/focus-heading";
@@ -21,6 +22,47 @@ import { TIME_ZONE_COOKIE } from "@/shared/ui/components/time-zone-cookie";
 // or past its expiry (plan "Risks": confirmed at
 // `node_modules/better-auth/dist/plugins/magic-link`, not guessed).
 const EXPIRED_LINK_ERROR = "INVALID_TOKEN";
+
+const DAY_MS = 86_400_000;
+
+/** Whole days from `today` to `date` (both `YYYY-MM-DD`); never negative. */
+function daysFrom(today: string, date: string): number {
+  return Math.max(
+    0,
+    Math.round((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / DAY_MS),
+  );
+}
+
+/** Home reminds of a transfer from the day before it leaves. */
+const REMIND_DAYS = 1;
+
+/**
+ * The trip's next transfer as home shows it, or null until the day before
+ * it leaves. Transfers is wired here so trips never imports it
+ * (architecture.md "Crossing modules").
+ */
+async function loadNextTransfer(
+  userId: string,
+  tripId: string,
+  locale: Locale,
+  today: string,
+): Promise<HomeTransfer | null> {
+  const listed = await transfers.listTransfers({ userId, tripId, locale });
+  const next = listed.ok ? nextTransfer(listed.value.transfers, Date.now()) : null;
+  const daysAway = next === null ? null : daysFrom(today, next.departDate);
+  if (next === null || daysAway === null || daysAway > REMIND_DAYS) {
+    return null;
+  }
+  return {
+    id: next.id,
+    mode: next.mode,
+    from: next.from,
+    to: next.to,
+    departDate: next.departDate,
+    departTime: next.departTime,
+    daysAway,
+  };
+}
 
 /** `YYYY-MM-DD` in the user's zone (the `tz` cookie); UTC when absent or invalid (plan D-5). */
 function todayIn(timeZone: string | undefined): string {
@@ -114,6 +156,12 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
           today,
         );
 
+  // The next trip's next transfer goes on its board.
+  const homeTransfer =
+    nextStop === null || nextTrip === null
+      ? null
+      : await loadNextTransfer(currentUser.id, nextTrip.id, locale as Locale, today);
+
   return (
     <>
       <FocusHeading />
@@ -121,6 +169,7 @@ export default async function HomePage({ params, searchParams }: PageProps<"/[lo
         displayName={currentUser.displayName}
         summary={summary}
         nextStop={nextStop}
+        nextTransfer={homeTransfer}
         today={today}
         justCreated={createdTripId !== undefined}
         createdTripId={createdTripId}

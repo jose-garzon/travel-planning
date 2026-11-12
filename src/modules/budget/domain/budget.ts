@@ -1,9 +1,9 @@
 // Budget rules (docs/product.md "Budget rules"). Pure. Money is integer
 // minor units; every currency is treated as having 2 decimals.
 
-export const CATEGORIES = ["flights", "lodging", "transport", "food", "other"] as const;
+export const CATEGORIES = ["lodging", "transport", "food", "other"] as const;
 export type Category = (typeof CATEGORIES)[number];
-export type SummaryCategory = Category | "activities";
+export type SummaryCategory = Category | "activities" | "transfers";
 
 export type BudgetItem = {
   id: string;
@@ -23,6 +23,16 @@ export type BudgetItem = {
 };
 
 export type ActivityCost = { title: string; cost: number; participantIds: string[] };
+
+/** A priced transfer: `cost` is per traveler, in trip-currency minor units. */
+export type TransferCost = {
+  id: string;
+  gap: number;
+  label: string;
+  cost: number;
+  charge: "all" | "opt-in";
+  participantIds: string[];
+};
 
 export type PersonTotal = {
   userId: string;
@@ -44,7 +54,7 @@ export function inTripCurrency(item: Pick<BudgetItem, "amount" | "rate">): numbe
 }
 
 function emptyCategories(): Record<SummaryCategory, number> {
-  return { flights: 0, lodging: 0, transport: 0, food: 0, other: 0, activities: 0 };
+  return { lodging: 0, transport: 0, food: 0, other: 0, activities: 0, transfers: 0 };
 }
 
 /**
@@ -60,22 +70,12 @@ export function splitEqually(amount: number, count: number): number[] {
   return Array.from({ length: count }, (_, index) => base + (index < remainder ? 1 : 0));
 }
 
-export function summarize({
-  items,
-  activities,
-  memberIds,
-  cap,
-}: {
-  items: BudgetItem[];
-  activities: ActivityCost[];
-  memberIds: string[];
-  cap: number | null;
-}): BudgetSummary {
+/** Who owes what: charges count only for people still on the trip. */
+function ledgerOf(memberIds: string[]) {
   const people = new Map<string, PersonTotal>(
     memberIds.map((userId) => [userId, { userId, total: 0, byCategory: emptyCategories() }]),
   );
   const byCategory = emptyCategories();
-
   const charge = (userId: string, category: SummaryCategory, amount: number) => {
     const person = people.get(userId);
     if (person === undefined) {
@@ -83,33 +83,61 @@ export function summarize({
     }
     person.total += amount;
     person.byCategory[category] += amount;
+    byCategory[category] += amount;
   };
+  return { people, byCategory, charge };
+}
 
-  for (const item of items) {
-    const amount = inTripCurrency(item);
-    if (item.userId !== null) {
-      // A per-person item of a member who left is no longer counted.
-      if (!people.has(item.userId)) {
-        continue;
-      }
-      byCategory[item.category] += amount;
-      charge(item.userId, item.category, amount);
-      continue;
-    }
+type Charge = [userId: string, category: SummaryCategory, amount: number];
+
+/** Every (person, category, amount) the trip's costs add up to, before leavers are dropped. */
+function chargesOf({
+  items,
+  activities,
+  transfers,
+  memberIds,
+}: {
+  items: BudgetItem[];
+  activities: ActivityCost[];
+  transfers: TransferCost[];
+  memberIds: string[];
+}): Charge[] {
+  return [
     // A unit price: every member pays it, so the total follows the group size.
-    for (const userId of memberIds) {
-      byCategory[item.category] += amount;
-      charge(userId, item.category, amount);
-    }
-  }
+    // A per-person item counts for its member only.
+    ...items.flatMap((item) =>
+      (item.userId === null ? memberIds : [item.userId]).map(
+        (userId): Charge => [userId, item.category, inTripCurrency(item)],
+      ),
+    ),
+    ...activities.flatMap((activity) =>
+      activity.participantIds.map((userId): Charge => [userId, "activities", activity.cost]),
+    ),
+    // All-travelers transfers follow the group; opt-in ones, who is still on it.
+    ...transfers.flatMap((transfer) =>
+      (transfer.charge === "all" ? memberIds : transfer.participantIds).map(
+        (userId): Charge => [userId, "transfers", transfer.cost],
+      ),
+    ),
+  ];
+}
 
-  for (const activity of activities) {
-    for (const userId of activity.participantIds) {
-      if (people.has(userId)) {
-        byCategory.activities += activity.cost;
-        charge(userId, "activities", activity.cost);
-      }
-    }
+export function summarize({
+  items,
+  activities,
+  transfers,
+  memberIds,
+  cap,
+}: {
+  items: BudgetItem[];
+  activities: ActivityCost[];
+  transfers: TransferCost[];
+  memberIds: string[];
+  cap: number | null;
+}): BudgetSummary {
+  const { people, byCategory, charge } = ledgerOf(memberIds);
+  for (const [userId, category, amount] of chargesOf({ items, activities, transfers, memberIds })) {
+    charge(userId, category, amount);
   }
 
   const total = Object.values(byCategory).reduce((sum, value) => sum + value, 0);

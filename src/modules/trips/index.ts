@@ -137,5 +137,17 @@ export async function getTripContext({
     endDate: dto.endDate,
     memberIds: roster.map((member) => member.userId),
     stops: dto.legs.map((leg) => ({ city: leg.to.name, from: leg.from.name, date: leg.date })),
+    /** The route with each city's time zone: where transfers sit (feature 015). */
+    route: {
+      legs: dto.legs.map((leg) => ({
+        from: {
+          name: leg.from.name,
+          code: leg.from.code,
+          tz: deps.cities.timeZoneOf(leg.from.cityId),
+        },
+        to: { name: leg.to.name, code: leg.to.code, tz: deps.cities.timeZoneOf(leg.to.cityId) },
+        date: leg.date,
+      })),
+    },
   };
 }

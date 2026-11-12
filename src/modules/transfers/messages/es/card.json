@@ -1,0 +1,36 @@
+{
+  "modes": {
+    "flight": "Vuelo",
+    "train": "Tren",
+    "bus": "Autobús",
+    "ferry": "Ferri",
+    "car": "Coche",
+    "other": "Traslado"
+  },
+  "summary": "{mode} de {from} a {to}, {date}",
+  "departs": "sale {time}",
+  "arrives": "llega {time}",
+  "nextDay": "+{days}",
+  "each": "{amount} c/u",
+  "noPrice": "Aún sin precio",
+  "charge": {
+    "all": "Todos los viajeros",
+    "opt-in": "Opcional"
+  },
+  "reference": "Ref. {reference}",
+  "openBooking": "Abrir reserva",
+  "newTab": "(se abre en una pestaña nueva)",
+  "past": "Pasado",
+  "routeChanged": "La ruta cambió. Revisa origen y destino",
+  "needsReview": "Revisa los datos",
+  "outsideWindow": "No coincide con las fechas de la ruta",
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "editLabel": "Editar traslado de {from} a {to}",
+  "deleteLabel": "Eliminar traslado de {from} a {to}",
+  "join": "Unirme",
+  "joined": "Unido",
+  "joinLabel": "{action}: traslado de {from} a {to}",
+  "participants": "{count} de {total}",
+  "joinFailed": "No se pudo actualizar."
+}

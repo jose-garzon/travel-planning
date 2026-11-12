@@ -13,6 +13,11 @@
   "ACTIVITY_OUTSIDE_TRIP": "Pick a day inside the trip dates.",
   "TOO_MANY_ACTIVITIES": "This trip has too many activities.",
   "BUDGET_ITEM_NOT_FOUND": "That budget item no longer exists.",
+  "TRANSFER_NOT_FOUND": "That transfer no longer exists.",
+  "TRANSFER_ARRIVAL_BEFORE": "Arrival must be after departure.",
+  "TRANSFER_NOT_OPT_IN": "Everyone pays for this transfer; there is nothing to join.",
+  "TRANSFER_VERSION_CONFLICT": "This transfer changed. Reload to see the latest.",
+  "TOO_MANY_TRANSFERS": "This trip has too many transfers.",
   "AGENT_RATE_LIMITED": "You reached today's limit for the assistant. Try again tomorrow.",
   "AGENT_UNAVAILABLE": "The assistant is not available right now. Try again in a moment."
 }

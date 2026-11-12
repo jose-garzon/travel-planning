@@ -17,6 +17,7 @@
   "dismiss": "Descartar",
   "approved": "Agregado al viaje.",
   "approveFailed": "No se pudo agregar. Corrige los datos de arriba e inténtalo de nuevo.",
+  "foreignTransfer": "Este precio está en {currency}. Añade el traslado desde el itinerario, con un tipo de cambio.",
   "offline": "Sin conexión. El asistente necesita internet.",
   "startersLabel": "Ideas para preguntar",
   "starterActivities": "Qué hacer en {city} el {date}",
@@ -27,7 +28,6 @@
   "seeItinerary": "Verlo en el itinerario",
   "seeBudget": "Verlo en el presupuesto",
   "categories": {
-    "flights": "Vuelo",
     "lodging": "Alojamiento",
     "transport": "Transporte",
     "food": "Comida",
@@ -63,5 +63,19 @@
   "editCancel": "Cancelar",
   "undoFailed": "No se pudo deshacer. Quítalo desde el viaje.",
   "undoneCount": "{count, plural, one {Se quitó #.} other {Se quitaron #.}}",
-  "undoAll": "Deshacer {count}"
+  "undoAll": "Deshacer {count}",
+  "gapPrompt": "Busca cómo ir de {from} a {to} el {date} (tramo {gap}). Sugiere las mejores opciones.",
+  "gapAnyDate": "cualquier fecha",
+  "noOptions": "No hay opciones. Agrégalo tú",
+  "addManually": "Agregar",
+  "chargeAll": "Lo pagan todos",
+  "chargeOptIn": "Solo pagan quienes se unen",
+  "modes": {
+    "flight": "Vuelo",
+    "train": "Tren",
+    "bus": "Bus",
+    "ferry": "Ferry",
+    "car": "Carro",
+    "other": "Otro"
+  }
 }

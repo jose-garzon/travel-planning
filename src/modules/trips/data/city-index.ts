@@ -18,6 +18,8 @@ type CityRow = {
   id: string;
   code: string;
   cc: string;
+  /** IANA time zone of the city. */
+  tz?: string;
   en: string;
   es?: string;
   pop: number;
@@ -103,7 +105,11 @@ function search(request: CitySearch): CityOption[] {
 }
 
 /** Bundled city list (plan D-1): localized names and search, no network. */
-export const cityIndex: CityNames & { search(request: CitySearch): CityOption[] } = {
+export const cityIndex: CityNames & {
+  search(request: CitySearch): CityOption[];
+  timeZoneOf(cityId: string | null): string | null;
+} = {
+  timeZoneOf: (cityId) => (cityId === null ? null : (byId.get(cityId)?.row.tz ?? null)),
   localizeName: (city, locale) => {
     const known = city.cityId === null ? undefined : byId.get(city.cityId);
     return known ? known.names[locale] : city.name;

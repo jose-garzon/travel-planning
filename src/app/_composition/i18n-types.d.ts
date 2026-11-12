@@ -3,6 +3,7 @@ import type { AuthMessages } from "@/modules/auth";
 import type { BudgetMessages } from "@/modules/budget";
 import type { ItineraryMessages } from "@/modules/itinerary";
 import type { StyleguideMessages } from "@/modules/styleguide";
+import type { TransfersMessages } from "@/modules/transfers";
 import type { TripsMessages } from "@/modules/trips";
 import type sharedEn from "@/shared/i18n/messages/en.json";
 
@@ -20,6 +21,7 @@ declare module "next-intl" {
       trips: TripsMessages;
       itinerary: ItineraryMessages;
       budget: BudgetMessages;
+      transfers: TransfersMessages;
       agent: AgentMessages;
     };
   }

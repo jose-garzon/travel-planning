@@ -46,6 +46,9 @@
     "here": "estás aquí",
     "nextHere": "próxima parada",
     "crewSolo": "Solo tú",
-    "invite": "Suma a tu parche"
+    "invite": "Suma a tu parche",
+    "transfer": "Próximo traslado",
+    "transferCountdown": "{days, plural, =0 {Hoy} =1 {Mañana} other {En # días}}",
+    "transferName": "{label}: {mode, select, flight {vuelo} train {tren} bus {bus} ferry {ferri} car {carro} other {traslado}} de {from} a {to}, {when}, {countdown}"
   }
 }

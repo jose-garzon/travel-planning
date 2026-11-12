@@ -1,4 +1,4 @@
-import type { ActivityCost, BudgetItem } from "@/modules/budget/domain/budget";
+import type { ActivityCost, BudgetItem, TransferCost } from "@/modules/budget/domain/budget";
 
 export type TripContext = { currency: string; memberIds: string[] };
 
@@ -8,6 +8,9 @@ export type TripContextReader = {
 
 /** Subscribed activity costs, from the itinerary module (wired by the app layer). */
 export type ActivityCostsReader = { forTrip(tripId: string): Promise<ActivityCost[]> };
+
+/** Priced transfers, from the transfers module (wired by the app layer). */
+export type TransferCostsReader = { forTrip(tripId: string): Promise<TransferCost[]> };
 
 export type BudgetRepository = {
   listItems(tripId: string): Promise<BudgetItem[]>;

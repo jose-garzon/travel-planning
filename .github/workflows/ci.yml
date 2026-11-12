@@ -18,6 +18,9 @@ env:
   BETTER_AUTH_URL: http://localhost:3000
   MAGIC_LINK_SENDER: console
   AUTH_RATE_LIMIT: "off"
+  # Turns the agent UI on (Find options, panel). Never used for a real call:
+  # agent scenarios intercept /api/v1/trips/*/agent in the browser.
+  ANTHROPIC_API_KEY: ci-only-fake-key
 
 jobs:
   checks:

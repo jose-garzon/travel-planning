@@ -19,6 +19,23 @@ export type HomeActivity = {
   goingCount: number;
 };
 
+/**
+ * The next transfer of the next trip, as home shows it. The app layer maps
+ * the transfers module's DTO onto this (architecture.md, "Crossing modules").
+ */
+export type HomeTransfer = {
+  id: string;
+  mode: "flight" | "train" | "bus" | "ferry" | "car" | "other";
+  from: string;
+  to: string;
+  /** `YYYY-MM-DD`, local to the departure city. */
+  departDate: string;
+  /** `HH:MM`, 24h, local to the departure city. */
+  departTime: string | null;
+  /** Whole days from the viewer's today to `departDate`; 0 on the day. */
+  daysAway: number;
+};
+
 export type NextStopDay = {
   /** `YYYY-MM-DD`. */
   date: string;

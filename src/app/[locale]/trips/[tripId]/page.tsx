@@ -1,12 +1,17 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import type { ReactNode } from "react";
-import { agent, budget, itinerary } from "@/app/_composition/trip-context";
+import { Fragment, type ReactNode } from "react";
+import { agent, budget, itinerary, transfers } from "@/app/_composition/trip-context";
 import { tripMembers } from "@/app/_composition/trip-members";
 import { AgentPanel, AssistantDock } from "@/modules/agent/ui/entries/agent";
 import { getCurrentUser } from "@/modules/auth";
 import { BudgetCard, BudgetCosts } from "@/modules/budget/ui/entries/budget";
 import { ItineraryStop } from "@/modules/itinerary/ui/entries/itinerary";
+import {
+  RouteChangedGroup,
+  TransferGap,
+  TransferSheetHost,
+} from "@/modules/transfers/ui/entries/transfers";
 import { getTrip } from "@/modules/trips";
 import { ShareTripBox, ShareTripButton, TravelersCard } from "@/modules/trips/ui/entries/members";
 import { TicketStrip, TripSummary } from "@/modules/trips/ui/entries/summary";
@@ -16,7 +21,7 @@ import { SectionHeader } from "@/shared/ui/components/section-header";
 import { StopAccordion } from "@/shared/ui/components/stop-accordion";
 import { Toast } from "@/shared/ui/components/toast";
 import { formatMoney } from "@/shared/ui/money";
-import { currentStop, groupByStop } from "./plan";
+import { currentStop, groupByStop, orphanTransfers } from "./plan";
 
 export default async function TripPage({
   params,
@@ -44,12 +49,13 @@ export default async function TripPage({
     notFound();
   }
 
-  const [members, activities, costs] = await Promise.all([
+  const [members, activities, costs, gapTransfers] = await Promise.all([
     tripMembers.listTripMembers({ userId: currentUser.id, tripId }),
     itinerary.listActivities({ userId: currentUser.id, tripId }),
     budget.getBudget({ userId: currentUser.id, tripId }),
+    transfers.listTransfers({ userId: currentUser.id, tripId, locale: locale as Locale }),
   ]);
-  if (!members.ok || !activities.ok || !costs.ok) {
+  if (!members.ok || !activities.ok || !costs.ok || !gapTransfers.ok) {
     notFound();
   }
   const memberNames = namesById(members.value);
@@ -157,34 +163,55 @@ export default async function TripPage({
                   format: (minor) => formatMoney(minor, costs.value.currency, locale),
                   t,
                 });
+                // Gap `g` leads into stop `g`; the return gap sits before the whole-trip group.
+                const gap = gapTransfers.value.gaps[group.stop ?? legs.length];
                 return (
-                  <StopAccordion
-                    key={group.stop ?? "whole"}
-                    title={stop?.city ?? t("wholeTrip")}
-                    tone={group.stop === null ? "whole" : "stop"}
-                    dates={formatRange(from, to, locale)}
-                    meta={meta}
-                    defaultOpen={index === openStop}
-                  >
-                    <ItineraryStop
-                      tripId={tripId}
-                      currency={activities.value.currency}
-                      activities={group.activities}
-                      startDate={from}
-                      endDate={to}
-                      memberNames={memberNames}
-                    />
-                    <BudgetCosts
-                      tripId={tripId}
-                      budget={costs.value}
-                      viewerId={currentUser.id}
-                      memberNames={memberNames}
-                      items={group.costs}
-                      stop={group.stop}
-                    />
-                  </StopAccordion>
+                  <Fragment key={group.stop ?? "whole"}>
+                    {gap === undefined ? null : (
+                      <TransferGap
+                        gap={gap}
+                        transfers={gapTransfers.value.transfers.filter(
+                          (transfer) => transfer.gap === gap.index,
+                        )}
+                        hasAgent={hasAgent}
+                        tripId={tripId}
+                        viewerId={currentUser.id}
+                        memberCount={members.value.length}
+                      />
+                    )}
+                    <StopAccordion
+                      title={stop?.city ?? t("wholeTrip")}
+                      tone={group.stop === null ? "whole" : "stop"}
+                      dates={formatRange(from, to, locale)}
+                      meta={meta}
+                      defaultOpen={index === openStop}
+                    >
+                      <ItineraryStop
+                        tripId={tripId}
+                        currency={activities.value.currency}
+                        activities={group.activities}
+                        startDate={from}
+                        endDate={to}
+                        memberNames={memberNames}
+                      />
+                      <BudgetCosts
+                        tripId={tripId}
+                        budget={costs.value}
+                        viewerId={currentUser.id}
+                        memberNames={memberNames}
+                        items={group.costs}
+                        stop={group.stop}
+                      />
+                    </StopAccordion>
+                  </Fragment>
                 );
               })}
+              <RouteChangedGroup
+                transfers={orphanTransfers(gapTransfers.value.transfers, gapTransfers.value.gaps)}
+                tripId={tripId}
+                viewerId={currentUser.id}
+                memberCount={members.value.length}
+              />
             </section>
             <BudgetCard
               tripId={tripId}
@@ -202,6 +229,11 @@ export default async function TripPage({
             />
           </div>
         </div>
+        <TransferSheetHost
+          tripId={tripId}
+          tripCurrency={trip.currency}
+          gaps={gapTransfers.value.gaps}
+        />
         <TripRail
           share={
             isOwner ? (

@@ -7,7 +7,6 @@ import {
   Ellipsis,
   ExternalLink,
   type LucideIcon,
-  Plane,
   Plus,
   Trash2,
   Utensils,
@@ -26,11 +25,7 @@ import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 import { formatMoney } from "@/shared/ui/money";
 import { withViewTransition } from "@/shared/ui/view-transition";
 
-const SELECT_CLASSES =
-  "min-h-touch rounded-md border border-border-strong bg-surface-1 px-4 text-md text-text";
-
 const CATEGORY_ICONS: Record<Category, LucideIcon> = {
-  flights: Plane,
   lodging: BedDouble,
   transport: Bus,
   food: Utensils,
@@ -54,14 +49,7 @@ export type BudgetCostsProps = {
 };
 
 /** One stop's costs, with its own add button; new costs land in this stop. */
-export function BudgetCosts({
-  tripId,
-  budget,
-  viewerId,
-  memberNames,
-  items,
-  stop,
-}: BudgetCostsProps) {
+export function BudgetCosts({ tripId, budget, memberNames, items, stop }: BudgetCostsProps) {
   const t = useTranslations("budget.budget");
   const locale = useLocale();
   const router = useRouter();
@@ -86,7 +74,7 @@ export function BudgetCosts({
     }
   }
   const [currency, setCurrency] = useState(budget.currency);
-  const [category, setCategory] = useState<Category>(stop === null ? "flights" : "lodging");
+  const [category, setCategory] = useState<Category>("lodging");
 
   const money = (minor: number) => formatMoney(minor, budget.currency, locale);
 
@@ -117,7 +105,7 @@ export function BudgetCosts({
       amount: Number(field(form, "amount") || "NaN"),
       currency: field(form, "currency").toUpperCase() || budget.currency,
       rate: field(form, "rate") || null,
-      userId: category === "flights" ? field(form, "userId") || viewerId : null,
+      userId: null,
       link: field(form, "link") || null,
       stop,
     };
@@ -170,18 +158,6 @@ export function BudgetCosts({
               </div>
               <p className="mt-2 text-sm text-text-muted">{t(`splitHint.${category}`)}</p>
             </fieldset>
-            {category === "flights" ? (
-              <label className="flex flex-col gap-1">
-                <span className="font-semibold text-sm">{t("forWhom")}</span>
-                <select name="userId" defaultValue={viewerId} className={SELECT_CLASSES}>
-                  {Object.entries(memberNames).map(([id, name]) => (
-                    <option key={id} value={id}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ) : null}
             <Input name="label" label={t("label")} maxLength={80} required />
             <div className="grid grid-cols-amount gap-3">
               <Input

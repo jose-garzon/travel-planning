@@ -1,15 +1,27 @@
-import { ArrowRight, UserPlus } from "lucide-react";
+import {
+  ArrowRight,
+  Bus,
+  Car,
+  type LucideIcon,
+  Plane,
+  Route,
+  Ship,
+  TrainFront,
+  UserPlus,
+} from "lucide-react";
 import { useLocale } from "next-intl";
 import type { ReactNode } from "react";
 import { NextStopCarousel } from "@/modules/trips/ui/components/next-stop-carousel";
 import type {
   HomeActivity,
+  HomeTransfer,
   NextStop,
   NextStopDay,
   NextStopStation,
 } from "@/modules/trips/ui/components/next-stop-model";
 import { formatTripDateRange } from "@/modules/trips/ui/components/trip-date-range";
 import { Link } from "@/shared/i18n/navigation";
+import { Icon } from "@/shared/ui/components/icon";
 import { Panel } from "@/shared/ui/components/panel";
 import { cx } from "@/shared/ui/cx";
 import { useTranslatable } from "@/shared/ui/translatable";
@@ -289,6 +301,91 @@ function LaterDays({ days, locale }: { days: NextStopDay[]; locale: string }) {
   );
 }
 
+const MODE_ICONS: Record<HomeTransfer["mode"], LucideIcon> = {
+  flight: Plane,
+  train: TrainFront,
+  bus: Bus,
+  ferry: Ship,
+  car: Car,
+  other: Route,
+};
+
+/** `HH:MM` in the locale's clock: "9:40 AM" (en), "09:40" (es). */
+function formatClock(time: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "UTC",
+  }).format(new Date(`1970-01-01T${time}:00Z`));
+}
+
+/**
+ * The next transfer, pinned into the board's head as a ticket stub: the
+ * one thing nobody may miss. Inverted on the line colour so it reads
+ * first; the countdown is the amber time chip. Links to its card.
+ */
+function TransferStub({ tripId, transfer }: { tripId: string; transfer: HomeTransfer }) {
+  const translate = useTranslatable();
+  const locale = useLocale();
+  const when = [
+    formatDay(transfer.departDate, locale, "short"),
+    transfer.departTime === null ? null : formatClock(transfer.departTime, locale),
+  ]
+    .filter((part) => part !== null)
+    .join(" · ");
+  const label = translate({ translateId: "trips.home.nextStop.transfer" });
+  const countdown = translate({
+    translateId: "trips.home.nextStop.transferCountdown",
+    values: { days: transfer.daysAway },
+  });
+  // One sentence for screen readers, starting with the visible label.
+  const name = translate({
+    translateId: "trips.home.nextStop.transferName",
+    values: {
+      label,
+      mode: transfer.mode,
+      from: transfer.from,
+      to: transfer.to,
+      when,
+      countdown,
+    },
+  });
+
+  return (
+    <Link
+      href={`/trips/${tripId}#transfer-${transfer.id}`}
+      aria-label={name}
+      className="group/stub flex items-center gap-4 rounded-md bg-on-accent p-4 text-text ui-focus:outline-2 ui-focus:outline-solid ui-focus:outline-on-accent ui-focus:outline-offset-4 sm:p-5"
+    >
+      <span
+        aria-hidden="true"
+        className="grid size-14 shrink-0 place-items-center rounded-full bg-accent p-3 text-on-accent"
+      >
+        <Icon icon={MODE_ICONS[transfer.mode]} />
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="text-sm font-semibold uppercase text-accent">{label}</span>
+        <span className="flex flex-wrap items-center gap-x-2 font-display text-xl font-bold uppercase leading-none tracking-wide wrap-anywhere underline-offset-4 group-hover/stub:underline sm:text-2xl">
+          <span>{transfer.from}</span>
+          <ArrowRight aria-hidden="true" className="size-5 shrink-0" />
+          <span>{transfer.to}</span>
+        </span>
+        <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+          <span className="rounded-full bg-sun px-3 py-0.5 font-semibold text-on-sun tabular-nums">
+            {countdown}
+          </span>
+          {/* The chip already says the day; only the clock is new. */}
+          {transfer.departTime === null ? null : (
+            <span className="text-text-muted tabular-nums">
+              {formatClock(transfer.departTime, locale)}
+            </span>
+          )}
+        </span>
+      </span>
+    </Link>
+  );
+}
+
 /** One board field: a small label over its value. */
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -319,11 +416,14 @@ function DayBoard({
   day,
   headingId,
   first,
+  transfer,
 }: {
   stop: NextStop;
   day: NextStopDay;
   headingId: string;
   first: boolean;
+  /** Shown on the first board only. */
+  transfer: HomeTransfer | null;
 }) {
   const translate = useTranslatable();
   const locale = useLocale();
@@ -353,6 +453,8 @@ function DayBoard({
         <p className="-mt-3 font-semibold tabular-nums sm:-mt-4">
           {formatTripDateRange(stop, locale)}
         </p>
+
+        {first && transfer !== null && <TransferStub tripId={stop.tripId} transfer={transfer} />}
 
         <StationMap
           stations={stop.stations}
@@ -434,7 +536,13 @@ function DayBoard({
  * swipe through (never past days). From lg the later days list
  * inside the first board.
  */
-export function NextStopPanel({ stop }: { stop: NextStop }) {
+export function NextStopPanel({
+  stop,
+  transfer = null,
+}: {
+  stop: NextStop;
+  transfer?: HomeTransfer | null;
+}) {
   const translate = useTranslatable();
   const days = [stop.focus, ...stop.later];
 
@@ -458,6 +566,7 @@ export function NextStopPanel({ stop }: { stop: NextStop }) {
             stop={stop}
             day={day}
             first={i === 0}
+            transfer={transfer}
             headingId={i === 0 ? HEADING_ID : `${HEADING_ID}-${day.date}`}
           />
         ))}

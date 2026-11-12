@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { currentStop, groupByStop } from "./plan";
+import { currentStop, groupByStop, orphanTransfers } from "./plan";
 
 const stops = [
   { city: "Cartagena", from: "2026-11-03", to: "2026-11-07" },
@@ -48,5 +48,16 @@ describe("currentStop", () => {
   it("is -1 before the trip and for undated stops", () => {
     expect(currentStop(stops, "2026-10-01", "2026-11-11")).toBe(-1);
     expect(currentStop([{ city: "X", from: null, to: null }], "2026-11-05", null)).toBe(-1);
+  });
+});
+
+describe("orphanTransfers", () => {
+  it("keeps the transfers whose gap is not on the route any more", () => {
+    const transfers = [{ gap: 0 }, { gap: 2 }, { gap: 3 }, { gap: 9 }];
+
+    expect(orphanTransfers(transfers, [{ index: 0 }, { index: 1 }, { index: 2 }])).toEqual([
+      { gap: 3 },
+      { gap: 9 },
+    ]);
   });
 });

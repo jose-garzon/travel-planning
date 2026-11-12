@@ -3,6 +3,7 @@ import { inTripCurrency, summarize } from "@/modules/budget/domain/budget";
 import type {
   ActivityCostsReader,
   BudgetRepository,
+  TransferCostsReader,
   TripContext,
   TripContextReader,
 } from "@/modules/budget/service/ports";
@@ -14,6 +15,7 @@ export type BudgetDeps = {
   budget: BudgetRepository;
   trips: TripContextReader;
   activityCosts: ActivityCostsReader;
+  transferCosts: TransferCostsReader;
   ids: { next(): string };
 };
 
@@ -44,18 +46,25 @@ function toRecord(
 
 export async function getBudget(
   { userId, tripId }: { userId: string; tripId: string },
-  { budget, trips, activityCosts }: Omit<BudgetDeps, "ids">,
+  { budget, trips, activityCosts, transferCosts }: Omit<BudgetDeps, "ids">,
 ): Promise<Result<BudgetDto, BudgetError>> {
   const context = await trips.get(tripId, userId);
   if (context === null) {
     return err({ code: "TRIP_NOT_FOUND" });
   }
-  const [items, activities, cap] = await Promise.all([
+  const [items, activities, transfers, cap] = await Promise.all([
     budget.listItems(tripId),
     activityCosts.forTrip(tripId),
+    transferCosts.forTrip(tripId),
     budget.getCap(tripId),
   ]);
-  const summary = summarize({ items, activities, memberIds: context.memberIds, cap });
+  const summary = summarize({
+    items,
+    activities,
+    transfers,
+    memberIds: context.memberIds,
+    cap,
+  });
   return ok({
     currency: context.currency,
     items: items.map(({ tripId: _tripId, ...item }) => ({
@@ -63,6 +72,7 @@ export async function getBudget(
       amountInTripCurrency: inTripCurrency(item),
     })),
     summary,
+    transfers,
     mine: summary.perPerson.find((person) => person.userId === userId)?.total ?? 0,
   });
 }
