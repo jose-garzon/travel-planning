@@ -5,6 +5,7 @@ import {
   Bus,
   ChevronDown,
   Ellipsis,
+  ExternalLink,
   type LucideIcon,
   Plane,
   Plus,
@@ -16,13 +17,14 @@ import { type FormEvent, useState } from "react";
 import { CATEGORIES, type Category } from "@/modules/budget/domain/budget";
 import type { BudgetDto, BudgetItemDto, BudgetItemInput } from "@/modules/budget/service/schemas";
 import { useRouter } from "@/shared/i18n/navigation";
-import { Button } from "@/shared/ui/components/button";
+import { Button, buttonClasses } from "@/shared/ui/components/button";
 import { ConfirmDialog } from "@/shared/ui/components/confirm-dialog";
 import { Dialog } from "@/shared/ui/components/dialog";
 import { Icon } from "@/shared/ui/components/icon";
 import { Input } from "@/shared/ui/components/input";
 import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 import { formatMoney } from "@/shared/ui/money";
+import { withViewTransition } from "@/shared/ui/view-transition";
 
 const SELECT_CLASSES =
   "min-h-touch rounded-md border border-border-strong bg-surface-1 px-4 text-md text-text";
@@ -67,6 +69,22 @@ export function BudgetCosts({
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  // Optimistic delete: the cost folds away at once, neighbours close the gap.
+  const [removed, setRemoved] = useState<ReadonlySet<string>>(new Set());
+  const visible = items.filter((item) => !removed.has(item.id));
+
+  async function removeItem(itemId: string) {
+    withViewTransition(() => setRemoved((current) => new Set(current).add(itemId)));
+    if (!(await send(`/items/${itemId}`, "DELETE"))) {
+      withViewTransition(() =>
+        setRemoved((current) => {
+          const next = new Set(current);
+          next.delete(itemId);
+          return next;
+        }),
+      );
+    }
+  }
   const [currency, setCurrency] = useState(budget.currency);
   const [category, setCategory] = useState<Category>(stop === null ? "flights" : "lodging");
 
@@ -217,17 +235,22 @@ export function BudgetCosts({
         </Dialog>
       </div>
 
-      {items.length === 0 ? (
+      {visible.length === 0 ? (
         <p className="text-text-muted">{t("empty")}</p>
       ) : (
         <ul className="flex flex-col gap-2">
-          {items.map((item) => (
+          {visible.map((item) => (
             <li
               key={item.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border-strong bg-surface-1 p-3"
+              className="morph-card flex flex-col gap-2 rounded-md border border-border-strong bg-surface-1 p-4"
             >
-              <span className="flex min-w-0 flex-col">
-                <span className="truncate font-semibold">{item.label}</span>
+              <span className="flex items-baseline justify-between gap-3">
+                <span className="min-w-0 truncate font-semibold">{item.label}</span>
+                <span className="shrink-0 font-bold tabular-nums">
+                  {money(item.amountInTripCurrency)}
+                </span>
+              </span>
+              <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
                 <span className="text-sm text-text-muted">
                   {t(`categories.${item.category}`)}
                   {item.userId === null
@@ -237,29 +260,44 @@ export function BudgetCosts({
                     ? ""
                     : ` · ${formatMoney(item.amount, item.currency, locale)}`}
                 </span>
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="tabular-nums">{money(item.amountInTripCurrency)}</span>
-                <ConfirmDialog
-                  title={t("deleteConfirm", { label: item.label })}
-                  warning={t("deleteWarning")}
-                  confirmLabel={t("delete")}
-                  cancelLabel={t("cancel")}
-                  closeLabel={t("close")}
-                  onConfirm={() => send(`/items/${item.id}`, "DELETE")}
-                  trigger={
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      icon={Trash2}
-                      labelHidden
-                      disabled={!isOnline}
+                <span className="ml-auto flex shrink-0 items-center gap-2">
+                  {item.link === null ? null : (
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={t("openLink", { label: item.label })}
+                      className={buttonClasses({
+                        variant: "outline",
+                        size: "sm",
+                        labelHidden: true,
+                      })}
                     >
-                      {t("deleteItem", { label: item.label })}
-                    </Button>
-                  }
-                />
+                      <Icon icon={ExternalLink} size="sm" />
+                      <span className="sr-only">{t("openLink", { label: item.label })}</span>
+                    </a>
+                  )}
+                  <ConfirmDialog
+                    title={t("deleteConfirm", { label: item.label })}
+                    warning={t("deleteWarning")}
+                    confirmLabel={t("delete")}
+                    cancelLabel={t("cancel")}
+                    closeLabel={t("close")}
+                    onConfirm={() => removeItem(item.id)}
+                    trigger={
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        icon={Trash2}
+                        labelHidden
+                        disabled={!isOnline}
+                      >
+                        {t("deleteItem", { label: item.label })}
+                      </Button>
+                    }
+                  />
+                </span>
               </span>
             </li>
           ))}

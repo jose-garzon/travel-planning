@@ -23,6 +23,7 @@
   "rate": "1 {from} = ? {to}",
   "rateHint": "Tasa de cambio de hoy. Se guarda con este gasto.",
   "link": "Enlace",
+  "openLink": "Abrir enlace de {label}",
   "optional": "Opcional",
   "save": "Guardar gasto",
   "cancel": "Cancelar",

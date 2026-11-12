@@ -1,5 +1,6 @@
 "use client";
 
+import { Copy, RotateCcw, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { type ReactElement, useEffect, useRef, useState } from "react";
 import type { InviteDto } from "@/modules/trips/service/schemas";
@@ -7,6 +8,7 @@ import { Button } from "@/shared/ui/components/button";
 import { ConfirmDialog } from "@/shared/ui/components/confirm-dialog";
 import { Dialog } from "@/shared/ui/components/dialog";
 import { Input } from "@/shared/ui/components/input";
+import { cx } from "@/shared/ui/cx";
 import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 
 export type InviteCardProps = {
@@ -132,13 +134,12 @@ function InviteBody({ tripId, tripName }: { tripId: string; tripName: string }) 
             value={load.invite.url}
             onFocus={(event) => event.currentTarget.select()}
           />
-          <p className="text-sm text-text-muted">
-            {t("expires", { count: daysLeft(load.invite.expiresAt) })}
-          </p>
-          <div className="flex flex-wrap gap-2">
+          <div className={cx("grid gap-2", canShare ? "grid-cols-2" : "grid-cols-1")}>
             <Button
               type="button"
               variant="primary"
+              icon={Copy}
+              fullWidth
               translateId="trips.invite.copy"
               onClick={() => copy(load.invite.url)}
             />
@@ -146,27 +147,37 @@ function InviteBody({ tripId, tripName }: { tripId: string; tripName: string }) 
               <Button
                 type="button"
                 variant="secondary"
+                icon={Share2}
+                fullWidth
                 translateId="trips.invite.share"
                 onClick={() => share(load.invite.url)}
               />
             ) : null}
           </div>
-          <ConfirmDialog
-            trigger={
-              <Button
-                type="button"
-                variant="outline"
-                disabled={!isOnline}
-                translateId="trips.invite.reset"
-              />
-            }
-            onConfirm={() => reset()}
-            title={{ translateId: "trips.invite.resetTitle" }}
-            warning={{ translateId: "trips.invite.resetDescription" }}
-            confirmLabel={{ translateId: "trips.invite.resetConfirm" }}
-            closeLabel={{ translateId: "trips.invite.close" }}
-            cancelLabel={{ translateId: "trips.invite.cancel" }}
-          />
+          {/* Housekeeping, not the task: expiry and reset sit below a rule. */}
+          <div className="flex items-center justify-between gap-3 border-border border-t border-dashed pt-4">
+            <p className="text-sm text-text-muted">
+              {t("expires", { count: daysLeft(load.invite.expiresAt) })}
+            </p>
+            <ConfirmDialog
+              trigger={
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  icon={RotateCcw}
+                  disabled={!isOnline}
+                  translateId="trips.invite.reset"
+                />
+              }
+              onConfirm={() => reset()}
+              title={{ translateId: "trips.invite.resetTitle" }}
+              warning={{ translateId: "trips.invite.resetDescription" }}
+              confirmLabel={{ translateId: "trips.invite.resetConfirm" }}
+              closeLabel={{ translateId: "trips.invite.close" }}
+              cancelLabel={{ translateId: "trips.invite.cancel" }}
+            />
+          </div>
         </>
       ) : null}
       {isOnline ? null : <p className="text-sm text-text-muted">{t("offline")}</p>}

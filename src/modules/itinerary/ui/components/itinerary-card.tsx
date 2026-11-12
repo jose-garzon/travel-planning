@@ -1,18 +1,19 @@
 "use client";
 
-import { Check, Ellipsis, Plus, TriangleAlert } from "lucide-react";
+import { Check, Ellipsis, ExternalLink, Plus, TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ActivityDto, ActivityInput } from "@/modules/itinerary/service/schemas";
 import { ActivityForm } from "@/modules/itinerary/ui/components/activity-form";
 import { useRouter } from "@/shared/i18n/navigation";
-import { Button } from "@/shared/ui/components/button";
+import { Button, buttonClasses } from "@/shared/ui/components/button";
 import { ConfirmDialog } from "@/shared/ui/components/confirm-dialog";
 import { Dialog } from "@/shared/ui/components/dialog";
 import { Icon } from "@/shared/ui/components/icon";
 import { cx } from "@/shared/ui/cx";
 import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 import { formatMoney } from "@/shared/ui/money";
+import { withViewTransition } from "@/shared/ui/view-transition";
 
 export type ItineraryStopProps = {
   tripId: string;
@@ -57,6 +58,21 @@ export function ItineraryStop({
   const [editing, setEditing] = useState<Editing>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  // Optimistic state: the card morphs at once, the server catches up.
+  const [joined, setJoined] = useState<Record<string, boolean>>({});
+  const [removed, setRemoved] = useState<ReadonlySet<string>>(new Set());
+
+  // Drop overrides once the server's data agrees with them.
+  useEffect(() => {
+    setJoined((current) => {
+      const next = Object.fromEntries(
+        Object.entries(current).filter(([id, value]) =>
+          activities.some((activity) => activity.id === id && activity.subscribed !== value),
+        ),
+      );
+      return Object.keys(next).length === Object.keys(current).length ? current : next;
+    });
+  }, [activities]);
 
   const dateFormat = new Intl.DateTimeFormat(locale, {
     day: "numeric",
@@ -90,9 +106,18 @@ export function ItineraryStop({
     return errorMessage(response);
   }
 
-  async function act(activityId: string, method: "PUT" | "DELETE", path: string) {
+  async function act(
+    activityId: string,
+    method: "PUT" | "DELETE",
+    path: string,
+    optimistic: { apply: () => void; revert: () => void },
+  ) {
+    if (busyId === activityId) {
+      return;
+    }
     setBusyId(activityId);
     setFailure(null);
+    withViewTransition(optimistic.apply);
     const response = await fetch(`/api/v1/trips/${tripId}/activities/${activityId}${path}`, {
       method,
       headers: { "accept-language": locale },
@@ -101,15 +126,50 @@ export function ItineraryStop({
     if (response?.ok) {
       router.refresh();
     } else {
-      setFailure(await errorMessage(response));
+      const message = await errorMessage(response);
+      withViewTransition(() => {
+        optimistic.revert();
+        setFailure(message);
+      });
     }
   }
 
+  function toggle(activity: ActivityDto) {
+    const next = !(joined[activity.id] ?? activity.subscribed);
+    void act(activity.id, next ? "PUT" : "DELETE", "/subscription", {
+      apply: () => setJoined((current) => ({ ...current, [activity.id]: next })),
+      revert: () =>
+        setJoined((current) => {
+          const { [activity.id]: _, ...rest } = current;
+          return rest;
+        }),
+    });
+  }
+
+  function remove(activityId: string) {
+    void act(activityId, "DELETE", "", {
+      apply: () => setRemoved((current) => new Set(current).add(activityId)),
+      revert: () =>
+        setRemoved((current) => {
+          const next = new Set(current);
+          next.delete(activityId);
+          return next;
+        }),
+    });
+  }
+
   const days = groupByDay(
-    [...activities].sort(
-      (a, b) =>
-        a.date.localeCompare(b.date) || (a.startTime ?? "").localeCompare(b.startTime ?? ""),
-    ),
+    activities
+      .filter((activity) => !removed.has(activity.id))
+      .map((activity) =>
+        activity.id in joined
+          ? { ...activity, subscribed: joined[activity.id] ?? activity.subscribed }
+          : activity,
+      )
+      .sort(
+        (a, b) =>
+          a.date.localeCompare(b.date) || (a.startTime ?? "").localeCompare(b.startTime ?? ""),
+      ),
   );
 
   return (
@@ -170,11 +230,9 @@ export function ItineraryStop({
                     memberNames={memberNames}
                     isOnline={isOnline}
                     isBusy={busyId === activity.id}
-                    onToggle={() =>
-                      act(activity.id, activity.subscribed ? "DELETE" : "PUT", "/subscription")
-                    }
+                    onToggle={() => toggle(activity)}
                     onEdit={() => setEditing({ mode: "edit", activity })}
-                    onDelete={() => act(activity.id, "DELETE", "")}
+                    onDelete={() => remove(activity.id)}
                   />
                 ))}
               </ul>
@@ -219,35 +277,20 @@ function ActivityRow({
   return (
     <li
       className={cx(
-        "flex flex-col gap-2 rounded-md bg-surface-1 p-4",
+        "morph-card flex flex-col gap-2 rounded-md bg-surface-1 p-4",
         activity.subscribed ? "border-2 border-secondary" : "border border-border-strong",
       )}
     >
-      <div className="flex items-start gap-4">
-        {/* Timetable column: the departure time, set like a board. */}
-        <span className="w-12 shrink-0 pt-0.5 font-bold font-display text-xl leading-none tabular-nums tracking-wide">
-          {activity.startTime ?? "—"}
-        </span>
-        <p className="min-w-0 flex-1 font-semibold text-lg leading-snug">{activity.title}</p>
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            aria-pressed={activity.subscribed}
-            aria-busy={isBusy}
-            disabled={!isOnline || isBusy}
-            onClick={onToggle}
-            className={cx(
-              "inline-flex min-h-touch items-center gap-1 rounded-full border-2 border-secondary px-3 font-semibold text-sm",
-              "transition-colors duration-fast disabled:opacity-50",
-              "ui-focus:outline-2 ui-focus:outline-focus ui-focus:outline-offset-2 ui-focus:outline-solid",
-              activity.subscribed
-                ? "bg-secondary text-on-secondary"
-                : "text-secondary ui-hover:bg-secondary ui-hover:text-on-secondary",
-            )}
-          >
-            {activity.subscribed ? <Icon icon={Check} size="sm" /> : null}
-            {t("join")}
-          </button>
+      <div className="flex items-start gap-3">
+        {/* Timetable: the departure time, set like a board. On phones it
+            sits above the title; from sm up it becomes a column. */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:gap-4">
+          <span className="shrink-0 pt-0.5 font-bold font-display text-xl leading-none tabular-nums tracking-wide sm:w-12">
+            {activity.startTime ?? "—"}
+          </span>
+          <p className="min-w-0 font-semibold text-lg leading-snug">{activity.title}</p>
+        </div>
+        <div className="shrink-0">
           <Button
             type="button"
             size="sm"
@@ -255,13 +298,13 @@ function ActivityRow({
             icon={Ellipsis}
             labelHidden
             aria-expanded={isMenuOpen}
-            onClick={() => setIsMenuOpen((open) => !open)}
+            onClick={() => withViewTransition(() => setIsMenuOpen((open) => !open))}
           >
             {t("more", { title: activity.title })}
           </Button>
         </div>
       </div>
-      <p className="pl-16 text-sm text-text-muted">
+      <p className="sm:pl-16 text-sm text-text-muted">
         {activity.costPerPerson === null
           ? t("free")
           : t("perPerson", {
@@ -282,26 +325,47 @@ function ActivityRow({
         >
           {going}
         </span>
-        {activity.link === null ? null : (
-          <>
-            {" · "}
-            <a
-              href={activity.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2 ui-hover:text-accent"
-            >
-              {t("openLink")}
-            </a>
-          </>
-        )}
       </p>
       {activity.overlaps ? (
-        <p className="flex items-center gap-2 pl-16 font-semibold text-error text-sm">
+        <p className="flex items-center gap-2 sm:pl-16 font-semibold text-error text-sm">
           <Icon icon={TriangleAlert} />
           {t("overlap")}
         </p>
       ) : null}
+      <div className="flex items-center gap-2 sm:pl-16">
+        <button
+          type="button"
+          aria-busy={isBusy}
+          disabled={!isOnline}
+          onClick={onToggle}
+          className={cx(
+            "inline-flex min-h-touch items-center gap-1 rounded-full border-2 border-secondary px-3 font-semibold text-sm",
+            "transition-colors duration-fast disabled:opacity-50",
+            "ui-focus:outline-2 ui-focus:outline-focus ui-focus:outline-offset-2 ui-focus:outline-solid",
+            activity.subscribed
+              ? "bg-secondary text-on-secondary"
+              : "text-secondary ui-hover:bg-secondary ui-hover:text-on-secondary",
+          )}
+        >
+          {activity.subscribed ? <Icon icon={Check} size="sm" /> : null}
+          {activity.subscribed ? t("joined") : t("join")}
+        </button>
+        {activity.link === null ? null : (
+          <a
+            href={activity.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={t("openLink")}
+            className={cx(
+              "shrink-0",
+              buttonClasses({ variant: "outline", size: "sm", labelHidden: true }),
+            )}
+          >
+            <Icon icon={ExternalLink} size="sm" />
+            <span className="sr-only">{t("openLink")}</span>
+          </a>
+        )}
+      </div>
       {isMenuOpen ? (
         <div className="flex gap-2 border-border border-t pt-3">
           <Button type="button" size="sm" variant="outline" disabled={!isOnline} onClick={onEdit}>
