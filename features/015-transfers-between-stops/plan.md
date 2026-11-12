@@ -266,8 +266,8 @@ after now; date-only transfers count until their day ends.
 
 - Untracked `src/shared/db/migrations/0006_amusing_darwin.sql` (not in
   the journal) collides with the next migration number: the owner
-  removes it before T01. `src/shared/ui/duration.ts` (untracked) is
-  reused for durations; T01 commits it.
+  removes it before T01. `src/shared/ui/duration.ts` is written
+  by T01 (TDD) to format durations.
 - GeoNames download in T01 needs network: if it fails, T01 is blocked,
   not stubbed.
 - Gap index drifts on route reorder: flagged, never auto-moved.

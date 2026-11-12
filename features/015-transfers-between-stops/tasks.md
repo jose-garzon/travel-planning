@@ -37,7 +37,7 @@ Files:
 - `src/modules/trips/index.ts` (`getTripContext` adds `route`)
 - `src/shared/db/schema/transfers.ts`, `src/shared/db/schema/index.ts`
 - `src/shared/db/migrations/*` (generated)
-- `src/shared/ui/duration.ts` + `.test.ts` (commit existing)
+- `src/shared/ui/duration.ts` + `.test.ts` (new, TDD: localized duration per feature.md "1h 25m" / "1 h 25 min")
 - `src/shared/ui/transfer-events.ts` + `.test.ts`
 - `src/modules/transfers/domain/transfer.ts` + `.test.ts`
 - `src/modules/transfers/domain/gaps.ts` + `.test.ts`
