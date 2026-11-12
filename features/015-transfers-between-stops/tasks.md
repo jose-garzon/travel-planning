@@ -165,7 +165,7 @@ Done when:
 
 ## T04. Join an opt-in transfer
 
-Status: todo
+Status: blocked (plan: card has no viewer id or member count for Join state and "n of m")
 Depends on: T01, T03, T06 (shares transfer-card.tsx)
 Model: haiku
 Scenarios: @T04
@@ -193,7 +193,7 @@ Done when:
 
 ## T05. Find transfer options with the agent
 
-Status: doing
+Status: done
 Depends on: T01, T02 ("No options" scenario ends in the T02 form)
 Model: sonnet
 Scenarios: @T05
@@ -218,7 +218,7 @@ Steps:
    firing `openTransferSheet`.
 
 Done when:
-- [ ] Scenarios tagged @T05 pass (agent model faked in e2e, as today)
+- [x] Scenarios tagged @T05 pass (agent model faked in e2e, as today)
 
 
 ## T06. Next up card and route-change flags

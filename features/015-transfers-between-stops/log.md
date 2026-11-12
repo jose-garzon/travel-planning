@@ -69,3 +69,17 @@ product fixes: sheet scrolls (max-h-sheet; Save was off-screen), outbound gap pr
 test commits (reasoned): exact labels, hydration-safe Add click, real T03 budget step,
 tz fill for seeded trips, money() thousands, duration step maps "9 hr 30 min" → "9h 30m"
 open for PR: scenario says "9 hr 30 min", card shows compact "9h 30m"
+
+## 2026-11-12 T02 merged: a560f6a
+
+## 2026-11-12 T05 round 2
+rebased onto T02; e2e fails: duplicate step "the transfer form shows from..." (agent + form steps). Sent back.
+
+## 2026-11-12 T04 restarted (Files extended)
+
+## 2026-11-12 T04 blocked again (plan gap)
+implementer (haiku) stopped before red: card gets no viewerId / member count, so aria-pressed and "n of m" impossible. Needs page.tsx + transfer-gap.tsx (+ DTO option). Worktree kept, clean.
+
+## 2026-11-12 T05 round 2
+test commit b218ab5 drops duplicate step (T02 owns it). green OK: 19/19 F015 desktop for T01,T02,T03,T05,T06; 670 unit
+open for PR: AssistantDock mobile drawer does not open on Find options

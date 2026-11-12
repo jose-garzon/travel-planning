@@ -13,6 +13,7 @@ import { SectionHeader } from "@/shared/ui/components/section-header";
 import { cx } from "@/shared/ui/cx";
 import { useIsOnline } from "@/shared/ui/hooks/use-is-online";
 import { formatMoney } from "@/shared/ui/money";
+import { onAskAssistantForGap, openTransferSheet } from "@/shared/ui/transfer-events";
 
 /** One city of the route with the days spent there, used to seed prompts. */
 export type AgentStop = { city: string; from: string | null; to: string | null };
@@ -29,7 +30,24 @@ export type AgentPanelProps = {
 type SuggestionState = "pending" | "saving" | "approved" | "dismissed" | "failed";
 
 /** A chat turn plus the suggestions that came with it (assistant only). */
-type Turn = ChatMessage & { suggestions?: Suggestion[] };
+type Turn = ChatMessage & {
+  suggestions?: Suggestion[];
+  /** Set when the turn answers "Find options" for a gap. */
+  transferGap?: { gap: number; from: string | null; to: string | null; date: string | null };
+};
+
+type ChargeMode = "all" | "opt-in";
+
+/** The places a gap connects, from the origin and the route's stops. */
+function gapPlaces(
+  gap: number,
+  origin: string | null,
+  stops: AgentStop[],
+): { from: string; to: string } {
+  const from = gap === 0 ? origin : stops[gap - 1]?.city;
+  const to = stops[gap]?.city ?? origin;
+  return { from: from ?? "", to: to ?? "" };
+}
 
 /** Approves a suggestion through the public itinerary or budget API. */
 function approvalRequest(
@@ -37,7 +55,28 @@ function approvalRequest(
   tripId: string,
   viewerId: string,
   tripCurrency: string,
+  places: { from: string; to: string } | null,
+  charge: ChargeMode,
 ) {
+  if (suggestion.kind === "transfer") {
+    return {
+      url: `/api/v1/trips/${tripId}/transfers`,
+      body: {
+        gap: suggestion.gap,
+        mode: suggestion.mode,
+        from: places?.from ?? "",
+        to: places?.to ?? "",
+        departDate: suggestion.departDate,
+        departTime: suggestion.departTime,
+        arriveDate: suggestion.arriveDate,
+        arriveTime: suggestion.arriveTime,
+        cost: suggestion.cost,
+        currency: suggestion.cost === null ? null : (suggestion.currency ?? tripCurrency),
+        charge,
+        link: suggestion.sourceUrl,
+      },
+    };
+  }
   if (suggestion.kind === "activity") {
     return {
       url: `/api/v1/trips/${tripId}/activities`,
@@ -209,6 +248,8 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
   const [justDismissed, setJustDismissed] = useState<string | null>(null);
   /** Added suggestion id → its resource URL (for Undo). */
   const [created, setCreated] = useState<Created>({});
+  /** Who pays a transfer, per suggestion; "all" unless switched. */
+  const [charges, setCharges] = useState<Record<string, ChargeMode>>({});
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
@@ -295,7 +336,7 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
     return prompts.length === 0 ? [t("starterGeneric")] : prompts.slice(0, 4);
   }
 
-  async function ask(raw: string) {
+  async function ask(raw: string, transferGap?: Turn["transferGap"]) {
     const content = raw.trim();
     if (content === "" || isAsking) {
       return;
@@ -334,7 +375,12 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
     if (response?.ok && payload !== null && "reply" in payload) {
       setTurns([
         ...next,
-        { role: "assistant", content: payload.reply, suggestions: payload.suggestions },
+        {
+          role: "assistant",
+          content: payload.reply,
+          suggestions: payload.suggestions,
+          transferGap,
+        },
       ]);
       setAnnouncement(
         [
@@ -359,6 +405,20 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
     );
   }
 
+  // "Find options" on a route gap: ask for that gap, in the member's language.
+  const findOptionsRef = useRef((_detail: NonNullable<Turn["transferGap"]>) => {});
+  findOptionsRef.current = (detail) => {
+    const date = detail.date === null ? t("gapAnyDate") : formatDay(detail.date);
+    const prompt = t("gapPrompt", {
+      gap: detail.gap,
+      from: detail.from ?? "",
+      to: detail.to ?? "",
+      date,
+    });
+    void ask(prompt, detail);
+  };
+  useEffect(() => onAskAssistantForGap((detail) => findOptionsRef.current(detail)), []);
+
   // Enter sends, Shift+Enter breaks the line (not while composing IME text).
   function sendOnEnter(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
@@ -379,6 +439,7 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
     setEditing({});
     setFailures({});
     setCreated({});
+    setCharges({});
     setRestoredCount(0);
     setError(null);
     setFailedPrompt(null);
@@ -390,7 +451,15 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
   async function approve(suggestion: Suggestion, announce = true): Promise<string | null> {
     setStates((current) => ({ ...current, [suggestion.id]: "saving" }));
     setFailures(({ [suggestion.id]: _, ...rest }) => rest);
-    const { url, body } = approvalRequest(suggestion, tripId, viewerId, tripCurrency);
+    const places = suggestion.kind === "transfer" ? gapPlaces(suggestion.gap, origin, stops) : null;
+    const { url, body } = approvalRequest(
+      suggestion,
+      tripId,
+      viewerId,
+      tripCurrency,
+      places,
+      charges[suggestion.id] ?? "all",
+    );
     const response = await fetch(url, {
       method: "POST",
       headers: { "content-type": "application/json", "accept-language": locale },
@@ -414,7 +483,7 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
     }
     const card = document.querySelector<HTMLElement>(`[data-suggestion="${suggestion.id}"]`);
     if (card !== null) {
-      flyToStation(card, suggestion.kind === "activity" ? "itinerary-heading" : "budget-heading");
+      flyToStation(card, suggestion.kind === "budget" ? "budget-heading" : "itinerary-heading");
     }
     router.refresh();
     return null;
@@ -563,6 +632,7 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
                   <AgentReply content={turn.content} />
                 </div>
               )}
+              <NoOptions turn={turn} />
               {turn.suggestions === undefined || turn.suggestions.length === 0 ? null : (
                 <div className="flex flex-col gap-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -618,6 +688,11 @@ export function AgentPanel({ tripId, viewerId, tripCurrency, origin, stops }: Ag
                         }
                         tripCurrency={tripCurrency}
                         stops={stops}
+                        origin={origin}
+                        charge={charges[suggestion.id] ?? "all"}
+                        onCharge={(next) =>
+                          setCharges((current) => ({ ...current, [suggestion.id]: next }))
+                        }
                         isOnline={isOnline}
                         formatDay={formatDay}
                         onApprove={approve}
@@ -784,6 +859,9 @@ type SuggestionCardProps = {
   state: SuggestionState;
   tripCurrency: string;
   stops: AgentStop[];
+  origin: string | null;
+  charge: ChargeMode;
+  onCharge: (next: ChargeMode) => void;
   range: { min?: string; max?: string };
   isOnline: boolean;
   isEditing: boolean;
@@ -875,6 +953,9 @@ function SuggestionCard({
   state,
   tripCurrency,
   stops,
+  origin,
+  charge,
+  onCharge,
   range,
   isOnline,
   isEditing,
@@ -893,7 +974,7 @@ function SuggestionCard({
   const locale = useLocale();
   const cardRef = useRef<HTMLLIElement>(null);
   const [isValid, setIsValid] = useState(true);
-  const title = suggestion.kind === "activity" ? suggestion.title : suggestion.label;
+  const title = suggestionTitle(suggestion, origin, stops);
 
   if (state === "dismissed") {
     return (
@@ -914,7 +995,7 @@ function SuggestionCard({
   const money = (amount: number, currency: string) =>
     formatMoney(Math.round(amount * 100), currency, locale);
   const currency =
-    suggestion.kind === "activity" ? (suggestion.currency ?? tripCurrency) : suggestion.currency;
+    suggestion.kind === "budget" ? suggestion.currency : (suggestion.currency ?? tripCurrency);
   const detail = cardDetail(suggestion, currency, stops, formatDay, money, t);
   const isAdded = state === "approved";
 
@@ -928,7 +1009,10 @@ function SuggestionCard({
       )}
     >
       <CardSummary suggestion={suggestion} title={title} detail={detail} isAdded={isAdded} />
-      {isEditing && !isAdded ? (
+      {suggestion.kind === "transfer" && !isAdded ? (
+        <ChargeSwitch charge={charge} onChange={onCharge} />
+      ) : null}
+      {isEditing && !isAdded && suggestion.kind !== "transfer" ? (
         <SuggestionFields
           suggestion={suggestion}
           currency={currency}
@@ -941,6 +1025,7 @@ function SuggestionCard({
         <AddedNote kind={suggestion.kind} onUndo={onUndoAdd} />
       ) : (
         <CardActions
+          canEdit={suggestion.kind !== "transfer"}
           isLead={isLead}
           isEditing={isEditing}
           canAdd={isOnline && (!isEditing || isValid)}
@@ -959,6 +1044,7 @@ function SuggestionCard({
 
 /** Add, edit (Done / Cancel while open) and a quiet dismiss, on one row. */
 function CardActions({
+  canEdit,
   isLead,
   isEditing,
   canAdd,
@@ -970,6 +1056,7 @@ function CardActions({
   onCloseEdit,
   onDismiss,
 }: {
+  canEdit: boolean;
   isLead: boolean;
   isEditing: boolean;
   canAdd: boolean;
@@ -1016,11 +1103,11 @@ function CardActions({
             {t("editCancel")}
           </button>
         </>
-      ) : (
+      ) : canEdit ? (
         <button type="button" className={quiet} onClick={onEdit}>
           {t("edit")}
         </button>
-      )}
+      ) : null}
       <button type="button" data-dismiss className={quiet} onClick={onDismiss}>
         {t("dismiss")}
       </button>
@@ -1039,6 +1126,15 @@ function cardDetail(
   money: (amount: number, currency: string) => string,
   t: ChatT,
 ): string {
+  if (suggestion.kind === "transfer") {
+    return [
+      t(`modes.${suggestion.mode}`),
+      formatDay(suggestion.departDate) + (suggestion.departTime ? ` ${suggestion.departTime}` : ""),
+      suggestion.cost === null ? null : money(suggestion.cost, currency),
+    ]
+      .filter((part) => part !== null)
+      .join(" · ");
+  }
   return suggestion.kind === "activity"
     ? suggestion.costPerPerson === null
       ? t("activityDetailFree", { date: formatDay(suggestion.date) })
@@ -1066,7 +1162,7 @@ function SuggestionFields({
   onChange,
   onValidity,
 }: {
-  suggestion: Suggestion;
+  suggestion: Exclude<Suggestion, { kind: "transfer" }>;
   currency: string;
   range: { min?: string; max?: string };
   onChange: (next: Suggestion) => void;
@@ -1136,10 +1232,10 @@ function AddedNote({ kind, onUndo }: { kind: Suggestion["kind"]; onUndo?: () => 
     <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-semibold text-sm">
       {t("approved")}
       <a
-        href={kind === "activity" ? "#itinerary" : "#budget"}
+        href={kind === "budget" ? "#budget" : "#itinerary"}
         className="underline underline-offset-2 ui-hover:text-accent"
       >
-        {kind === "activity" ? t("seeItinerary") : t("seeBudget")}
+        {kind === "budget" ? t("seeBudget") : t("seeItinerary")}
       </a>
       {onUndo === undefined ? null : (
         <button
@@ -1202,6 +1298,89 @@ function AskError({
           {t("retry")}
         </Button>
       ) : null}
+    </div>
+  );
+}
+
+/** Card heading: the activity, the cost label or the two cities of a transfer. */
+function suggestionTitle(
+  suggestion: Suggestion,
+  origin: string | null,
+  stops: AgentStop[],
+): string {
+  if (suggestion.kind === "activity") {
+    return suggestion.title;
+  }
+  if (suggestion.kind === "budget") {
+    return suggestion.label;
+  }
+  const { from, to } = gapPlaces(suggestion.gap, origin, stops);
+  return `${from} → ${to}`;
+}
+
+/** Who pays a transfer: everyone by default, or only the members who join. */
+function ChargeSwitch({
+  charge,
+  onChange,
+}: {
+  charge: ChargeMode;
+  onChange: (next: ChargeMode) => void;
+}) {
+  const t = useTranslations("agent.chat");
+  const isAll = charge === "all";
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isAll}
+      onClick={() => onChange(isAll ? "opt-in" : "all")}
+      className="flex min-h-touch cursor-pointer items-center gap-2 self-start text-left text-sm ui-focus:outline-2 ui-focus:outline-focus ui-focus:outline-solid"
+    >
+      <span
+        aria-hidden="true"
+        className={cx(
+          "inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-text px-0.5 transition-colors duration-fast",
+          isAll ? "bg-line" : "bg-bg",
+        )}
+      >
+        <span
+          className={cx(
+            "size-3 rounded-full bg-text transition-transform duration-fast",
+            isAll ? "translate-x-4" : "translate-x-0",
+          )}
+        />
+      </span>
+      <span>{isAll ? t("chargeAll") : t("chargeOptIn")}</span>
+    </button>
+  );
+}
+
+/** A "Find options" question that found nothing: hand over to the form. */
+function NoOptions({ turn }: { turn: Turn }) {
+  const t = useTranslations("agent.chat");
+  const gap = turn.transferGap;
+  if (gap === undefined || (turn.suggestions?.length ?? 0) > 0) {
+    return null;
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <p className="font-semibold text-sm">{t("noOptions")}</p>
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        onClick={() =>
+          openTransferSheet({
+            gap: gap.gap,
+            prefill: {
+              ...(gap.from === null ? {} : { from: gap.from }),
+              ...(gap.to === null ? {} : { to: gap.to }),
+            },
+          })
+        }
+      >
+        {t("addManually")}
+      </Button>
     </div>
   );
 }

@@ -27,7 +27,6 @@
   "seeItinerary": "Verlo en el itinerario",
   "seeBudget": "Verlo en el presupuesto",
   "categories": {
-    "flights": "Vuelo",
     "lodging": "Alojamiento",
     "transport": "Transporte",
     "food": "Comida",
@@ -63,5 +62,19 @@
   "editCancel": "Cancelar",
   "undoFailed": "No se pudo deshacer. Quítalo desde el viaje.",
   "undoneCount": "{count, plural, one {Se quitó #.} other {Se quitaron #.}}",
-  "undoAll": "Deshacer {count}"
+  "undoAll": "Deshacer {count}",
+  "gapPrompt": "Busca cómo ir de {from} a {to} el {date} (tramo {gap}). Sugiere las mejores opciones.",
+  "gapAnyDate": "cualquier fecha",
+  "noOptions": "No hay opciones. Agrégalo tú",
+  "addManually": "Agregar",
+  "chargeAll": "Lo pagan todos",
+  "chargeOptIn": "Solo pagan quienes se unen",
+  "modes": {
+    "flight": "Vuelo",
+    "train": "Tren",
+    "bus": "Bus",
+    "ferry": "Ferry",
+    "car": "Carro",
+    "other": "Otro"
+  }
 }

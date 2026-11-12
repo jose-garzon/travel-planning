@@ -99,3 +99,48 @@ describe("systemPrompt", () => {
     expect(prompt).toContain("out of scope");
   });
 });
+
+describe("systemPrompt transfers", () => {
+  it("numbers each gap so transfer suggestions can name one", () => {
+    const prompt = systemPrompt(trip, "en", "2027-01-01");
+    expect(prompt).toContain("suggest_transfer");
+    expect(prompt).toContain("gap 0: Bogotá → Madrid");
+  });
+
+  it("no longer treats flights as a budget item", () => {
+    const prompt = systemPrompt(trip, "en", "2027-01-01");
+    expect(prompt).not.toContain("suggest_budget_item (flight");
+    expect(prompt).not.toContain("Flights are per person");
+  });
+});
+
+describe("askAgent transfer suggestions", () => {
+  it("returns a transfer suggestion with an id", async () => {
+    const d = deps();
+    d.model.reply = vi.fn(async () => ({
+      text: "Found one",
+      suggestions: [
+        {
+          kind: "transfer" as const,
+          gap: 0,
+          mode: "flight" as const,
+          departDate: "2027-05-01",
+          departTime: null,
+          arriveDate: null,
+          arriveTime: null,
+          cost: 300,
+          currency: "EUR",
+          sourceUrl: "https://example.com/flight",
+        },
+      ],
+    })) as never;
+    const result = await askAgent(command, d);
+    expect(result).toEqual({
+      ok: true,
+      value: {
+        reply: "Found one",
+        suggestions: [expect.objectContaining({ id: "s1", kind: "transfer", gap: 0 })],
+      },
+    });
+  });
+});

@@ -27,7 +27,6 @@
   "seeItinerary": "See it in the itinerary",
   "seeBudget": "See it in the budget",
   "categories": {
-    "flights": "Flight",
     "lodging": "Lodging",
     "transport": "Transport",
     "food": "Food",
@@ -63,5 +62,19 @@
   "editCancel": "Cancel",
   "undoFailed": "Could not take it back. Remove it from the trip instead.",
   "undoneCount": "{count, plural, one {# taken back out.} other {# taken back out.}}",
-  "undoAll": "Undo {count}"
+  "undoAll": "Undo {count}",
+  "gapPrompt": "Find ways to get from {from} to {to} on {date} (transfer gap {gap}). Suggest the best options.",
+  "gapAnyDate": "any date",
+  "noOptions": "No options found. Add it yourself",
+  "addManually": "Add",
+  "chargeAll": "Shared by everyone",
+  "chargeOptIn": "Only travelers who join pay",
+  "modes": {
+    "flight": "Flight",
+    "train": "Train",
+    "bus": "Bus",
+    "ferry": "Ferry",
+    "car": "Car",
+    "other": "Other"
+  }
 }
