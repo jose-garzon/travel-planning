@@ -252,7 +252,7 @@ describe("TransferSheetHost", () => {
   });
 
   describe("a transfer whose gap left the route", () => {
-    const orphan = { ...editing, gap: 7, from: "Medellín", to: "Cali" };
+    const orphan = { ...editing, from: "Medellín", to: "Cali" };
 
     it("deletes it, confirming with its own cities, and focuses the first Add button", async () => {
       const root = document.createElement("div");
@@ -285,7 +285,7 @@ describe("TransferSheetHost", () => {
     });
 
     it("moves an edit to the gap that now connects its cities", async () => {
-      open({ gap: 7, action: "edit", prefill: { ...editing, gap: 7 } });
+      open({ gap: 7, action: "edit", prefill: editing });
       await screen.findByRole("dialog", { name: "Edit transfer" });
       answer(200, { id: "t1" });
 
