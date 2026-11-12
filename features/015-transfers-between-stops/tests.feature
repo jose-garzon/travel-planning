@@ -147,15 +147,15 @@ Feature: Transfers between destinations
 
   @T06 @AC-8
   Scenario: Next up card with countdown
-    Given today is "2027-03-13"
+    Given today is "2027-03-14"
     And the trip has a flight from "Bogotá" to "Cartagena" on "2027-03-15" at "09:40"
     When I open the home page
-    Then the next trip shows the transfer "Bogotá" to "Cartagena" leaving in 2 days
+    Then the next trip shows the transfer "Bogotá" to "Cartagena" leaving tomorrow
     And the page has no accessibility violations
 
   @T06 @EC-9
   Scenario: Past transfer is muted and not next up
-    Given today is "2027-03-17"
+    Given today is "2027-03-18"
     And the trip has a flight from "Bogotá" to "Cartagena" on "2027-03-15"
     And the trip has a bus from "Cartagena" to "Santa Marta" on "2027-03-19"
     When I open the home page
@@ -168,6 +168,13 @@ Feature: Transfers between destinations
     Given the trip has a bus from "Cartagena" to "Santa Marta" on "2027-03-19"
     When I change the trip's second destination to "Barranquilla"
     Then the transfer to "Santa Marta" shows "Route changed. Check from/to"
+
+  @T06 @AC-8
+  Scenario: Next transfer stays off home until the day before
+    Given today is "2027-03-13"
+    And the trip has a flight from "Bogotá" to "Cartagena" on "2027-03-15" at "09:40"
+    When I open the home page
+    Then the next trip shows no transfer
 
   @T07 @AC-12 @a11y @i18n
   Scenario Outline: Transfer read as one sentence

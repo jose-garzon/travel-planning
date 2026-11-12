@@ -1,6 +1,0 @@
-{
-  "heading": "Next up",
-  "route": "{from} to {to}",
-  "countdown": "{days, plural, =0 {today} =1 {tomorrow} other {in # days}}",
-  "departs": "departs {time}"
-}

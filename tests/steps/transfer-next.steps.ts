@@ -26,13 +26,18 @@ function nextTransferLink(page: Page, from: string, to: string) {
 }
 
 Then(
-  "the next trip shows the transfer {string} to {string} leaving in {int} days",
-  async ({ page }, from: string, to: string, days: number) => {
+  "the next trip shows the transfer {string} to {string} leaving tomorrow",
+  async ({ page }, from: string, to: string) => {
     const link = nextTransferLink(page, from, to);
     await expect(link).toBeVisible();
-    await expect(link).toContainText(`In ${days} days`);
+    await expect(link).toContainText("Tomorrow");
   },
 );
+
+Then("the next trip shows no transfer", async ({ page }) => {
+  await expect(page.getByRole("heading", { level: 2 }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Next transfer:/ })).toHaveCount(0);
+});
 
 Then(
   "the next trip shows the transfer {string} to {string}",
