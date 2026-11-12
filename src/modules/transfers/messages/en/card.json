@@ -1,0 +1,30 @@
+{
+  "modes": {
+    "flight": "Flight",
+    "train": "Train",
+    "bus": "Bus",
+    "ferry": "Ferry",
+    "car": "Car",
+    "other": "Transfer"
+  },
+  "summary": "{mode} from {from} to {to}, {date}",
+  "departs": "departs {time}",
+  "arrives": "arrives {time}",
+  "nextDay": "+{days}",
+  "each": "{amount} each",
+  "noPrice": "No price yet",
+  "charge": {
+    "all": "All travelers",
+    "opt-in": "Opt-in"
+  },
+  "reference": "Ref {reference}",
+  "openBooking": "Open booking",
+  "newTab": "(opens in a new tab)",
+  "routeChanged": "Route changed. Check from/to",
+  "needsReview": "Check details",
+  "outsideWindow": "Doesn't match route dates",
+  "edit": "Edit",
+  "delete": "Delete",
+  "editLabel": "Edit transfer from {from} to {to}",
+  "deleteLabel": "Delete transfer from {from} to {to}"
+}

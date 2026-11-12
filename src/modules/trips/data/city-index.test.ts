@@ -94,3 +94,25 @@ describe("cityIndex.localizeName", () => {
     expect(cityIndex.localizeName({ cityId: null, name: "Atlantis" }, "es")).toBe("Atlantis");
   });
 });
+
+describe("cityIndex.timeZoneOf", () => {
+  it("gives the IANA time zone of a known city", () => {
+    const [bogota] = search("bogot");
+
+    expect(bogota && cityIndex.timeZoneOf(bogota.cityId)).toBe("America/Bogota");
+  });
+
+  it("gives every searchable city a time zone", () => {
+    const options = ["lon", "par", "new", "tok", "lim", "mad"].flatMap((query) => search(query));
+
+    expect(options.length).toBeGreaterThan(0);
+    for (const option of options) {
+      expect(cityIndex.timeZoneOf(option.cityId)).toMatch(/^[A-Za-z_]+\/[A-Za-z_/-]+$/);
+    }
+  });
+
+  it("gives null for a free-text city and an unknown id", () => {
+    expect(cityIndex.timeZoneOf(null)).toBeNull();
+    expect(cityIndex.timeZoneOf("g0")).toBeNull();
+  });
+});

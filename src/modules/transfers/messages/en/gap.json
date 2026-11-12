@@ -1,0 +1,10 @@
+{
+  "labelTo": "Getting to {city}",
+  "labelReturn": "Return from {city}",
+  "askTo": "How do you get to {city}?",
+  "askBack": "How do you get back to {city}?",
+  "add": "Add",
+  "addLabel": "Add transfer: {place}",
+  "findOptions": "Find options",
+  "findLabel": "Find options: {place}"
+}

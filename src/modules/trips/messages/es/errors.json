@@ -13,6 +13,11 @@
   "ACTIVITY_OUTSIDE_TRIP": "Elige un día dentro de las fechas del viaje.",
   "TOO_MANY_ACTIVITIES": "Este viaje tiene demasiadas actividades.",
   "BUDGET_ITEM_NOT_FOUND": "Ese gasto ya no existe.",
+  "TRANSFER_NOT_FOUND": "Ese traslado ya no existe.",
+  "TRANSFER_ARRIVAL_BEFORE": "La llegada debe ser después de la salida.",
+  "TRANSFER_NOT_OPT_IN": "Todos pagan este traslado; no hay nada a lo que unirse.",
+  "TRANSFER_VERSION_CONFLICT": "Este traslado cambió. Recarga para ver lo último.",
+  "TOO_MANY_TRANSFERS": "Este viaje tiene demasiados traslados.",
   "AGENT_RATE_LIMITED": "Llegaste al límite de hoy del asistente. Vuelve a intentarlo mañana.",
   "AGENT_UNAVAILABLE": "El asistente no está disponible ahora. Inténtalo de nuevo en un momento."
 }

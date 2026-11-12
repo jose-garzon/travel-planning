@@ -24,7 +24,7 @@ only their own files. Each task has its own step file.
 
 ## T01. See and add transfers in route gaps (walking skeleton)
 
-Status: todo
+Status: done
 Depends on: -
 Model: sonnet
 Scenarios: @T01
@@ -77,11 +77,11 @@ Steps:
    after stops.
 
 Done when:
-- [ ] Scenarios tagged @T01 pass
-- [ ] Unit tests cover gaps for 1, 2, n legs, with and without return
-- [ ] Repository list ≤ 2 queries
-- [ ] Every city with a GeoNames entry has `tz`
-- [ ] `pnpm lint:deps` passes; existing scenarios still pass
+- [x] Scenarios tagged @T01 pass
+- [x] Unit tests cover gaps for 1, 2, n legs, with and without return
+- [x] Repository list ≤ 2 queries
+- [x] Every city with a GeoNames entry has `tz`
+- [x] `pnpm lint:deps` passes; existing scenarios still pass
 
 Notes:
 - Copy the pattern of `modules/itinerary` (index wiring, Args type).

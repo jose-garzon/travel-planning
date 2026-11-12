@@ -5,6 +5,7 @@ import { loadAuthMessages } from "@/modules/auth";
 import { loadBudgetMessages } from "@/modules/budget";
 import { loadItineraryMessages } from "@/modules/itinerary";
 import { loadStyleguideMessages } from "@/modules/styleguide";
+import { loadTransfersMessages } from "@/modules/transfers";
 import { loadTripsMessages } from "@/modules/trips";
 import type { Locale } from "@/shared/i18n/routing";
 import { routing } from "@/shared/i18n/routing";
@@ -20,6 +21,7 @@ async function loadMessages(locale: Locale) {
     trips: await loadTripsMessages(locale),
     itinerary: await loadItineraryMessages(locale),
     budget: await loadBudgetMessages(locale),
+    transfers: await loadTransfersMessages(locale),
     agent: await loadAgentMessages(locale),
   };
 }

@@ -11,7 +11,7 @@
  *   cities over 15000 people and their English / Spanish names.
  *
  * A city is kept when an airport sits within RADIUS_KM of it (the most
- * populated city wins). Its code is the IATA metropolitan code when it
+ * populated city wins). Its `tz` is the GeoNames IANA time zone. Its code is the IATA metropolitan code when it
  * has one (LON, PAR, NYC), else the code of its main airport.
  */
 import { execFileSync, spawn } from "node:child_process";
@@ -53,7 +53,16 @@ const METRO_OF = new Map(
 );
 
 type Airport = { iata: string; type: string; lat: number; lon: number; country: string };
-type GeoCity = { id: string; name: string; lat: number; lon: number; country: string; pop: number };
+type GeoCity = {
+  id: string;
+  name: string;
+  lat: number;
+  lon: number;
+  country: string;
+  pop: number;
+  /** IANA time zone (GeoNames column 17). */
+  tz: string;
+};
 
 function download(url: string, file: string) {
   if (!existsSync(file)) {
@@ -173,6 +182,7 @@ async function main() {
       lon: Number(c[5]),
       country: c[8] ?? "",
       pop: Number(c[14]),
+      tz: c[17] ?? "",
     });
   });
 
@@ -221,6 +231,7 @@ async function main() {
       id: `g${city.id}`,
       code: metro ?? main?.iata ?? "",
       cc: city.country,
+      ...(city.tz === "" ? {} : { tz: city.tz }),
       en,
       ...(es === en ? {} : { es }),
       pop: city.pop,
