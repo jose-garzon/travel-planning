@@ -35,7 +35,7 @@ function budget(page: Page) {
 
 /** "COP 100" in the app's English format, tolerant of the non-breaking space. */
 function money(amount: number, currency: string): RegExp {
-  return new RegExp(`${currency}\\s*${amount}(?![\\d,.])`);
+  return new RegExp(`${currency}\\s*${amount.toLocaleString("en-US")}(?![\\d,.])`);
 }
 
 Given("the trip has {int} travelers", async ({ page }, count: number) => {

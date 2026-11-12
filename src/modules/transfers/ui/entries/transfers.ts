@@ -2,3 +2,4 @@
 
 export { NextTransferCard } from "@/modules/transfers/ui/components/next-transfer-card";
 export { TransferGap } from "@/modules/transfers/ui/components/transfer-gap";
+export { TransferSheetHost } from "@/modules/transfers/ui/components/transfer-sheet-host";

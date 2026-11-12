@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Gap } from "@/modules/transfers/domain/gaps";
 import {
+  arrivesBeforeDeparture,
   costInTripCurrency,
   dayOffset,
   durationMinutes,
@@ -254,5 +255,77 @@ describe("isPast", () => {
 
     expect(isPast(t, Date.parse("2027-03-15T20:00:00Z"))).toBe(false);
     expect(isPast(t, Date.parse("2027-03-16T00:00:01Z"))).toBe(true);
+  });
+});
+
+describe("arrivesBeforeDeparture", () => {
+  it("is true when the arrival wall clock is earlier in the same zone", () => {
+    expect(
+      arrivesBeforeDeparture(
+        transfer({ departTime: "12:00", arriveDate: "2027-03-15", arriveTime: "09:00" }),
+      ),
+    ).toBe(true);
+  });
+
+  it("is false for an overnight arrival (+1)", () => {
+    expect(
+      arrivesBeforeDeparture(
+        transfer({ departTime: "22:00", arriveDate: "2027-03-16", arriveTime: "06:00" }),
+      ),
+    ).toBe(false);
+  });
+
+  it("compares instants, not wall clocks, across zones", () => {
+    // 18:00 Bogotá is 23:00Z; 10:30 Madrid in June is 08:30Z next day.
+    expect(
+      arrivesBeforeDeparture(
+        transfer({
+          departDate: "2027-06-01",
+          departTime: "18:00",
+          departTz: BOGOTA,
+          arriveDate: "2027-06-02",
+          arriveTime: "10:30",
+          arriveTz: "Europe/Madrid",
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("accepts an earlier wall clock that is later in real time across the date line", () => {
+    // Auckland is far ahead of Los Angeles: 08:00 on the 2nd (Auckland, NZDT)
+    // is 19:00Z on the 1st; 10:00 on the 1st in Los Angeles (PST) is 18:00Z.
+    expect(
+      arrivesBeforeDeparture(
+        transfer({
+          departDate: "2027-01-01",
+          departTime: "10:00",
+          departTz: "America/Los_Angeles",
+          arriveDate: "2027-01-02",
+          arriveTime: "08:00",
+          arriveTz: "Pacific/Auckland",
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("holds across a daylight-saving change", () => {
+    // Clocks in Madrid jump 02:00 -> 03:00 on 2027-03-28: 01:30 to 03:10 is 40 minutes.
+    expect(
+      arrivesBeforeDeparture(
+        transfer({
+          departDate: "2027-03-28",
+          departTime: "01:30",
+          departTz: "Europe/Madrid",
+          arriveDate: "2027-03-28",
+          arriveTime: "03:10",
+          arriveTz: "Europe/Madrid",
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("is false when there is nothing to compare", () => {
+    expect(arrivesBeforeDeparture(transfer())).toBe(false);
+    expect(arrivesBeforeDeparture(transfer({ departTime: "10:00" }))).toBe(false);
   });
 });

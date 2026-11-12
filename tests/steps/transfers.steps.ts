@@ -35,7 +35,7 @@ function gapOf(trip: SeededTrip, from: string, to: string): number {
   return index === -1 ? trip.legs.length : index;
 }
 
-function gapBefore(page: Page, city: string) {
+export function gapBefore(page: Page, city: string) {
   return page.getByRole("region", { name: `Getting to ${city}` });
 }
 

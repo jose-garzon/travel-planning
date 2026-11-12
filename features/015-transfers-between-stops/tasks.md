@@ -92,7 +92,7 @@ Notes:
 
 ## T02. Add, edit and delete a transfer by hand
 
-Status: doing
+Status: done
 Depends on: T01
 Model: sonnet
 Scenarios: @T02
@@ -118,9 +118,9 @@ Steps:
    budget form; edit/delete from the card; delete confirmation.
 
 Done when:
-- [ ] Scenarios tagged @T02 pass
-- [ ] Unit tests: DST change, date-line crossing, "+1" offset
-- [ ] Stale version returns 409 and shows the conflict warning
+- [x] Scenarios tagged @T02 pass
+- [x] Unit tests: DST change, date-line crossing, "+1" offset
+- [x] Stale version returns 409 and shows the conflict warning
 
 
 ## T03. Transfers in the budget, flights migrated

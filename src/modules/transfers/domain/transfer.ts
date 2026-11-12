@@ -106,6 +106,12 @@ export function durationMinutes(transfer: Transfer): number | null {
   return depart === null || arrive === null ? null : Math.round((arrive - depart) / MINUTE_MS);
 }
 
+/** True when the arrival instant is earlier than the departure instant. */
+export function arrivesBeforeDeparture(transfer: Transfer): boolean {
+  const minutes = durationMinutes(transfer);
+  return minutes !== null && minutes < 0;
+}
+
 /** Calendar days between the departure date and the arrival date ("+1"). */
 export function dayOffset(transfer: Transfer): number {
   if (transfer.arriveDate === null) {

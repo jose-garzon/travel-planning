@@ -54,3 +54,18 @@ implementer (sonnet): red OK (e829fad), 3 scenarios, 25 unit
 green OK: 3/3 @F015 @T06 + T01/T03 regression desktop, 627 unit
 extra files: domain/transfer.ts (isPast param narrowed), steps
 transfers.steps.ts + support/today.ts (shift dates to real clock; in red commit)
+
+## 2026-11-12 T02 round 1
+implementer (sonnet): red OK (5bb0caf), 7 scenarios, ~37 unit
+green failed: 0/7 e2e (strict label clash "Departure time"; save POST never sent; edit click timeout)
+round 2 sent with output; rebase onto feature branch (T03, T06 merged)
+extra files: ports.ts, schemas.ts, drizzle repo, index.ts, create-transfer.ts, entries, page.tsx (mount sheet)
+
+## 2026-11-12 T06 merged: f000997
+
+## 2026-11-12 T02 round 2
+implementer (sonnet): rebased on T03+T06; green OK: 7/7 @T02, 17/17 F015 desktop, 665 unit
+product fixes: sheet scrolls (max-h-sheet; Save was off-screen), outbound gap prefills From = origin
+test commits (reasoned): exact labels, hydration-safe Add click, real T03 budget step,
+tz fill for seeded trips, money() thousands, duration step maps "9 hr 30 min" → "9h 30m"
+open for PR: scenario says "9 hr 30 min", card shows compact "9h 30m"

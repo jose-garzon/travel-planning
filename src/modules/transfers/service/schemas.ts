@@ -41,6 +41,13 @@ export const transferInputSchema = z.object({
 
 export type TransferInput = z.infer<typeof transferInputSchema>;
 
+/** PATCH body: the input plus the version the editor read. */
+export const transferUpdateSchema = transferInputSchema.extend({
+  version: z.number().int().min(1),
+});
+
+export type TransferUpdate = z.infer<typeof transferUpdateSchema>;
+
 export type TransferDto = {
   id: string;
   gap: number;

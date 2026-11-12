@@ -1,5 +1,5 @@
 import "server-only";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import type { Transfer } from "@/modules/transfers/domain/transfer";
 import type { NewTransfer, TransfersRepository } from "@/modules/transfers/service/ports";
 import { db } from "@/shared/db/client";
@@ -69,5 +69,47 @@ export class DrizzleTransfersRepository implements TransfersRepository {
       createdAt: new Date(createdAt),
     });
     return { ...record, participantIds: [] };
+  }
+
+  async find(tripId: string, transferId: string): Promise<Transfer | null> {
+    const [row] = await db
+      .select()
+      .from(transfer)
+      .where(and(eq(transfer.tripId, tripId), eq(transfer.id, transferId)));
+    if (row === undefined) {
+      return null;
+    }
+    const participants = await db
+      .select()
+      .from(transferParticipant)
+      .where(eq(transferParticipant.transferId, transferId));
+    return toTransfer(
+      row,
+      participants.map((p) => p.userId),
+    );
+  }
+
+  async update(record: Transfer, expectedVersion: number): Promise<Transfer | null> {
+    const { id, tripId, from, to, createdAt, createdBy, participantIds, ...rest } = record;
+    const changed = await db
+      .update(transfer)
+      .set({ ...rest, fromName: from, toName: to })
+      .where(
+        and(
+          eq(transfer.id, id),
+          eq(transfer.tripId, tripId),
+          eq(transfer.version, expectedVersion),
+        ),
+      )
+      .returning({ id: transfer.id });
+    return changed.length === 0 ? null : record;
+  }
+
+  async delete(tripId: string, transferId: string): Promise<boolean> {
+    const removed = await db
+      .delete(transfer)
+      .where(and(eq(transfer.tripId, tripId), eq(transfer.id, transferId)))
+      .returning({ id: transfer.id });
+    return removed.length > 0;
   }
 }

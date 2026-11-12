@@ -1,6 +1,6 @@
 import { gapsOf } from "@/modules/transfers/domain/gaps";
 import {
-  durationMinutes,
+  arrivesBeforeDeparture,
   MAX_TRANSFERS_PER_TRIP,
   type Transfer,
 } from "@/modules/transfers/domain/transfer";
@@ -83,8 +83,7 @@ export async function createTransfer(
   }
   const now = clock.now();
   const record = toRecord(ids.next(), command, context.currency, now);
-  const minutes = durationMinutes({ ...record, participantIds: [] });
-  if (minutes !== null && minutes < 0) {
+  if (arrivesBeforeDeparture({ ...record, participantIds: [] })) {
     return err({ code: "TRANSFER_ARRIVAL_BEFORE" });
   }
   if ((await transfers.listForTrip(tripId)).length >= MAX_TRANSFERS_PER_TRIP) {
