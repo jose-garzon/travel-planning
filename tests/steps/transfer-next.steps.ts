@@ -20,19 +20,26 @@ When(
   },
 );
 
+// The next transfer lives on home's next-trip board, as a link to its card.
+function nextTransferLink(page: Page, from: string, to: string) {
+  return page.getByRole("link", { name: new RegExp(`^Next transfer: .*${from} to ${to}`) });
+}
+
 Then(
-  "the next up card shows {string} to {string} leaving in {int} days",
+  "the next trip shows the transfer {string} to {string} leaving in {int} days",
   async ({ page }, from: string, to: string, days: number) => {
-    const card = page.getByRole("region", { name: "Next up" });
-    await expect(card.getByRole("link", { name: `${from} to ${to}` })).toBeVisible();
-    await expect(card).toContainText(`in ${days} days`);
+    const link = nextTransferLink(page, from, to);
+    await expect(link).toBeVisible();
+    await expect(link).toContainText(`In ${days} days`);
   },
 );
 
-Then("the next up card shows {string} to {string}", async ({ page }, from: string, to: string) => {
-  const card = page.getByRole("region", { name: "Next up" });
-  await expect(card.getByRole("link", { name: `${from} to ${to}` })).toBeVisible();
-});
+Then(
+  "the next trip shows the transfer {string} to {string}",
+  async ({ page }, from: string, to: string) => {
+    await expect(nextTransferLink(page, from, to)).toBeVisible();
+  },
+);
 
 Then("the transfer to {string} is shown as past", async ({ page }, city: string) => {
   await expect(transferTo(page, city).getByText("Past", { exact: true })).toBeVisible();

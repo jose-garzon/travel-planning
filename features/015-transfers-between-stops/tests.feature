@@ -149,8 +149,8 @@ Feature: Transfers between destinations
   Scenario: Next up card with countdown
     Given today is "2027-03-13"
     And the trip has a flight from "Bogotá" to "Cartagena" on "2027-03-15" at "09:40"
-    When I open the trip
-    Then the next up card shows "Bogotá" to "Cartagena" leaving in 2 days
+    When I open the home page
+    Then the next trip shows the transfer "Bogotá" to "Cartagena" leaving in 2 days
     And the page has no accessibility violations
 
   @T06 @EC-9
@@ -158,9 +158,10 @@ Feature: Transfers between destinations
     Given today is "2027-03-17"
     And the trip has a flight from "Bogotá" to "Cartagena" on "2027-03-15"
     And the trip has a bus from "Cartagena" to "Santa Marta" on "2027-03-19"
+    When I open the home page
+    Then the next trip shows the transfer "Cartagena" to "Santa Marta"
     When I open the trip
-    Then the next up card shows "Cartagena" to "Santa Marta"
-    And the transfer to "Cartagena" is shown as past
+    Then the transfer to "Cartagena" is shown as past
 
   @T06 @AC-9 @EC-1
   Scenario: Route change flags a transfer
