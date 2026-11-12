@@ -15,6 +15,10 @@ export type TransferGapProps = {
   transfers: TransferDto[];
   /** "Find options" needs the assistant; hidden when it is off. */
   hasAgent: boolean;
+  /** For joining opt-in transfers: the trip, the signed-in member and the crew size. */
+  tripId: string;
+  viewerId: string;
+  memberCount: number;
 };
 
 /**
@@ -22,7 +26,14 @@ export type TransferGapProps = {
  * transfers by departure on a solid stretch of line, or a dashed stretch
  * with one quiet question and Add / Find options.
  */
-export function TransferGap({ gap, transfers, hasAgent }: TransferGapProps) {
+export function TransferGap({
+  gap,
+  transfers,
+  hasAgent,
+  tripId,
+  viewerId,
+  memberCount,
+}: TransferGapProps) {
   const t = useTranslations("transfers.gap");
   const isReturn = gap.kind === "return";
   const place = isReturn
@@ -89,7 +100,7 @@ export function TransferGap({ gap, transfers, hasAgent }: TransferGapProps) {
             <ul className="flex flex-col">
               {transfers.map((transfer) => (
                 <li key={transfer.id}>
-                  <TransferCard transfer={transfer} />
+                  <TransferCard transfer={transfer} join={{ tripId, viewerId, memberCount }} />
                 </li>
               ))}
             </ul>

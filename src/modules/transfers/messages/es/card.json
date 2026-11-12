@@ -27,5 +27,10 @@
   "edit": "Editar",
   "delete": "Eliminar",
   "editLabel": "Editar traslado de {from} a {to}",
-  "deleteLabel": "Eliminar traslado de {from} a {to}"
+  "deleteLabel": "Eliminar traslado de {from} a {to}",
+  "join": "Unirme",
+  "joined": "Unido",
+  "joinLabel": "Unirse al traslado de {from} a {to}",
+  "participants": "{count} de {total}",
+  "joinFailed": "No se pudo actualizar."
 }

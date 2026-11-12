@@ -22,6 +22,9 @@ export type TransfersRepository = {
   find(tripId: string, transferId: string): Promise<Transfer | null>;
   /** Writes `transfer` only if the stored version is still `expectedVersion`; null when it is not. */
   update(transfer: Transfer, expectedVersion: number): Promise<Transfer | null>;
+  /** Idempotent: joining twice leaves one row. */
+  addParticipant(transferId: string, userId: string): Promise<void>;
+  removeParticipant(transferId: string, userId: string): Promise<void>;
   /** False when the trip has no such transfer. */
   delete(tripId: string, transferId: string): Promise<boolean>;
 };

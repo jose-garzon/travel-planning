@@ -86,3 +86,13 @@ open for PR: AssistantDock mobile drawer does not open on Find options
 
 ## 2026-11-12 visual fix
 user: edit/delete icon buttons too close → gap-2 on card actions
+
+## 2026-11-12 T04 unblocked (orchestrator decision)
+option 1: viewerId + memberCount as props page → TransferGap → TransferCard → toggle (no API change). Files += page.tsx, transfer-gap.tsx. Model haiku → sonnet (scope grew).
+T07 Files += assistant-dock.tsx (mobile drawer on Find options).
+
+## 2026-11-12 T04 rounds 1-2
+implementer (sonnet): red OK (e82fc39); round 2 moved step edit into its own test commit
+green OK: 21/21 F015 desktop (T01-T06), unit pass on feature branch
+test commits: zero-total = Transfers row absent; join step opens trip
+props: tripId, viewerId, memberCount page → gap → card (join prop); card.json join strings

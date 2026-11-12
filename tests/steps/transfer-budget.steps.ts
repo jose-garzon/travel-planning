@@ -135,11 +135,16 @@ Then(
 Then(
   "the trip total for transfers is {int} {string}",
   async ({ page }, amount: number, currency: string) => {
-    await expect(
-      budget(page)
-        .getByRole("listitem")
-        .filter({ hasText: /^Transfers/ }),
-    ).toContainText(money(amount, currency));
+    const row = budget(page)
+      .getByRole("listitem")
+      .filter({ hasText: /^Transfers/ });
+    if (amount === 0) {
+      // The summary lists only categories that cost something.
+      await expect(budget(page)).toBeVisible();
+      await expect(row).toHaveCount(0);
+      return;
+    }
+    await expect(row).toContainText(money(amount, currency));
   },
 );
 

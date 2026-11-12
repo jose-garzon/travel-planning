@@ -105,6 +105,18 @@ export class DrizzleTransfersRepository implements TransfersRepository {
     return changed.length === 0 ? null : record;
   }
 
+  async addParticipant(transferId: string, userId: string): Promise<void> {
+    await db.insert(transferParticipant).values({ transferId, userId }).onConflictDoNothing();
+  }
+
+  async removeParticipant(transferId: string, userId: string): Promise<void> {
+    await db
+      .delete(transferParticipant)
+      .where(
+        and(eq(transferParticipant.transferId, transferId), eq(transferParticipant.userId, userId)),
+      );
+  }
+
   async delete(tripId: string, transferId: string): Promise<boolean> {
     const removed = await db
       .delete(transfer)

@@ -175,6 +175,9 @@ export default async function TripPage({
                           (transfer) => transfer.gap === gap.index,
                         )}
                         hasAgent={hasAgent}
+                        tripId={tripId}
+                        viewerId={currentUser.id}
+                        memberCount={members.value.length}
                       />
                     )}
                     <StopAccordion

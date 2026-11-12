@@ -165,9 +165,9 @@ Done when:
 
 ## T04. Join an opt-in transfer
 
-Status: blocked (plan: card has no viewer id or member count for Join state and "n of m")
+Status: done
 Depends on: T01, T03, T06 (shares transfer-card.tsx)
-Model: haiku
+Model: sonnet
 Scenarios: @T04
 Covers: AC-6, EC-6
 
@@ -181,14 +181,16 @@ Files:
 - `src/modules/transfers/data/drizzle-transfers-repository.ts` + `.integration.test.ts`
 - `src/modules/transfers/index.ts` (`setTransferParticipation`)
 - `src/app/_composition/trip-context.ts` (wiring)
+- `src/app/[locale]/trips/[tripId]/page.tsx` (pass `viewerId`, `memberCount` to `TransferGap`)
+- `src/modules/transfers/ui/components/transfer-gap.tsx` (+ `.test.tsx`; thread props to the card)
 
 Steps:
 1. Use case; PUT/DELETE route (copy activity subscription route).
 2. Toggle with `aria-pressed` and "n of m"; refresh budget.
 
 Done when:
-- [ ] Scenarios tagged @T04 pass
-- [ ] Joining an "all" transfer returns 400 `TRANSFER_NOT_OPT_IN`
+- [x] Scenarios tagged @T04 pass
+- [x] Joining an "all" transfer returns 400 `TRANSFER_NOT_OPT_IN`
 
 
 ## T05. Find transfer options with the agent
@@ -261,6 +263,7 @@ Files:
 - `src/modules/transfers/ui/components/*.tsx` (fixes only)
 - `src/modules/transfers/messages/{en,es}/*.json` (fixes only)
 - `tests/steps/transfer-hardening.steps.ts`
+- `src/modules/agent/ui/components/assistant-dock.tsx` (open the mobile drawer on `askAssistantForGap`)
 
 Steps:
 1. Card sentence label in en and es; keyboard and focus flow.

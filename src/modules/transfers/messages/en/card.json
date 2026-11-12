@@ -27,5 +27,10 @@
   "edit": "Edit",
   "delete": "Delete",
   "editLabel": "Edit transfer from {from} to {to}",
-  "deleteLabel": "Delete transfer from {from} to {to}"
+  "deleteLabel": "Delete transfer from {from} to {to}",
+  "join": "Join",
+  "joined": "Joined",
+  "joinLabel": "Join transfer from {from} to {to}",
+  "participants": "{count} of {total}",
+  "joinFailed": "Could not update."
 }

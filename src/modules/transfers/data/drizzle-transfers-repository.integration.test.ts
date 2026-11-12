@@ -162,4 +162,20 @@ describe("DrizzleTransfersRepository", () => {
 
     expect(fixtures.queryCount).toBeLessThanOrEqual(2);
   });
+
+  it("adds a participant once and removes it", async () => {
+    await repository.create(transfer("t4", "trip-a"));
+
+    await repository.addParticipant("t4", "user-1");
+    await repository.addParticipant("t4", "user-1");
+    await repository.addParticipant("t4", "user-2");
+    expect((await repository.find("trip-a", "t4"))?.participantIds.sort()).toEqual([
+      "user-1",
+      "user-2",
+    ]);
+
+    await repository.removeParticipant("t4", "user-1");
+    await repository.removeParticipant("t4", "user-1");
+    expect((await repository.find("trip-a", "t4"))?.participantIds).toEqual(["user-2"]);
+  });
 });

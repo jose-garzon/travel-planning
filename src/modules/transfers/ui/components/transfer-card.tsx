@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { TransferDto } from "@/modules/transfers/service/schemas";
+import { JoinTransferToggle } from "@/modules/transfers/ui/components/join-transfer-toggle";
 import { Button } from "@/shared/ui/components/button";
 import { Icon } from "@/shared/ui/components/icon";
 import { cx } from "@/shared/ui/cx";
@@ -23,7 +24,11 @@ import { formatDuration } from "@/shared/ui/duration";
 import { formatMoney } from "@/shared/ui/money";
 import { openTransferSheet, type TransferPrefill } from "@/shared/ui/transfer-events";
 
-export type TransferCardProps = { transfer: TransferDto };
+export type TransferCardProps = {
+  transfer: TransferDto;
+  /** Lets the viewer join an opt-in transfer; without it the card is read-only. */
+  join?: { tripId: string; viewerId: string; memberCount: number };
+};
 
 const MODE_ICONS: Record<TransferDto["mode"], LucideIcon> = {
   flight: Plane,
@@ -137,7 +142,7 @@ function useSentence(transfer: TransferDto): string {
  * pays. The whole card is read as one sentence; Edit and Delete hand the
  * transfer to the sheet (`TransferSheetHost`).
  */
-export function TransferCard({ transfer }: TransferCardProps) {
+export function TransferCard({ transfer, join }: TransferCardProps) {
   const t = useTranslations("transfers.card");
   const locale = useLocale();
   const sentence = useSentence(transfer);
@@ -212,6 +217,17 @@ export function TransferCard({ transfer }: TransferCardProps) {
         ))}
       </div>
       <div className="flex shrink-0 gap-2">
+        {join === undefined || transfer.charge !== "opt-in" ? null : (
+          <JoinTransferToggle
+            tripId={join.tripId}
+            transferId={transfer.id}
+            from={transfer.from}
+            to={transfer.to}
+            participantIds={transfer.participantIds}
+            viewerId={join.viewerId}
+            memberCount={join.memberCount}
+          />
+        )}
         <Button
           type="button"
           size="sm"

@@ -70,9 +70,17 @@ function dto(id: string, departTime: string): TransferDto {
 }
 
 function renderGap(gap: Gap, transfers: TransferDto[] = [], hasAgent = true) {
-  return renderWithIntl(<TransferGap gap={gap} transfers={transfers} hasAgent={hasAgent} />, {
-    messages,
-  });
+  return renderWithIntl(
+    <TransferGap
+      gap={gap}
+      transfers={transfers}
+      hasAgent={hasAgent}
+      tripId="trip-1"
+      viewerId="me"
+      memberCount={2}
+    />,
+    { messages },
+  );
 }
 
 const unsubscribers: (() => void)[] = [];
@@ -152,5 +160,18 @@ describe("TransferGap", () => {
     renderGap(between, [dto("early", "08:00")]);
 
     expect(screen.getByRole("button", { name: /^Add/ })).toBeInTheDocument();
+  });
+
+  it("lets the viewer join an opt-in transfer, with the count of travelers", () => {
+    renderGap(between, [{ ...dto("a", "08:00"), charge: "opt-in", participantIds: ["me"] }]);
+
+    expect(screen.getByRole("button", { name: /^Join/ })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("1 of 2")).toBeInTheDocument();
+  });
+
+  it("offers nothing to join on a transfer everyone pays", () => {
+    renderGap(between, [dto("a", "08:00")]);
+
+    expect(screen.queryByRole("button", { name: /^Join/ })).toBeNull();
   });
 });
