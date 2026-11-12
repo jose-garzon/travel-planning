@@ -14,7 +14,7 @@ export const budgetItem = sqliteTable(
       enum: ["flights", "lodging", "transport", "food", "other"],
     }).notNull(),
     label: text("label").notNull(),
-    /** Minor units in `currency`. */
+    /** Unit price per traveler, minor units in `currency`. */
     amount: integer("amount").notNull(),
     currency: text("currency").notNull(),
     /** Units of trip currency per one unit of `currency`, stored at entry. */

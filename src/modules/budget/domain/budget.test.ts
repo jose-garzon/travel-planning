@@ -27,7 +27,7 @@ describe("splitEqually", () => {
 describe("summarize", () => {
   const memberIds = ["ana", "ben", "cai"];
 
-  it("splits shared items, charges per-person items and subscribed activities", () => {
+  it("charges shared unit prices to every member, per-person items and activities", () => {
     const summary = summarize({
       memberIds,
       cap: null,
@@ -40,13 +40,22 @@ describe("summarize", () => {
     });
     const byId = Object.fromEntries(summary.perPerson.map((p) => [p.userId, p.total]));
     expect(byId).toEqual({
-      ana: 10000 + 50000 + 30 + 2000,
-      ben: 10000 + 30 + 2000,
-      cai: 10000 + 30,
+      ana: 30000 + 50000 + 90 + 2000,
+      ben: 30000 + 90 + 2000,
+      cai: 30000 + 90,
     });
     expect(summary.byCategory.activities).toBe(4000);
-    expect(summary.total).toBe(30000 + 50000 + 90 + 4000);
+    expect(summary.total).toBe(3 * 30000 + 50000 + 3 * 90 + 4000);
     expect(summary.remaining).toBeNull();
+  });
+
+  it("grows the total of a unit price when a member joins", () => {
+    const items = [item({ amount: 2500 })];
+    const two = summarize({ memberIds: ["ana", "ben"], cap: null, items, activities: [] });
+    const three = summarize({ memberIds, cap: null, items, activities: [] });
+    expect(two.total).toBe(5000);
+    expect(three.total).toBe(7500);
+    expect(three.perPerson.map((p) => p.total)).toEqual([2500, 2500, 2500]);
   });
 
   it("ignores per-person items and participants of people who left", () => {
@@ -63,11 +72,11 @@ describe("summarize", () => {
     const under = summarize({
       memberIds,
       cap: 1000,
-      items: [item({ amount: 600 })],
+      items: [item({ amount: 200 })],
       activities: [],
     });
     expect(under.remaining).toBe(400);
-    const over = summarize({ memberIds, cap: 100, items: [item({ amount: 600 })], activities: [] });
+    const over = summarize({ memberIds, cap: 100, items: [item({ amount: 200 })], activities: [] });
     expect(over.remaining).toBe(-500);
   });
 });

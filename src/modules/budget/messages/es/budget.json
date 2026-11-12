@@ -18,7 +18,7 @@
   "category": "Categoría",
   "forWhom": "Para quién",
   "label": "Qué",
-  "amount": "Monto",
+  "amount": "Precio por persona",
   "currency": "Moneda",
   "rate": "1 {from} = ? {to}",
   "rateHint": "Tasa de cambio de hoy. Se guarda con este gasto.",
@@ -27,7 +27,7 @@
   "save": "Guardar gasto",
   "cancel": "Cancelar",
   "empty": "Aún no hay gastos. Agrega alojamiento, transporte o comida, o pregunta al asistente.",
-  "splitEqually": "dividido por igual",
+  "splitEqually": "por persona",
   "delete": "Eliminar",
   "deleteItem": "Eliminar “{label}”",
   "deleteConfirm": "¿Eliminar “{label}” para todos?",
@@ -42,10 +42,10 @@
   },
   "splitHint": {
     "flights": "Por persona: cuenta solo para el viajero que elijas.",
-    "lodging": "Dividido por igual entre todos.",
-    "transport": "Dividido por igual entre todos.",
-    "food": "Estimado total de comida, dividido por igual entre todos.",
-    "other": "Dividido por igual entre todos."
+    "lodging": "Precio por viajero. El total crece con el grupo.",
+    "transport": "Precio por viajero. El total crece con el grupo.",
+    "food": "Estimado de comida por viajero. El total crece con el grupo.",
+    "other": "Precio por viajero. El total crece con el grupo."
   },
   "capToggle": "Fijar un tope de presupuesto",
   "capUsed": "Tope usado",

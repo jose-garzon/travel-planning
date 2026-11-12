@@ -10,11 +10,12 @@ export type BudgetItem = {
   tripId: string;
   category: Category;
   label: string;
+  /** Unit price: per traveler, charged once to each member it counts for. */
   amount: number;
   currency: string;
   /** Trip-currency units per one unit of `currency`. */
   rate: string;
-  /** A per-person item counts only for this member; null splits equally. */
+  /** Counts only for this member; null counts for every member. */
   userId: string | null;
   link: string | null;
   /** Leg position (0-based) of the stop it belongs to; null: whole trip. */
@@ -95,13 +96,11 @@ export function summarize({
       charge(item.userId, item.category, amount);
       continue;
     }
-    byCategory[item.category] += amount;
-    splitEqually(amount, memberIds.length).forEach((share, index) => {
-      const userId = memberIds[index];
-      if (userId !== undefined) {
-        charge(userId, item.category, share);
-      }
-    });
+    // A unit price: every member pays it, so the total follows the group size.
+    for (const userId of memberIds) {
+      byCategory[item.category] += amount;
+      charge(userId, item.category, amount);
+    }
   }
 
   for (const activity of activities) {

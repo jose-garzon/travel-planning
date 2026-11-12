@@ -57,7 +57,7 @@ export function createClaudeAgentModel(modelId: string): AgentModel {
           }),
           suggest_budget_item: tool({
             description:
-              "Propose one cost (flight, lodging, transport, food, other) for the members to approve. Call once per item. Set stop to the route stop number the cost belongs to (lodging, food, local transport in a city); null only for costs of the whole trip.",
+              "Propose one cost (flight, lodging, transport, food, other) for the members to approve. Call once per item. amount is the price for ONE traveler, never a group total: the app multiplies it by the number of travelers. Set stop to the route stop number the cost belongs to (lodging, food, local transport in a city); null only for costs of the whole trip.",
             inputSchema: budgetSchema,
             execute: async (input) => {
               suggestions.push({ kind: "budget", ...input });
