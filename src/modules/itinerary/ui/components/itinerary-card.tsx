@@ -1,12 +1,12 @@
 "use client";
 
-import { Check, Ellipsis, Plus, TriangleAlert } from "lucide-react";
+import { Check, Ellipsis, ExternalLink, Plus, TriangleAlert } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import type { ActivityDto, ActivityInput } from "@/modules/itinerary/service/schemas";
 import { ActivityForm } from "@/modules/itinerary/ui/components/activity-form";
 import { useRouter } from "@/shared/i18n/navigation";
-import { Button } from "@/shared/ui/components/button";
+import { Button, buttonClasses } from "@/shared/ui/components/button";
 import { ConfirmDialog } from "@/shared/ui/components/confirm-dialog";
 import { Dialog } from "@/shared/ui/components/dialog";
 import { Icon } from "@/shared/ui/components/icon";
@@ -248,6 +248,18 @@ function ActivityRow({
             {activity.subscribed ? <Icon icon={Check} size="sm" /> : null}
             {t("join")}
           </button>
+          {activity.link === null ? null : (
+            <a
+              href={activity.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={t("openLink")}
+              className={buttonClasses({ variant: "outline", size: "sm", labelHidden: true })}
+            >
+              <Icon icon={ExternalLink} size="sm" />
+              <span className="sr-only">{t("openLink")}</span>
+            </a>
+          )}
           <Button
             type="button"
             size="sm"
@@ -282,19 +294,6 @@ function ActivityRow({
         >
           {going}
         </span>
-        {activity.link === null ? null : (
-          <>
-            {" · "}
-            <a
-              href={activity.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2 ui-hover:text-accent"
-            >
-              {t("openLink")}
-            </a>
-          </>
-        )}
       </p>
       {activity.overlaps ? (
         <p className="flex items-center gap-2 pl-16 font-semibold text-error text-sm">

@@ -23,6 +23,7 @@
   "rate": "1 {from} = ? {to}",
   "rateHint": "Exchange rate today. It is saved with this cost.",
   "link": "Link",
+  "openLink": "Open link for {label}",
   "optional": "Optional",
   "save": "Save cost",
   "cancel": "Cancel",

@@ -5,6 +5,7 @@ import {
   Bus,
   ChevronDown,
   Ellipsis,
+  ExternalLink,
   type LucideIcon,
   Plane,
   Plus,
@@ -16,7 +17,7 @@ import { type FormEvent, useState } from "react";
 import { CATEGORIES, type Category } from "@/modules/budget/domain/budget";
 import type { BudgetDto, BudgetItemDto, BudgetItemInput } from "@/modules/budget/service/schemas";
 import { useRouter } from "@/shared/i18n/navigation";
-import { Button } from "@/shared/ui/components/button";
+import { Button, buttonClasses } from "@/shared/ui/components/button";
 import { ConfirmDialog } from "@/shared/ui/components/confirm-dialog";
 import { Dialog } from "@/shared/ui/components/dialog";
 import { Icon } from "@/shared/ui/components/icon";
@@ -240,6 +241,18 @@ export function BudgetCosts({
               </span>
               <span className="flex items-center gap-2">
                 <span className="tabular-nums">{money(item.amountInTripCurrency)}</span>
+                {item.link === null ? null : (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={t("openLink", { label: item.label })}
+                    className={buttonClasses({ variant: "outline", size: "sm", labelHidden: true })}
+                  >
+                    <Icon icon={ExternalLink} size="sm" />
+                    <span className="sr-only">{t("openLink", { label: item.label })}</span>
+                  </a>
+                )}
                 <ConfirmDialog
                   title={t("deleteConfirm", { label: item.label })}
                   warning={t("deleteWarning")}
